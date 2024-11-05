@@ -22,7 +22,7 @@ class NameClass(Resource):
         rcode = rcode
         # genes = db.search(rcode)
         return {
-            "List of gewnes" : rcode
+            "List of genes" : rcode
         }
 
 
