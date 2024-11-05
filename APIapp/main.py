@@ -17,10 +17,10 @@ def get_genes(rcode):
     '''
     panel_data = requests.get(f'https://panelapp.genomicsengland.co.uk/api/v1/panels/{rcode}/genes/?confidence_level=3') # confidence level 3 is green
     json_data = panel_data.json()
-    gene_symbols = [entry["gene_data"]["gene_symbol"] for entry in json_data["results"]] # access gene symbols from nested JSON output from PanelApp API, add to list
+    gene_symbols = [(entry["gene_data"]["gene_symbol"], entry["gene_data"]["hgnc_id"]) for entry in json_data["results"]] # access gene symbols from nested JSON output from PanelApp API, add to list
     return gene_symbols
 
-panelapp_space = api.namespace('PanelApp', description='Return a name provided by the user')
+panelapp_space = api.namespace('VIMMO', description='Return a name provided by the user')
 @panelapp_space.route("/<string:rcode>")
 class NameClass(Resource):
     def get(self, rcode):
