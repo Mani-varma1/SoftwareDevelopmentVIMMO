@@ -12,10 +12,12 @@ application = Flask(__name__)
 api = Api(app = application)
 
 def get_genes(rcode):
-
-    panel_data = requests.get(f'https://panelapp.genomicsengland.co.uk/api/v1/panels/{rcode}/genes/?confidence_level=3')
+    '''
+    query PanelApp API based on RCode --> return list of green genes in the panel
+    '''
+    panel_data = requests.get(f'https://panelapp.genomicsengland.co.uk/api/v1/panels/{rcode}/genes/?confidence_level=3') # confidence level 3 is green
     json_data = panel_data.json()
-    gene_symbols = [entry["gene_data"]["gene_symbol"] for entry in json_data["results"]]
+    gene_symbols = [entry["gene_data"]["gene_symbol"] for entry in json_data["results"]] # access gene symbols from nested JSON output from PanelApp API, add to list
     return gene_symbols
 
 panelapp_space = api.namespace('PanelApp', description='Return a name provided by the user')
@@ -23,7 +25,7 @@ panelapp_space = api.namespace('PanelApp', description='Return a name provided b
 class NameClass(Resource):
     def get(self, rcode):
         rcode = rcode
-        gene_list = get_genes(rcode)
+        gene_list = get_genes(rcode) # call get_genes with user inputted RCode
         return {
             f"List of genes in {rcode}" : gene_list
         }
