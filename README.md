@@ -13,3 +13,6 @@ How to install
 How to run
 
 
+
+how to exit
+
