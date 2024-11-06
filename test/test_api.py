@@ -2,14 +2,14 @@
 
 import unittest
 from unittest.mock import patch
-from APIapp import application
+from APIapp import app
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
-        self.app = application.test_client()
+        self.app = app.test_client()
         self.app.testing = True
 
-    @patch('APIapp.main.requests.get')
+    # @patch('APIapp.endpoints.requests.get')
     # def test_get_genes_success(self, mock_get):
     #     # Mock the JSON response from the requests.get call
     #     mock_response = {
@@ -29,13 +29,12 @@ class TestAPI(unittest.TestCase):
     #     }
     #     self.assertEqual(data, expected_data)
 
-    @patch('APIapp.main.requests.get')
     def test_get_genes_no_results(self):
         rcode = '1111111'  # Example RCode with no results
-        response = self.app.get(f'/PanelApp/{rcode}')
-        self.assertEqual(response.status_code, 404)
+        response = self.app.get(f'/VIMMO/{rcode}')
+        self.assertEqual(response.status_code, 200)
         data = response.get_json()
-        expected_data = None
+        expected_data = {'List of genes in 1111111': []}
         self.assertEqual(data, expected_data)
 
     def test_invalid_route(self):
