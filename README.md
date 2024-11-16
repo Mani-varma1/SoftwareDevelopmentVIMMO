@@ -38,7 +38,7 @@ pip install -e .
 
 The package installation will automatically handle all dependencies listed in `pyproject.toml`.
 
-### Building the Package
+### Building the Package for Production
 
 If you want to build the distribution files:
 ```bash
@@ -49,6 +49,12 @@ python -m build
 This will create:
 - A wheel file (*.whl) in the `dist/` directory
 - A source distribution (*.tar.gz) in the `dist/` directory
+
+Install using:
+```bash
+# This will create both wheel and source distribution
+pip install dist/*.whl
+```
 
 ## Usage
 
