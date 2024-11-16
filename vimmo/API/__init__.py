@@ -1,6 +1,6 @@
 from flask import Flask, g
 from flask_restx import Api
-from db.db import Database
+from vimmo.db.db import Database
 
 app = Flask(__name__)
 api = Api(app=app)
@@ -20,4 +20,4 @@ def shutdown_session(exception=None):
         db.close()
 
 # Import the routes to register them
-from APIapp import endpoints
+from vimmo.API import endpoints

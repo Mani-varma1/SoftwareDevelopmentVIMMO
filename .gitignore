@@ -3,3 +3,5 @@ APIapp/__pycache__
 test/__pycache__
 utils/__pycache__
 db/__pycache__
+vimmo.egg-info
+dist

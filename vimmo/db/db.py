@@ -2,6 +2,8 @@
 import sqlite3
 from sqlite3 import Connection
 from typing import Optional, List, Tuple, Dict, Any
+import importlib.resources
+import os
 
 
 class Database:
@@ -9,12 +11,32 @@ class Database:
         self.db_path = db_path
         self.conn: Optional[Connection] = None
 
+    def get_db_path(self) -> str:
+        """
+        Get the database path, handling both development and installed scenarios.
+        """
+        try:
+            # First try to get the database from the installed package
+            with importlib.resources.path('vimmo.db', 'panels_data.db') as db_path:
+                return str(db_path)
+        except Exception:
+            # If that fails, try the development path
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            dev_db_path = os.path.join(current_dir, self.db_path)
+            
+            if os.path.exists(dev_db_path):
+                return dev_db_path
+            else:
+                raise FileNotFoundError("database file could not be located")
+            
+
+
     def connect(self):
         """Establish a connection to the SQLite database."""
         if not self.conn:
-            self.conn = sqlite3.connect(self.db_path)
-            self.conn.row_factory = sqlite3.Row  # To return rows as dictionaries
-            # self._initialize_tables()
+            db_path = self.get_db_path()
+            self.conn = sqlite3.connect(db_path)
+            self.conn.row_factory = sqlite3.Row
     
     def _initialize_tables(self):
         """Create necessary tables if they don't exist."""
@@ -92,7 +114,7 @@ class Database:
                 ''', (patient_id, panel_id, rcodes, version))
         else:
             print("Either panel_id or rcode must be provided.")
-            return
+            return None
         
         self.conn.commit()
 
@@ -121,50 +143,68 @@ class PanelQuery:
     def __init__(self, connection):
         self.conn = connection
 
-    def get_panel_data(self, panel_id: Optional[int] = None, rcode: Optional[str] = None):
+    def get_panel_data(self, ID: Optional[str] = None, matches: bool=False):
         """Retrieve all records associated with a specific Panel_ID or rcode."""
         cursor = self.conn.cursor()
+        operator = "LIKE" if matches else "="
         
-        if panel_id:
-            query = '''
+        if "R" not in ID:
+            query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
                    genes_info.GRCh38_start, genes_info.GRCh38_stop
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-            WHERE panel.Panel_ID = ?
+            WHERE panel.Panel_ID {operator} ?
             '''
-            result = cursor.execute(query, (panel_id,)).fetchall()
-        
-        elif rcode:
-            rcode_query = f"%{rcode}%"
-            query = '''
-            SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
-                   genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
-                   genes_info.GRCh38_start, genes_info.GRCh38_stop
-            FROM panel
-            JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
-            JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-            WHERE panel.rcodes LIKE ?
-            '''
-            result = cursor.execute(query, (rcode_query,)).fetchall()
+            result = cursor.execute(query, (ID,)).fetchall()
         
         else:
-            return []
+            rcode_query = f"%{ID}%" if matches else ID
+            query = f'''
+            SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
+                   genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
+                   genes_info.GRCh38_start, genes_info.GRCh38_stop
+            FROM panel
+            JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
+            JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
+            WHERE panel.rcodes {operator} ?
+            '''
+            result = cursor.execute(query, (rcode_query,)).fetchall()
 
-        return [dict(row) for row in result]
+        if result:
+            return {
+                "ID": ID,
+                "Associated Gene Records": [dict(row) for row in result]
+            }
+        else:
+            return {
+                "ID": ID,
+                "Could not find any match the ID": ID
+            }
+                
 
-    def get_panels_from_gene(self, hgnc_id: str) -> list[
+    def get_panels_from_gene(self, hgnc_id: str, matches: bool=False) -> list[
         dict[Any, Any] | dict[str, Any] | dict[str, str] | dict[bytes, bytes]]:
         cursor = self.conn.cursor()
-        query = '''
+        operator = "LIKE" if matches else "="
+        query = f'''
         SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
         FROM panel
         Join panel_genes on panel.Panel_ID = panel_genes.Panel_ID
         join genes_info on panel_genes.HGNC_ID = genes_info.HGNC_ID
-        WHERE panel_genes.HGNC_ID = ?
+        WHERE panel_genes.HGNC_ID {operator} ?
         '''
 
         result = cursor.execute(query, (hgnc_id,)).fetchall()
-        return [dict(row) for row in result]
+        if result:
+            return{
+                "HGNC ID": hgnc_id,
+                "Panels": [dict(row) for row in result]
+                }
+        else:
+            return {
+                "ID": hgnc_id,
+                "Could not find any match the HGNC ID": hgnc_id
+            }
