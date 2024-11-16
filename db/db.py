@@ -13,7 +13,7 @@ class Database:
         if not self.conn:
             self.conn = sqlite3.connect(self.db_path)
             self.conn.row_factory = sqlite3.Row  # To return rows as dictionaries
-            self._initialize_tables()
+            # self._initialize_tables()
     
     def _initialize_tables(self):
         """Create necessary tables if they don't exist."""
