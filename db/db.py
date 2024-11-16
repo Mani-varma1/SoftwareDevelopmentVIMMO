@@ -1,7 +1,8 @@
 
 import sqlite3
 from sqlite3 import Connection
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict, Any
+
 
 class Database:
     def __init__(self, db_path: str = 'db/panels_data.db'):
@@ -152,4 +153,18 @@ class PanelQuery:
         else:
             return []
 
+        return [dict(row) for row in result]
+
+    def get_panels_from_gene(self, hgnc_id: str) -> list[
+        dict[Any, Any] | dict[str, Any] | dict[str, str] | dict[bytes, bytes]]:
+        cursor = self.conn.cursor()
+        query = '''
+        SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
+        FROM panel
+        Join panel_genes on panel.Panel_ID = panel_genes.Panel_ID
+        join genes_info on panel_genes.HGNC_ID = genes_info.HGNC_ID
+        WHERE panel_genes.HGNC_ID = ?
+        '''
+
+        result = cursor.execute(query, (hgnc_id,)).fetchall()
         return [dict(row) for row in result]

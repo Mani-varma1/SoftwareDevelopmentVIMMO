@@ -1,6 +1,7 @@
 
 from flask_restx import Resource, reqparse
 from APIapp import api,get_db
+#from database_prework.each_paneld import hgnc_id
 from utils.panelapp import  PanelAppClient
 from db.db import PanelQuery
 import requests
@@ -12,7 +13,8 @@ parser1 = reqparse.RequestParser()
 parser1.add_argument('ID',
                     type=str,
                     help='Type in Panel-ID or R code')
-
+parser2 = reqparse.RequestParser()
+parser2.add_argument('HGNC_ID', type=str, help='Type in HGNC code')
 
 
 
@@ -50,6 +52,21 @@ class NameClass(Resource):
         return {
             "Panel ID or R-code": ID,
             "Associated Gene Records": panel_data
+        }
+
+genes_space = api.namespace('genes', description='Return panels containing gene')
+@genes_space.route("/genes")
+class NameClass(Resource):
+    @api.doc(parser=parser2)
+    def get(self):
+        args = parser2.parse_args()
+        hgnc_id = args.get('HGNC_ID')
+        db = get_db()
+        query = PanelQuery(db.conn)
+        panels_returned = query.get_panels_from_gene(hgnc_id=hgnc_id)
+        return {
+            "HGNC ID": hgnc_id,
+            "Panels": panels_returned
         }
 
 
