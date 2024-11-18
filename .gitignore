@@ -1,10 +1,12 @@
 .idea
-vimmo/__pycache__
-vimmo/API/__pycache__
-vimmo/db/__pycache__
-vimmo/utils/__pycache__
-test/__pycache__
-utils/__pycache__
-db/__pycache__
-vimmo.egg-info
-dist
+# Exclude all __pycache__ directories recursively
+**/__pycache__/
+
+# Exclude compiled Python files (*.pyc, *.pyo) globally
+*.pyc
+*.pyo
+
+# Exclude vimmo.egg-info and build/distribution directories
+vimmo.egg-info/
+dist/
+build/
