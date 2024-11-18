@@ -1,5 +1,8 @@
 .idea
-APIapp/__pycache__
+vimmo/__pycache__
+vimmo/API/__pycache__
+vimmo/db/__pycache__
+vimmo/utils/__pycache__
 test/__pycache__
 utils/__pycache__
 db/__pycache__
