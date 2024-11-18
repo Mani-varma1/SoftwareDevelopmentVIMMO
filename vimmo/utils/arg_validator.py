@@ -19,7 +19,8 @@ def validate_id_or_hgnc(args):
         raise ValueError("Provide only one of 'ID' or 'HGNC_ID', not both.")
 
     # Validate the format of ID
-    if id_value and not re.match(rcode_pattern, id_value) and id_value and not re.match(panel_pattern, id_value):
+    if (id_value and not re.match(rcode_pattern, id_value)) and \
+        (id_value and not re.match(panel_pattern, id_value)):
         raise ValueError(
             "Invalid format for 'ID':"
             "'R123' or 'R123.4' format for R codes  /  "

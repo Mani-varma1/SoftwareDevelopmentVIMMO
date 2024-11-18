@@ -1,6 +1,7 @@
 from flask import Flask, g
 from flask_restx import Api
 from vimmo.db.db import Database
+import os
 
 app = Flask(__name__)
 api = Api(app=app)
