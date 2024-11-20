@@ -1,4 +1,4 @@
-from flask_restx import reqparse,inputs
+from flask_restx import reqparse, inputs
 
 class IDParser:
     """Parser for handling panel ID and HGNC ID arguments."""
@@ -6,15 +6,21 @@ class IDParser:
     def create_parser():
         parser = reqparse.RequestParser()
         parser.add_argument(
-            'ID',
-            type=str,
-            help="Provide Panel ID or R-code. Leave blank if using 'HGNC_ID'.",
+            'Panel_ID',
+            type=int,  # Changed to int
+            help="Provide Panel_ID. Leave blank if using 'Rcode' or 'HGNC_ID'.",
             required=False
+        )
+        parser.add_argument(
+            'Rcode',
+            type=str,  # Added missing comma
+            help="Provide Rcode. Leave blank if using 'Panel_ID' or 'HGNC_ID'.",
+            required=False  # Added for consistency
         )
         parser.add_argument(
             'HGNC_ID',
             type=str,
-            help="Provide HGNC ID. Leave blank if using 'ID'.",
+            help="Provide HGNC ID. Leave blank if using 'Rcode' or 'Panel_ID'.",
             required=False
         )
         parser.add_argument(
@@ -25,7 +31,6 @@ class IDParser:
             default=False
         )
         return parser
-
 
 class PatientParser:
     """Parser for handling patient-related arguments."""
