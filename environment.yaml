@@ -1,6 +1,12 @@
 name: VIMMO
 channels:
   - conda-forge
-  - bioconda
+  - defaults
 dependencies:
-  - python==3.13 
+  - python=3.13
+  - pip
+  - pip:
+    - build
+    - setuptools
+    - wheel
+    - twine

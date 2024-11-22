@@ -1,11 +1,9 @@
 import requests
-from flask import Flask
-application = Flask(__name__) 
 
 ID_list = []
 
-for number in range(1,6):
-
+for number in range(1,9):
+    url=f"https://panelapp.genomicsengland.co.uk/api/v1/panels/signedoff/?display=all&format=json&page=2"
     url = f"https://panelapp.genomicsengland.co.uk/api/v1/panels/?page={number}"
     data = requests.get(url)
     json_data = data.json()
