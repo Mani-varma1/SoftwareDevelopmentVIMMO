@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import patch
 from APIapp import app
+from vimmo import API
+
 
 class TestAPI(unittest.TestCase):
     def setUp(self):

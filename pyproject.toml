@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vimmo"
+version = "0.1.0"
+description = "App that gives you stuff"
+readme = "README.md"
+authors = [
+    {name = "The Boys", email = "theboys.email@example.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha"
+]
+requires-python = ">=3.13"
+dependencies = [
+    "flask",
+    "flask-restx",
+    "requests",
+    "pandas"
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vimmo*"]
+
+[tool.setuptools.package-data]
+"vimmo" = ["db/*.db"]
+
+[project.scripts]
+vimmo = "vimmo.main:main"

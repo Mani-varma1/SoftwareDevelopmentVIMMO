@@ -12,10 +12,9 @@ def main():
     # Create the table in the database
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS panels (
-            Panel_ID TEXT,
+            Panel_ID INTEGER PRIMARY KEY,
             rcodes TEXT,
-            Version TEXT,
-            PRIMARY KEY (Panel_ID, rcodes)
+            Version TEXT
         )
     ''')
 
