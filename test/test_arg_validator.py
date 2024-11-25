@@ -1,5 +1,5 @@
 import unittest
-from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc  # Import the function to test
+from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
 
 
 class TestValidateIDOrRcodeOrHGNC(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestValidateIDOrRcodeOrHGNC(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             validate_panel_id_or_Rcode_or_hgnc(args)
         # Ensure the error message mentions the invalid Panel_ID format
-        self.assertIn("Invalid format for 'Panel_ID': Must be a number", str(context.exception))
+        self.assertIn("Invalid input: 'Panel_ID' must be digits only", str(context.exception))
 
     def test_valid_rcode(self):
         """Test valid Rcode."""
