@@ -3,7 +3,8 @@ from flask import render_template, send_file
 from flask_restx import Resource
 from vimmo.API import api,get_db
 from vimmo.utils.panelapp import  PanelAppClient
-from vimmo.utils.parser import IDParser, PatientParser
+from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
+from vimmo.utils.parser import IDParser, PatientParser, DownloadParser
 from vimmo.utils.arg_validator import validate_id_or_hgnc
 from vimmo.db.db import PanelQuery
 from io import StringIO, BytesIO
@@ -40,79 +41,73 @@ class PanelSearch(Resource):
             return panels_returned
 
 
+
+
+
+download_parser=DownloadParser.create_parser()
 @panels_space.route('/download')
 class PanelDownload(Resource):
-    @api.doc(parser=id_parser)  # Hide from Swagger UI but keep endpoint accessible
+    @api.doc(parser=download_parser)
     def get(self):
-        """Download panel data as BED file"""
-        args = id_parser.parse_args()
+        """
+        Endpoint to download panel data as a BED file.
+
+        Query Parameters:
+        - HGNC_ID (str): Gene identifier for querying (e.g., HGNC ID or symbol).
+        - genome_build (str): Genome build version (default: 'GRCh38').
+        - transcript_set (str): Transcript set to use (e.g., 'refseq', 'ensembl', 'all'; default: 'all').
+        - limit_transcripts (str): Specifies transcript filtering ('mane', 'select', 'all'; default: 'all').
+
+        Returns:
+        - FileResponse: A downloadable BED file containing gene data.
+        """
+        # Parse user-provided arguments from the request
+        args = download_parser.parse_args()
+
+
+        # # # Apply custom validation
+        # # try:
+        # #     validate_id_or_hgnc(args)
+        # # except ValueError as e:
+        # #     return {"error": str(e)}, 400
         
-        # Dummy data structure mimicking your panel data
-        dummy_data = {
-            "panel_id": "123",
-            "genes": [
-                {
-                    "gene_symbol": "BRCA1",
-                    "chromosome": "chr17",
-                    "start": 43044295,
-                    "end": 43125364,
-                    "strand": "+"
-                },
-                {
-                    "gene_symbol": "BRCA2",
-                    "chromosome": "chr13",
-                    "start": 32315474,
-                    "end": 32399672,
-                    "strand": "-"
-                },
-                {
-                    "gene_symbol": "TP53",
-                    "chromosome": "chr17",
-                    "start": 7571720,
-                    "end": 7590868,
-                    "strand": "+"
-                }
-            ]
-        }
+
+        # gene_query = args.get("HGNC_ID")
+        # genome_build = args.get('genome_build', 'GRCh38')
+        # transcript_set = args.get('transcript_set', 'all')
+        # limit_transcripts = args.get('limit_transcripts', 'mane_select')
         
-        # Convert to BED format
-        bed_rows = []
-        for gene in dummy_data["genes"]:
-            bed_rows.append({
-                'chrom': gene.get('chromosome', '.'),
-                'start': gene.get('start', 0),
-                'end': gene.get('end', 0),
-                'name': f"{gene.get('gene_symbol', '.')}_{dummy_data['panel_id']}",
-                'score': 1000,
-                'strand': gene.get('strand', '.')
-            })
+
+
+        # # Initialize the VariantValidator client
+        # var_val_client = VarValClient()
+
+        # try:
+        #     # Generate the BED file content
+        #     bed_file = var_val_client.parse_to_bed(
+        #         gene_query=gene_query,
+        #         genome_build=genome_build,
+        #         transcript_set=transcript_set,
+        #         limit_transcripts=limit_transcripts
+        #     )
+        # except VarValAPIError as e:
+        #     # Return an error response if processing fails
+        #     return {"error": str(e)}, 500
         
-        bed_df = pd.DataFrame(bed_rows)
-        
-        # Create a BytesIO object
-        output = BytesIO()
-        
-        # Write DataFrame to string buffer
-        bed_string = bed_df.to_csv(
-            sep='\t',
-            index=False,
-            header=False,
-            columns=['chrom', 'start', 'end', 'name', 'score', 'strand']
-        )
-        
-        # Convert string to bytes and write to BytesIO
-        output.write(bed_string.encode('utf-8'))
-        output.seek(0)
-        
-        filename = f"panel_{'_'.join(filter(None, [args.get('ID'), args.get('HGNC_ID')]))}.bed"
-        
-        return send_file(
-            output,
-            mimetype='text/plain',
-            as_attachment=True,
-            download_name=filename
-        )
-        
+        # print("point 2")
+
+
+        # # Generate a meaningful filename for the download
+        # filename = f"{gene_query.replace('|', '_')}_{genome_build}_mane_select.bed"
+
+        # # Return the BED file as a downloadable response
+        # return send_file(
+        #     bed_file,
+        #     mimetype='text/plain',
+        #     as_attachment=True,
+        #     download_name=filename
+        # )
+        return "Hi"
 
 
     
