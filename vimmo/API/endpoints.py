@@ -28,7 +28,7 @@ class PanelSearch(Resource):
 
         # Apply custom validation for the parsed arguments
         try:
-            validate_panel_id_or_Rcode_or_hgnc(args)  # Ensure only one valid parameter is provided
+            validate_panel_id_or_Rcode_or_hgnc(args,panel_space=True)  # Ensure only one valid parameter is provided
         except ValueError as e:
             # Return an error response if validation fails
             return {"error": str(e)}, 400
@@ -84,12 +84,35 @@ class PanelDownload(Resource):
 
         # # Apply custom validation
         try:
-            validate_panel_id_or_Rcode_or_hgnc(args)
+            validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
         except ValueError as e:
             return {"error": str(e)}, 400
 
+        panel_id=args.get("Panel_ID",None)
+        r_code=args.get("Rcode",None)
 
-        gene_query = args.get("HGNC_ID")
+
+        # Retrieve the database connection
+        db = get_db()
+        # Initialize a query object with the database connection
+        query = PanelQuery(db.conn)
+
+        if panel_id:
+            panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+            gene_query="|".join(gene_query)
+        elif r_code:
+            panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+            gene_query="|".join(gene_query)
+        else:
+            gene_query = args.get("HGNC_ID",None)
+
+
         genome_build = args.get('genome_build', 'GRCh38')
         transcript_set = args.get('transcript_set', 'all')
         limit_transcripts = args.get('limit_transcripts', 'mane_select')
@@ -112,7 +135,12 @@ class PanelDownload(Resource):
 
 
         # Generate a meaningful filename for the download
-        filename = f"{gene_query.replace('|', '_')}_{genome_build}_mane_select.bed"
+        if panel_id:
+            filename = f"{panel_id}_{genome_build}_{limit_transcripts}.bed"
+        elif r_code:
+            filename = f"{r_code}_{genome_build}_{limit_transcripts}.bed"
+        else:
+            filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
 
         # Return the BED file as a downloadable response
         return send_file(
