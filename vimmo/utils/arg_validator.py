@@ -1,35 +1,37 @@
 import re
 
-def validate_id_or_hgnc(args):
-    """Custom validation for ID and HGNC_ID."""
-    id_value = args.get('ID', None)
-    hgnc_id_value = args.get('HGNC_ID', None)
+def validate_panel_id_or_Rcode_or_hgnc(args):
+    """Custom validation for Panel_ID, Rcode, and HGNC_ID."""
+    
+    # Extract the values of Panel_ID, Rcode, and HGNC_ID from the input dictionary
+    panel_id_value = args.get('Panel_ID', None)          # Panel ID
+    rcode_value = args.get('Rcode', None)                # R-code
+    hgnc_id_value = args.get('HGNC_ID', None)            # HGNC_ID
 
-    # Define patterns for ID and HGNC_ID
-    rcode_pattern = r"^R\d+(\.\d+)?$"  # Starts with 'R', followed by one or more digits, optionally a period and more digits
-    panel_pattern=r"\d+"
-    hgnc_pattern = r"^HGNC:\d+$"  # Starts with 'HGNC:', followed by one or more digits
+    # Define patterns for Panel_ID, Rcode, and HGNC_ID
+    rcode_pattern = r"^R\d+$"      # Pattern for Rcode: Starts with 'R', followed by digits only
+    panel_pattern = r"^\d+$"       # Pattern for Panel_ID: Matches only digits
+    hgnc_pattern = r"^HGNC:\d+$"   # Pattern for HGNC_ID: Starts with 'HGNC:', followed by digits
 
     # Ensure at least one argument is provided
-    if not id_value and not hgnc_id_value:
-        raise ValueError("At least one of 'ID' or 'HGNC_ID' must be provided.")
+    if not any([panel_id_value, rcode_value, hgnc_id_value]):
+        raise ValueError("At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.")
 
     # Ensure only one argument is provided
-    if id_value and hgnc_id_value:
-        raise ValueError("Provide only one of 'ID' or 'HGNC_ID', not both.")
+    if sum(bool(arg) for arg in [panel_id_value, rcode_value, hgnc_id_value]) > 1:
+        raise ValueError("Provide only one of 'Panel_ID', 'Rcode', or 'HGNC_ID', not multiple.")
 
-    # Validate the format of ID
-    if (id_value and not re.match(rcode_pattern, id_value)) and \
-        (id_value and not re.match(panel_pattern, id_value)):
-        raise ValueError(
-            "Invalid format for 'ID':"
-            "'R123' or 'R123.4' format for R codes  /  "
-            "'123' format for Panel ID."
-        )
+    # Validate the format of Panel_ID - must be a number
+    if panel_id_value:
+        if not re.fullmatch(panel_pattern, str(panel_id_value)):  # Validate Panel_ID format
+            raise ValueError("Invalid format for 'Panel_ID': Must be a number (e.g., '1234').")
 
-    # Validate the format of HGNC_ID
-    if hgnc_id_value and not re.match(hgnc_pattern, hgnc_id_value):
-        raise ValueError(
-            "Invalid format for 'HGNC_ID'. It must start with 'HGNC:', followed by one or more digits (e.g., 'HGNC:12345')."
-        )
-    
+    # Validate the format of Rcode - must start with 'R' and be followed by digits only
+    if rcode_value:
+        if not re.fullmatch(rcode_pattern, rcode_value):  # Validate Rcode format
+            raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
+
+    # Validate the format of HGNC_ID - must start with 'HGNC:' and be followed by digits only
+    if hgnc_id_value:
+        if not re.fullmatch(hgnc_pattern, hgnc_id_value):  # Validate HGNC_ID format
+            raise ValueError("Invalid format for 'HGNC_ID': It must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345').")

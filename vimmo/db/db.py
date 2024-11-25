@@ -136,19 +136,24 @@ class Database:
         if self.conn:
             self.conn.close()
             self.conn = None
-
-
-
+        
 class PanelQuery:
     def __init__(self, connection):
         self.conn = connection
 
-    def get_panel_data(self, ID: Optional[str] = None, matches: bool=False):
-        """Retrieve all records associated with a specific Panel_ID or rcode."""
+    def get_panel_data(self, panel_id: Optional[int] = None, matches: bool=False):
+        """Retrieve all records associated with a specific Panel_ID."""
+        if panel_id is None:
+            raise ValueError("Panel_ID must be provided.")
+
         cursor = self.conn.cursor()
         operator = "LIKE" if matches else "="
-        
-        if "R" not in ID:
+
+        # For numeric Panel_ID, LIKE is not typically used. Consider enforcing exact matches.
+        if matches:
+            # If 'matches' is True, you might want to convert the panel_id to a string and use LIKE
+            # However, this is unusual for numeric IDs. Consider whether this is necessary.
+            panel_id_query = f"%{panel_id}%"
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
@@ -156,12 +161,11 @@ class PanelQuery:
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-            WHERE panel.Panel_ID {operator} ?
+            WHERE panel.Panel_ID LIKE ?
             '''
-            result = cursor.execute(query, (ID,)).fetchall()
-        
+            result = cursor.execute(query, (panel_id_query,)).fetchall()
         else:
-            rcode_query = f"%{ID}%" if matches else ID
+            # Exact match for Panel_ID
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
@@ -169,42 +173,69 @@ class PanelQuery:
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-            WHERE panel.rcodes {operator} ?
+            WHERE panel.Panel_ID = ?
             '''
-            result = cursor.execute(query, (rcode_query,)).fetchall()
+            result = cursor.execute(query, (panel_id,)).fetchall()
 
         if result:
             return {
-                "ID": ID,
+                "Panel_ID": panel_id,
                 "Associated Gene Records": [dict(row) for row in result]
             }
         else:
             return {
-                "ID": ID,
-                "Could not find any match the ID": ID
+                "Panel_ID": panel_id,
+                "Message": "No matches found."
             }
-                
 
-    def get_panels_from_gene(self, hgnc_id: str, matches: bool=False) -> list[
-        dict[Any, Any] | dict[str, Any] | dict[str, str] | dict[bytes, bytes]]:
+    def get_panels_by_rcode(self, rcode: str, matches: bool = False):
+        """Retrieve all records associated with a specific rcode."""
+        cursor = self.conn.cursor()
+        operator = "LIKE" if matches else "="
+        rcode_query = f"%{rcode}%" if matches else rcode
+
+        # Query by rcode
+        query = f'''
+        SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
+               genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
+               genes_info.GRCh38_start, genes_info.GRCh38_stop
+        FROM panel
+        JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
+        JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
+        WHERE panel.rcodes {operator} ?
+        '''
+        result = cursor.execute(query, (rcode_query,)).fetchall()
+
+        if result:
+            return {
+                "Rcode": rcode,
+                "Associated Gene Records": [dict(row) for row in result]
+            }
+        else:
+            return {
+                "Rcode": rcode,
+                "Message": "No matches found for this rcode."
+            }
+
+    def get_panels_from_gene(self, hgnc_id: str, matches: bool=False) -> list[dict]:
         cursor = self.conn.cursor()
         operator = "LIKE" if matches else "="
         query = f'''
         SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
         FROM panel
-        Join panel_genes on panel.Panel_ID = panel_genes.Panel_ID
-        join genes_info on panel_genes.HGNC_ID = genes_info.HGNC_ID
+        JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
+        JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
         WHERE panel_genes.HGNC_ID {operator} ?
         '''
 
         result = cursor.execute(query, (hgnc_id,)).fetchall()
         if result:
-            return{
+            return {
                 "HGNC ID": hgnc_id,
                 "Panels": [dict(row) for row in result]
-                }
+            }
         else:
             return {
-                "ID": hgnc_id,
-                "Could not find any match the HGNC ID": hgnc_id
+                "HGNC ID": hgnc_id,
+                "Message": "Could not find any match for the HGNC ID."
             }
