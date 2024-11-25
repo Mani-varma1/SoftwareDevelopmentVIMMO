@@ -98,7 +98,6 @@ class VarValClient:
             'canonical': 'select'
         }
         limit_transcripts = limit_transcripts_map.get(limit_transcripts, limit_transcripts)
-        print("point 1")
 
         try:
             # Fetch gene data from the API

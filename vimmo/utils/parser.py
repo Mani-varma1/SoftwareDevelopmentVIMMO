@@ -64,7 +64,7 @@ class DownloadParser:
             type=str,
             choices=['GRCh37', 'GRCh38'],
             help="Specify the genome build (GRCh37 or GRCh38).",
-            required=False,
+            required=True,
             default='GRCh38'
         )
         parser.add_argument(
@@ -72,7 +72,7 @@ class DownloadParser:
             type=str,
             choices=['refseq', 'ensembl', 'all'],
             help="Specify the transcript set (refseq, ensembl, or all).",
-            required=False,
+            required=True,
             default='all'
         )
         parser.add_argument(
@@ -83,10 +83,10 @@ class DownloadParser:
                 "Limit transcripts to specific categories: "
                 "'mane_select + mane_plus_clinical' for MANE Select and Mane Plus Clinical, "
                 "'mane_select' for MANE Select only, "
-                "'all' for all transcripts."
+                "'canonical' for canonical transcripts."
             ),
-            required=False,
-            default='all'
+            required=True,
+            default='mane_select'
         )
 
         return parser

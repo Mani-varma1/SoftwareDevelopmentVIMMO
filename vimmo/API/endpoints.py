@@ -65,49 +65,47 @@ class PanelDownload(Resource):
         args = download_parser.parse_args()
 
 
-        # # # Apply custom validation
-        # # try:
-        # #     validate_id_or_hgnc(args)
-        # # except ValueError as e:
-        # #     return {"error": str(e)}, 400
+        # # Apply custom validation
+        try:
+            validate_id_or_hgnc(args)
+        except ValueError as e:
+            return {"error": str(e)}, 400
         
 
-        # gene_query = args.get("HGNC_ID")
-        # genome_build = args.get('genome_build', 'GRCh38')
-        # transcript_set = args.get('transcript_set', 'all')
-        # limit_transcripts = args.get('limit_transcripts', 'mane_select')
+        gene_query = args.get("HGNC_ID")
+        genome_build = args.get('genome_build', 'GRCh38')
+        transcript_set = args.get('transcript_set', 'all')
+        limit_transcripts = args.get('limit_transcripts', 'mane_select')
         
 
 
-        # # Initialize the VariantValidator client
-        # var_val_client = VarValClient()
+        # Initialize the VariantValidator client
+        var_val_client = VarValClient()
 
-        # try:
-        #     # Generate the BED file content
-        #     bed_file = var_val_client.parse_to_bed(
-        #         gene_query=gene_query,
-        #         genome_build=genome_build,
-        #         transcript_set=transcript_set,
-        #         limit_transcripts=limit_transcripts
-        #     )
-        # except VarValAPIError as e:
-        #     # Return an error response if processing fails
-        #     return {"error": str(e)}, 500
-        
-        # print("point 2")
+        try:
+            # Generate the BED file content
+            bed_file = var_val_client.parse_to_bed(
+                gene_query=gene_query,
+                genome_build=genome_build,
+                transcript_set=transcript_set,
+                limit_transcripts=limit_transcripts
+            )
+        except VarValAPIError as e:
+            # Return an error response if processing fails
+            return {"error": str(e)}, 500
 
 
-        # # Generate a meaningful filename for the download
-        # filename = f"{gene_query.replace('|', '_')}_{genome_build}_mane_select.bed"
+        # Generate a meaningful filename for the download
+        filename = f"{gene_query.replace('|', '_')}_{genome_build}_mane_select.bed"
 
-        # # Return the BED file as a downloadable response
-        # return send_file(
-        #     bed_file,
-        #     mimetype='text/plain',
-        #     as_attachment=True,
-        #     download_name=filename
-        # )
-        return "Hi"
+        # Return the BED file as a downloadable response
+        return send_file(
+            bed_file,
+            mimetype='text/plain',
+            as_attachment=True,
+            download_name=filename
+        )
+
 
 
     
