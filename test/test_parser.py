@@ -1,6 +1,6 @@
 import unittest
 from flask_restx import reqparse, inputs
-from parser import IDParser
+from vimmo.utils.parser import IDParser
 
 class TestParsers(unittest.TestCase):
 
