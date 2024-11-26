@@ -11,7 +11,7 @@ A Flask-based API application for panel data analysis.
 ### Prerequisites
 
 - Conda (Miniconda or Anaconda)
-- Git
+- Git.
 
 ### Setup Instructions
 
@@ -72,6 +72,15 @@ The API will be available at:
 - Swagger UI Documentation: http://127.0.0.1:5000/
 
 
+
+
+## Testing
+
+In root directory (<path>/SoftwareDevelopmentVIMMO) :
+```bash
+# Using the command to automagically find and run tests
+python -m unittest discover
+```
 
 how to exit
 

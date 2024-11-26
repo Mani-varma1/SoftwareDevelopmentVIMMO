@@ -21,7 +21,7 @@ dependencies = [
     "flask",
     "flask-restx",
     "requests",
-    "pandas"
+    "pandas",
 ]
 
 [tool.setuptools]
