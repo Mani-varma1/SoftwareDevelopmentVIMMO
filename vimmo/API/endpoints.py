@@ -109,6 +109,7 @@ class PanelDownload(Resource):
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
             gene_query="|".join(gene_query)
+            print(gene_query)
         else:
             gene_query = args.get("HGNC_ID",None)
 

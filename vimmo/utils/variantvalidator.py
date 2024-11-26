@@ -2,6 +2,7 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
+import json
 
 class VarValAPIError(Exception):
     """Custom exception for errors related to the PanelApp API."""
@@ -34,7 +35,6 @@ class VarValClient:
         """
         try:
             response = requests.get(url)
-            print("Hi")
         except :
             raise VarValAPIError(f"Failed to get data from PanelApp API. Status code: {response.status_code}")
         else:
@@ -113,6 +113,8 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
+            with open("R139.json", "w") as json_file:
+                json.dump(gene, json_file)
             chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
             for transcript in gene.get('transcripts', []):
                 reference = transcript.get('reference', '.')
