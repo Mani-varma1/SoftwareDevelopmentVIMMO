@@ -173,9 +173,10 @@ class PanelQuery:
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-            WHERE panel.Panel_ID = ?
             '''
-            result = cursor.execute(query, (panel_id,)).fetchall()
+            # result = cursor.execute(query, (panel_id,)).fetchall()
+            #            WHERE panel.Panel_ID = ?
+            result = cursor.execute(query,).fetchall()
 
         if result:
             return {

@@ -102,7 +102,7 @@ class PanelDownload(Resource):
             if "Message" in panel_data:
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-            gene_query="|".join(gene_query)
+            # gene_query="|".join(gene_query)
         elif r_code:
             panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
             if "Message" in panel_data:

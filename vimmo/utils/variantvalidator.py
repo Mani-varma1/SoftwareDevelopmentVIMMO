@@ -3,6 +3,8 @@ from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
 import json
+import time
+
 
 class VarValAPIError(Exception):
     """Custom exception for errors related to the PanelApp API."""
@@ -98,49 +100,59 @@ class VarValClient:
             'canonical': 'select'
         }
         limit_transcripts = limit_transcripts_map.get(limit_transcripts, limit_transcripts)
+        problem_genes=[]
+        for gene in gene_query:
+            print(gene)
+            try:
+                # Fetch gene data from the API
+                gene_data = self.get_gene_data(
+                    gene_query=gene,
+                    genome_build=genome_build,
+                    transcript_set=transcript_set,
+                    limit_transcripts=limit_transcripts
+                )
+            except VarValAPIError as e:
+                raise VarValAPIError(f"Error fetching data: {str(e)}")
+            
+            else:
+                # Parse the gene data into BED format]
+                bed_rows = []
+                # for gene in gene_data:
+                try:
+                    chromosome = f"chr{gene_data[0]['transcripts'][0]['annotations']['chromosome']}"
+                    print(gene + ">>>>>>>    ✅" )
+                except:
+                    problem_genes.append(gene)
+                    print(gene + ">>>>>>>   ❌" )
+                finally:
+                    time.sleep(1) 
+    
+                    # for transcript in gene.get('transcripts', []):
+                    #     reference = transcript.get('reference', '.')
+                    #     genomic_spans = transcript.get('genomic_spans', {})
+                    #     for accession, spans in genomic_spans.items():
+                    #         orientation = '+' if spans.get('orientation') == 1 else '-'
+                    #         for exon in spans.get('exon_structure', []):
+                    #             bed_rows.append({
+                    #                 'chrom': chromosome,
+                    #                 'start': exon['genomic_start'],
+                    #                 'end': exon['genomic_end'],
+                    #                 'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
+                    #                 'strand': orientation
+                    #             })
 
-        try:
-            # Fetch gene data from the API
-            gene_data = self.get_gene_data(
-                gene_query=gene_query,
-                genome_build=genome_build,
-                transcript_set=transcript_set,
-                limit_transcripts=limit_transcripts
-            )
-        except VarValAPIError as e:
-            raise VarValAPIError(f"Error fetching data: {str(e)}")
+            # # Convert rows into a DataFrame
+            # bed_df = pd.DataFrame(bed_rows)
 
-        # Parse the gene data into BED format
-        bed_rows = []
-        for gene in gene_data:
-            with open("R139.json", "w") as json_file:
-                json.dump(gene, json_file)
-            chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
-            for transcript in gene.get('transcripts', []):
-                reference = transcript.get('reference', '.')
-                genomic_spans = transcript.get('genomic_spans', {})
-                for accession, spans in genomic_spans.items():
-                    orientation = '+' if spans.get('orientation') == 1 else '-'
-                    for exon in spans.get('exon_structure', []):
-                        bed_rows.append({
-                            'chrom': chromosome,
-                            'start': exon['genomic_start'],
-                            'end': exon['genomic_end'],
-                            'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
-                            'strand': orientation
-                        })
-
-        # Convert rows into a DataFrame
-        bed_df = pd.DataFrame(bed_rows)
-
-        # Write the DataFrame to a BED file (BytesIO)
-        output = BytesIO()
-        bed_string = bed_df.to_csv(
-            sep='\t',
-            index=False,
-            header=False,
-            columns=['chrom', 'start', 'end', 'name', 'strand']
-        )
-        output.write(bed_string.encode('utf-8'))
-        output.seek(0)
-        return output
+            # # Write the DataFrame to a BED file (BytesIO)
+            # output = BytesIO()
+            # bed_string = bed_df.to_csv(
+            #     sep='\t',
+            #     index=False,
+            #     header=False,
+            #     columns=['chrom', 'start', 'end', 'name', 'strand']
+            # )
+            # output.write(bed_string.encode('utf-8'))
+            # output.seek(0)
+            # return output
+        return problem_genes
