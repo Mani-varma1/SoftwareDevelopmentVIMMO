@@ -2,7 +2,7 @@ import csv
 import sqlite3
 
 def main():
-    csv_file_name = 'latest_panel_versions.csv'  # Your existing CSV file
+    csv_file_name = '../createdb/latest_panel_versions.csv'  # Your existing CSV file
     db_file_name = 'panel_data.db'               # The SQLite database file to create
 
     # Connect to (or create) the SQLite database

@@ -2,7 +2,7 @@ import requests
 import json
 import csv
 items=[]
-with open('latest_panel_versions.csv', 'r') as pf:
+with open('../createdb/latest_panel_versions.csv', 'r') as pf:
     next(pf)
     for line in pf:
         cleaned_line = line.strip()

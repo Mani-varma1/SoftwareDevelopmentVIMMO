@@ -10,7 +10,7 @@ df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
-conn = sqlite3.connect('panels_data.db')
+conn = sqlite3.connect('../../vimmo/db/panels_data.db')
 cursor = conn.cursor()
 
 # Create Table 1: panel
@@ -46,6 +46,19 @@ CREATE TABLE IF NOT EXISTS genes_info (
     GRCh37_Chr TEXT,
     GRCh37_start INTEGER,
     GRCh37_stop INTEGER
+)
+''')
+
+# Create Table 4: patient_test_history to stores previous RCODES and versions
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS patient_data (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    patient_id TEXT,
+    panel_id INTEGER,
+    rcode TEXT,
+    panel_version TEXT,
+    date DATE,
+    FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
 )
 ''')
 
