@@ -164,6 +164,7 @@ class PanelQuery:
             WHERE panel.Panel_ID LIKE ?
             '''
             result = cursor.execute(query, (panel_id_query,)).fetchall()
+
         else:
             # Exact match for Panel_ID
             query = f'''

@@ -54,6 +54,7 @@ class PanelSearch(Resource):
             panels_returned = query.get_panels_from_gene(hgnc_id=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
             return panels_returned
             # If no valid parameter is provided, return an error response
+
         return {"error": "No valid Panel_ID, Rcode, or HGNC_ID provided."}, 400
 
 
@@ -134,6 +135,8 @@ class PanelDownload(Resource):
             filename = f"{r_code}_{genome_build}_{limit_transcripts}.bed"
         else:
             filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
+        
+        db.close()
 
         # Return the BED file as a downloadable response
         return send_file(
