@@ -4,7 +4,7 @@ from flask_restx import Resource
 from vimmo.API import api,get_db
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser, DownloadParser
+from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, LocalDownloadParser
 from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
 from vimmo.db.db import PanelQuery
 
@@ -81,7 +81,6 @@ class PanelDownload(Resource):
         # Parse user-provided arguments from the request
         args = download_parser.parse_args()
 
-
         # # Apply custom validation
         try:
             validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
@@ -90,28 +89,23 @@ class PanelDownload(Resource):
 
         panel_id=args.get("Panel_ID",None)
         r_code=args.get("Rcode",None)
+        matches=args.get("Similar_Matches",None)
+        HGNC_ID=args.get("HGNC_ID",None)
 
 
         # Retrieve the database connection
         db = get_db()
         # Initialize a query object with the database connection
         query = PanelQuery(db.conn)
-
-        if panel_id:
-            panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
-            if "Message" in panel_data:
-                return panel_data
-            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-            gene_query="|".join(gene_query)
-        elif r_code:
-            panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
-            if "Message" in panel_data:
-                return panel_data
-            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        
+        if not HGNC_ID:
+            gene_query=query.get_gene_list(panel_id,r_code,matches)
+            if "Message" in gene_query:
+                return gene_query
             gene_query="|".join(gene_query)
         else:
-            gene_query = args.get("HGNC_ID",None)
-
+            gene_query=HGNC_ID
+            
 
         genome_build = args.get('genome_build', 'GRCh38')
         transcript_set = args.get('transcript_set', 'all')
@@ -141,6 +135,69 @@ class PanelDownload(Resource):
             filename = f"{r_code}_{genome_build}_{limit_transcripts}.bed"
         else:
             filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
+
+        # Return the BED file as a downloadable response
+        return send_file(
+            bed_file,
+            mimetype='text/plain',
+            as_attachment=True,
+            download_name=filename
+        )
+
+
+
+
+
+local_download_parser=LocalDownloadParser.create_parser()
+@panels_space.route('/download/local')
+class PanelDownload(Resource):
+    @api.doc(parser=local_download_parser)
+    def get(self):
+        """
+        Endpoint to download panel data as a BED file.
+
+        Query Parameters:
+        - HGNC_ID (str): Gene identifier for querying (e.g., HGNC ID or symbol).
+        - genome_build (str): Genome build version (default: 'GRCh38').
+        - transcript_set (str): Transcript set to use (e.g., 'refseq', 'ensembl', 'all'; default: 'all').
+        - limit_transcripts (str): Specifies transcript filtering ('mane', 'select', 'all'; default: 'all').
+
+        Returns:
+        - FileResponse: A downloadable BED file containing gene data.
+        """
+        # Parse user-provided arguments from the request
+        args = download_parser.parse_args()
+
+
+        # # Apply custom validation
+        try:
+            validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
+        except ValueError as e:
+            return {"error": str(e)}, 400
+
+        panel_id=args.get("Panel_ID",None)
+        r_code=args.get("Rcode",None)
+        matches=args.get("Similar_Matches",None)
+        HGNC_ID=args.get("HGNC_ID",None)
+
+
+        # Retrieve the database connection
+        db = get_db()
+        # Initialize a query object with the database connection
+        query = PanelQuery(db.conn)
+        gene_query=query.get_gene_list(panel_id,r_code,matches,HGNC_ID)
+        genome_build = args.get('genome_build', 'GRCh38')
+        bed_file="hi"
+
+
+
+        # Generate a meaningful filename for the download
+        if panel_id:
+            filename = f"{panel_id}_{genome_build}_Gencode.bed"
+        elif r_code:
+            filename = f"{r_code}_{genome_build}_Gencode.bed"
+        else:
+            filename = f"Genes_{genome_build}_Gencode.bed"
 
         # Return the BED file as a downloadable response
         return send_file(

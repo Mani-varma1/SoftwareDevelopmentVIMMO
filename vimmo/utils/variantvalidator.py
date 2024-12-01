@@ -34,11 +34,13 @@ class VarValClient:
         """
         try:
             response = requests.get(url)
-            print("Hi")
         except :
-            raise VarValAPIError(f"Failed to get data from PanelApp API. Status code: {response.status_code}")
+            raise VarValAPIError(f"Failed to connect. Please check your internet connection and try again")
         else:
-            return response.json()
+            if response.ok:
+                return response.json()
+            else:
+                raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
         """
@@ -109,6 +111,8 @@ class VarValClient:
             )
         except VarValAPIError as e:
             raise VarValAPIError(f"Error fetching data: {str(e)}")
+        
+        
 
         # Parse the gene data into BED format
         bed_rows = []
