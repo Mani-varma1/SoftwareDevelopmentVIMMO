@@ -4,10 +4,11 @@ import pandas as pd
 # Load the CSV files into pandas DataFrames
 csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 1
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
-
+csv3 = 'patient_info.csv' # TEST patient info for development
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
+df_patient_info = pd.read_csv(csv3)
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
 conn = sqlite3.connect('../../vimmo/db/panels_data.db')
@@ -76,6 +77,11 @@ df_genes_info.to_sql('genes_info', conn, if_exists='replace', index=False)
 df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy()
 df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
+
+# Populate Table 4: patient_test_history with TEST patient information
+df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
+df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
+
 
 # Commit the changes
 conn.commit()
