@@ -102,7 +102,6 @@ class PanelDownload(Resource):
             gene_query=query.get_gene_list(panel_id,r_code,matches)
             if "Message" in gene_query:
                 return gene_query
-            gene_query="|".join(gene_query)
         else:
             gene_query=HGNC_ID
             

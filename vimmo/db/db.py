@@ -252,3 +252,16 @@ class PanelQuery:
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
         return gene_query
+    
+    def get_gene_symbol(self, ids_to_replace):
+
+        cursor = self.conn.cursor()
+        placeholders = ', '.join(['?'] * len(ids_to_replace))
+        query = f'''
+            SELECT HGNC_ID, HGNC_symbol
+            FROM genes_info
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+        
+        result = cursor.execute(query, list(ids_to_replace)).fetchall()
+        return result

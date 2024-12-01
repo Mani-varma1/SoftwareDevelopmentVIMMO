@@ -2,6 +2,8 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
+from vimmo.db.db import PanelQuery
+from vimmo.API import get_db
 
 class VarValAPIError(Exception):
     """Custom exception for errors related to the PanelApp API."""
@@ -77,6 +79,53 @@ class VarValClient:
         return self._check_response(url)
     
 
+
+    def get_hgnc_ids_with_replacements(self, gene_query):
+        """
+        Retrieves HGNC_IDs for a given panel_id and replaces specified problematic HGNC_IDs with their HGNC_symbols.
+        
+        Parameters:
+        - panel_id (int): The ID of the panel to query.
+        - prob_gene_file (str): Path to the file containing problematic HGNC_IDs, one per line.
+        - db_path (str): Path to the SQLite database file.
+        
+        Returns:
+        - final_output (set): A set containing HGNC_IDs and HGNC_symbols with replacements made for problematic IDs.
+        """
+            
+        # Step 2: Load prob_gene_list from the file
+        with open('vimmo/utils/problem_genes.txt', 'r') as file:
+            prob_gene_list = [line.strip() for line in file if line.strip()]
+        
+        # Convert prob_gene_list to a set for faster lookup
+        prob_gene_set = set(prob_gene_list)
+        
+        # Step 3: Find the HGNC_IDs that need to be replaced
+        ids_to_replace = gene_query.intersection(prob_gene_set)
+        
+        # Step 4: Retrieve HGNC_symbols for the IDs to replace
+        if ids_to_replace:
+            # Retrieve the database connection
+            db = get_db()
+            # Initialize a query object with the database connection
+            query = PanelQuery(db.conn)
+            result = query.get_gene_symbol(ids_to_replace)
+            id_to_symbol = {row[0]: row[1] for row in result}
+        else:
+            id_to_symbol = {}
+        
+        # Step 5: Create the final set with replacements
+        final_output = set()
+        for hgnc_id in gene_query:
+            if hgnc_id in id_to_symbol:
+                final_output.add(id_to_symbol[hgnc_id])
+            else:
+                final_output.add(hgnc_id)
+        
+        return "|".join(final_output)
+
+
+
     def parse_to_bed(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
         """
         Fetches gene data from the API and converts it to BED file format.
@@ -100,6 +149,8 @@ class VarValClient:
             'canonical': 'select'
         }
         limit_transcripts = limit_transcripts_map.get(limit_transcripts, limit_transcripts)
+
+        gene_query= self.get_hgnc_ids_with_replacements(gene_query)
 
         try:
             # Fetch gene data from the API
