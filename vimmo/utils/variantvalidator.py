@@ -40,7 +40,10 @@ class VarValClient:
         except :
             raise VarValAPIError(f"Failed to get data from PanelApp API. Status code: {response.status_code}")
         else:
-            return response.json()
+            try:
+                return response.json()
+            except:
+                print(url)
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
         """
@@ -102,7 +105,6 @@ class VarValClient:
         limit_transcripts = limit_transcripts_map.get(limit_transcripts, limit_transcripts)
         problem_genes=[]
         for gene in gene_query:
-            print(gene)
             try:
                 # Fetch gene data from the API
                 gene_data = self.get_gene_data(
@@ -120,9 +122,9 @@ class VarValClient:
                 # for gene in gene_data:
                 try:
                     chromosome = f"chr{gene_data[0]['transcripts'][0]['annotations']['chromosome']}"
-                    print(gene + ">>>>>>>    ✅" )
                 except:
-                    problem_genes.append(gene)
+                    with open("prob_gene.txt", "a", newline='') as prob_file:
+                        prob_file.write(f"{gene}\n")
                     print(gene + ">>>>>>>   ❌" )
                 finally:
                     time.sleep(1) 
