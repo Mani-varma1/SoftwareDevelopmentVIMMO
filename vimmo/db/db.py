@@ -239,3 +239,16 @@ class PanelQuery:
                 "HGNC ID": hgnc_id,
                 "Message": "Could not find any match for the HGNC ID."
             }
+        
+    def get_gene_list(self,panel_id,r_code,matches):
+        if panel_id:
+            panel_data = self.get_panel_data(panel_id=panel_id, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        elif r_code:
+            panel_data = self.get_panels_by_rcode(rcode=r_code, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        return gene_query
