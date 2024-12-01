@@ -65,7 +65,7 @@ class PatientParser:
             'R code',
             type=str,
             help='Type in R code',
-            require=False
+            required=False
         )
         return parser
     
