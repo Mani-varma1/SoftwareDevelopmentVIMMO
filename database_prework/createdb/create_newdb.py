@@ -78,7 +78,7 @@ df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy(
 df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 
-# Populate Table 4: patient_test_history with TEST patient information
+# Populate Table 4: patient_data with TEST patient information
 df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
 df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
 
