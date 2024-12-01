@@ -4,9 +4,9 @@ from flask_restx import Resource
 from vimmo.API import api,get_db
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser, DownloadParser
+from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, UpdateParser
 from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
-from vimmo.db.db import PanelQuery
+from vimmo.db.db import Query
 
 
 panel_app_client = PanelAppClient()
@@ -36,7 +36,7 @@ class PanelSearch(Resource):
         # Retrieve the database connection
         db = get_db()
         # Initialize a query object with the database connection
-        query = PanelQuery(db.conn)
+        query = Query(db.conn)
 
         # Handle requests based on the provided argument
         if args.get("Panel_ID"):
@@ -95,7 +95,7 @@ class PanelDownload(Resource):
         # Retrieve the database connection
         db = get_db()
         # Initialize a query object with the database connection
-        query = PanelQuery(db.conn)
+        query = Query(db.conn)
 
         if panel_id:
             panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
@@ -152,20 +152,59 @@ class PanelDownload(Resource):
 
 
 
-    
-
-
 patient_space = api.namespace('patient', description='Return a patient panel provided by the user')
 patient_parser = PatientParser.create_parser()
-@patient_space.route("/")
+@patient_space.route("/patient")
 class PatientClass(Resource):
     @api.doc(parser=patient_parser)
     def get(self):
                 # Collect Arguements
         args = patient_parser.parse_args()
+        # Fetch the database and connect
+        db = get_db()
+        
+        query = Query(db.conn)
+        if args["R code"] == None:
+            # Show all Tests/version for a given patient ID workflow
+            # patient_query(Patient ID) -> all rows
+            patient_records = query.return_all_records(args["Patient ID"])
+   
+            return f'patient records = {patient_records}'
+            
+        else:
+            panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id (needed for signedoff panel version endpoint)
+            # Version comparison workflow
+            # Check database version is up to date
+            
+            lastest_online_version = panel_app_client.get_latest_online_version(panel_id) # Retrive the latest panel version, using panel Id as an input
 
-        gene_list = panel_app_client.get_genes(rcode)
-        return {
-            f"Paitned ID: {args['Patient_ID ']} List of genes in {rcode}" : gene_list
-        }
+            if lastest_online_version == None: # If online version can't be accessed/return no data
+                return f'The latest version of panel app was unable to be contacted, results are on valid from (lastupdate date)'
+            elif query.get_db_latest_version(args["R code"]) != lastest_online_version: # If our version NOT same as panel app latest, then update database and continue
+                # Update db
+                return f'update the db! goes here!'
+
+            else:
+                patient_history = query.check_patient_history(args["Patient ID"], args["R code"]) # Returns all rows for a patient for a given Rcode
+            if patient_history == None: # Checks if the response is empty ie - the patient_id isn't in the table
+                return f"There is no record of patient {args["Patient ID"]} recieving {args["R code"]} within our records" # Return explanatory message
+            else: # If patient_ID in table with the Rcode, find the difference between their most recent panel version & the current panel version
+                database_version = query.get_db_latest_version(args["R code"])
+                
+                return f"{str(patient_history)}, ----->  {database_version} Display diffs below {len(args)}"
+        
+        
+            
+update_space = api.namespace('Update Patient Records', description='Update the Vimmo database with a patients test history')
+update_parser = UpdateParser.create_parser()
+@update_space.route("/update")
+class UpdateClass(Resource):
+    @api.doc(parser=update_parser)
+    def get(self):
+        args = update_parser.parse_args()
+        
+        ### Update functionality here ###
+        return f"{args}"
+        
+
     
