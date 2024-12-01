@@ -54,16 +54,18 @@ class PatientParser:
         
         # Argument for Patient ID
         parser.add_argument(
-            '-f',
+            'Patient ID',
             type=str,
-            help='Type in Patient ID'
+            help='Type in Patient ID',
+            required=True
         )
         
         # Argument for R code
         parser.add_argument(
             'R code',
             type=str,
-            help='Type in R code'
+            help='Type in R code',
+            require=False
         )
         return parser
     
@@ -112,4 +114,35 @@ class DownloadParser:
             default='mane_select'
         )
 
+        return parser
+
+class UpdateParser:
+    """Parser for updating the patient database."""
+    @staticmethod
+    def create_parser():
+        parser = reqparse.RequestParser()
+        
+        parser.add_argument(
+            'Patient ID',
+            type=str,
+            help='Type in Patient ID (Required)',
+            required = True
+        )
+        parser.add_argument(
+            'R code',
+            type=str,
+            help='Type in R code (Required)',
+            required = True
+        )
+        parser.add_argument(
+            'Date',
+            type=str,
+            help='Type in the date the test was performed (YYYY-MM-DD) (Required)',
+            required = True
+        )
+        parser.add_argument(
+            'Version',
+            type=float,
+            help='Type the panel version if known (optional)'
+        )
         return parser
