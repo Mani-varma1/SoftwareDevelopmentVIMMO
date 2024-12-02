@@ -62,6 +62,18 @@ CREATE TABLE IF NOT EXISTS patient_data (
 )
 ''')
 
+# Create Table 5: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS panel_genes_archive (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Panel_ID INTEGER,
+    HGNC_ID TEXT,
+    Version TEXT,
+    Confidence INTEGER,
+    FOREIGN KEY (Panel_ID) REFERENCES panel (Panel_ID)
+)
+''')
+
 # Populate Table 1: panel
 df_panel.to_sql('panel', conn, if_exists='replace', index=False)
 
