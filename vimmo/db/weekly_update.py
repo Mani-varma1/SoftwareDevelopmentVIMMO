@@ -1,5 +1,6 @@
 import requests
 import logging
+import os
 import random
 
 from db import Database
@@ -186,18 +187,20 @@ def main():
     """
     # Configure logging to log to both file and console
     logging.basicConfig(
-        filename='panel_updates.log',
+        #filename='./logs/manual_panel_updates.log', # commented out for now as the cron job will redirect stdout to
+        # ../logs/cron_panel_updates.log
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
 
     # Add console handler for logging
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    logging.getLogger().addHandler(console_handler)
+
+    # console_handler = logging.StreamHandler()
+    # console_handler.setLevel(logging.INFO)
+    # formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    # console_handler.setFormatter(formatter)
+    # logging.getLogger().addHandler(console_handler)
 
     logging.info("Starting the panel update process.")
 
