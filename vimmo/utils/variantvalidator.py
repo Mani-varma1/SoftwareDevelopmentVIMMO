@@ -172,7 +172,7 @@ class VarValClient:
             for transcript in gene.get('transcripts', []):
                 reference = transcript.get('reference', '.')
                 genomic_spans = transcript.get('genomic_spans', {})
-                for accession, spans in genomic_spans.items():
+                for _, spans in genomic_spans.items():
                     orientation = '+' if spans.get('orientation') == 1 else '-'
                     for exon in spans.get('exon_structure', []):
                         bed_rows.append({

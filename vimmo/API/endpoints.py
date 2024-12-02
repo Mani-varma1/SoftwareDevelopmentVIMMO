@@ -6,7 +6,9 @@ from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
 from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, LocalDownloadParser
 from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
+from vimmo.utils.localbed import local_bed_formatter
 from vimmo.db.db import PanelQuery
+
 
 
 panel_app_client = PanelAppClient()
@@ -101,8 +103,9 @@ class PanelDownload(Resource):
         
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
-            if "Message" in gene_query:
-                return gene_query
+            # Check if gene_query is a set of HGNC IDs
+            if isinstance(gene_query, dict) and "Message" in gene_query:
+                return gene_query, 400
         else:
             gene_query=HGNC_ID
             
@@ -137,14 +140,22 @@ class PanelDownload(Resource):
             filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
         
         db.close()
+        
+         # Return the BED file as a downloadable response
+        if bed_file:
+            # Return the BED file using send_file
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
 
-        # Return the BED file as a downloadable response
-        return send_file(
-            bed_file,
-            mimetype='text/plain',
-            as_attachment=True,
-            download_name=filename
-        )
+
+       
+
 
 
 
@@ -152,7 +163,7 @@ class PanelDownload(Resource):
 
 local_download_parser=LocalDownloadParser.create_parser()
 @panels_space.route('/download/local')
-class PanelDownload(Resource):
+class LocalPanelDownload(Resource):
     @api.doc(parser=local_download_parser)
     def get(self):
         """
@@ -168,7 +179,7 @@ class PanelDownload(Resource):
         - FileResponse: A downloadable BED file containing gene data.
         """
         # Parse user-provided arguments from the request
-        args = download_parser.parse_args()
+        args = local_download_parser.parse_args()
 
 
         # # Apply custom validation
@@ -187,9 +198,17 @@ class PanelDownload(Resource):
         db = get_db()
         # Initialize a query object with the database connection
         query = PanelQuery(db.conn)
-        gene_query=query.get_gene_list(panel_id,r_code,matches,HGNC_ID)
+        if not HGNC_ID:
+            gene_query=query.get_gene_list(panel_id,r_code,matches)
+            # Check if gene_query is a set of HGNC IDs
+            if isinstance(gene_query, dict) and "Message" in gene_query:
+                return gene_query, 400
+        else:
+            gene_query=HGNC_ID
+        
         genome_build = args.get('genome_build', 'GRCh38')
-        bed_file="hi"
+        local_bed_records=query.local_bed(gene_query,genome_build)
+        bed_file=local_bed_formatter(local_bed_records)
 
 
 
@@ -201,13 +220,17 @@ class PanelDownload(Resource):
         else:
             filename = f"Genes_{genome_build}_Gencode.bed"
 
-        # Return the BED file as a downloadable response
-        return send_file(
-            bed_file,
-            mimetype='text/plain',
-            as_attachment=True,
-            download_name=filename
-        )
+        db.close()
+
+        if bed_file:
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
 
 
 
