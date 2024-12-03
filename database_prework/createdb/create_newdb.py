@@ -5,10 +5,12 @@ import pandas as pd
 csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 1
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
 csv3 = 'patient_info.csv' # TEST patient info for development
+csv4 = 'historic_tests.csv'
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
 df_patient_info = pd.read_csv(csv3)
+df_historic_tests = pd.read_csv(csv4)
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
 conn = sqlite3.connect('../../vimmo/db/panels_data.db')
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS genes_info (
 )
 ''')
 
-# Create Table 4: patient_test_history to stores previous RCODES and versions
+# Create Table 4: patient_data to stores previous RCODES and versions
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS patient_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,6 +61,18 @@ CREATE TABLE IF NOT EXISTS patient_data (
     rcode TEXT,
     panel_version TEXT,
     date DATE,
+    FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
+)
+''')
+
+# Create Table 5: historic_tests to store historic gene panel contents
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS historic_tests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    panel_id INTEGER,
+    HGNC_ID TEXT,
+    confidence TEXT,
+    version DATE,
     FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
 )
 ''')
@@ -82,6 +96,9 @@ df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
 df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
 
+# Populate Table 5: historic_tests with TEST information
+df_historic_tests.columns = ['Panel_ID', 'HGNC_ID', 'Confidence', 'Version']
+df_historic_tests.to_sql('historic_tests', conn, if_exists='replace',index=False)
 
 # Commit the changes
 conn.commit()

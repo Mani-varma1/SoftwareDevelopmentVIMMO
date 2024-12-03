@@ -368,6 +368,34 @@ class Query:
 
         return patient_records
         
+    def current_panel_contents(self, panelID: str) -> list[list]:
+        cursor = self.conn.cursor()
+        operator = "="
+
+        query = f"""
+        SELECT HGNC_ID, Version, Confidence
+        FROM panel_genes 
+        WHERE panel_genes.Panel_ID {operator} ?
+"""
+        current_panel_data = cursor.execute(query, (panelID)).fetchall()
+        return current_panel_data
+        
+
+    def historic_panel_contents(self, panelID: str, version):
+        cursor = self.conn.cursor()
+        operator = "="
+
+        query = f"""
+        SELECT Rcode, Version, Date
+        FROM historic_data
+        WHERE patient_data.Patient_ID {operator} ?
+"""
+
+        historic_panel_data = cursor.execute(query, (panelID, version)).fetchall()
+        return historic_panel_data
+        ...
+
+
 class Update:
     def __init__(self,connection):
         self.conn = connection
@@ -396,6 +424,6 @@ class Update:
             # fetch panel ID, current panel version (must check up-to-date)
             # add record to the patient_history table
             
-    
+
             
             self.conn.commit()

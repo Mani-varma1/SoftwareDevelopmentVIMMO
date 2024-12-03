@@ -164,13 +164,13 @@ class PatientClass(Resource):
         db = get_db()
         
         query = Query(db.conn)
-        if args["R code"] == None:
-            # Show all Tests/version for a given patient ID workflow
-            # patient_query(Patient ID) -> all rows
+        #Return all records for a patient
+        if args["R code"] == None: # No Rcode input = show all Tests/version for a given patient ID workflow
+
             patient_records = query.return_all_records(args["Patient ID"])
    
             return f'patient records = {patient_records}'
-            
+        #Panel comparison if possible
         else:
             panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id (needed for signedoff panel version endpoint)
             # Version comparison workflow
@@ -179,23 +179,39 @@ class PatientClass(Resource):
             lastest_online_version = panel_app_client.get_latest_online_version(panel_id) # Retrive the latest panel version, using panel Id as an input
 
             if lastest_online_version == None: # If online version can't be accessed/return no data
-                return f'The latest version of panel app was unable to be contacted, results are on valid from (lastupdate date)'
+                # complete comparison using database not updated with disclaimer
+                disclaimer = 'The latest version of panel app was unable to be contacted, results are on valid from (lastupdate date)'
+            
             elif query.get_db_latest_version(args["R code"]) != lastest_online_version: # If our version NOT same as panel app latest, then update database and continue
-                # Update db
-                return f'update the db! goes here!'
+            # Update db prior to comparison
+            #
+                return f'update the db! goes here!' 
 
-            else:
-                patient_history = query.check_patient_history(args["Patient ID"], args["R code"]) # Returns all rows for a patient for a given Rcode
+            else: 
+                disclaimer = 'Panel comparison up to date'# If our db is up-to-date, continue with panel comparison, without updating or a disclaimer in response
+            
+            patient_history = query.check_patient_history(args["Patient ID"], args["R code"]) # Returns all rows for a patient for a given Rcode
+            database_version = query.get_db_latest_version(args["R code"])
             if patient_history == None: # Checks if the response is empty ie - the patient_id isn't in the table
                 return f"There is no record of patient {args["Patient ID"]} recieving {args["R code"]} within our records" # Return explanatory message
-            else: # If patient_ID in table with the Rcode, find the difference between their most recent panel version & the current panel version
-                database_version = query.get_db_latest_version(args["R code"])
-                
-                return f"{str(patient_history)}, ----->  {database_version} Display diffs below {len(args)}"
+            elif lastest_online_version != database_version: # The database version is the same as the historic version return the gene contents 
+                 return f"""
+                {disclaimer}  Changes detected!
+                The panel {args["R code"]} has not changed since patient {args['Patient ID']} was tested
+                 """
+                 
+            else: #  If patient_ID in table with the Rcode, find the difference between their most recent panel version & the current panel version
+                # Comparison function
+
+                return f"""
+                {disclaimer}                    Changes dectected
+                2.4 ----> {lastest_online_version}
+                The version has updated since patient {args['Patient ID']} recieved the {args['R code']} panel   Genes added - [('HGNC:2186', 3)] Genes removed - [(HGNC:5126, 3)] Confidence changes - [('HGNC:2002, 2, 3')]
+                """
         
         
             
-update_space = api.namespace('Update Patient Records', description='Update the Vimmo database with a patients test history')
+update_space = api.namespace('UpdatePatientRecords', description='Update the Vimmo database with a patients test history')
 update_parser = UpdateParser.create_parser()
 @update_space.route("/update")
 class UpdateClass(Resource):
