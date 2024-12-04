@@ -4,11 +4,17 @@ import pandas as pd
 # Load the CSV files into pandas DataFrames
 csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 1
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
+bed_file = 'genes_exons38.bed'
+
 csv3 = 'patient_info.csv' # TEST patient info for development
 csv4 = 'historic_tests.csv'
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
+# Load the BED file into a pandas DataFrame
+df_bed38 = pd.read_csv(bed_file, sep='\t', header=None, names=[
+    'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
+])
 df_patient_info = pd.read_csv(csv3)
 df_historic_tests = pd.read_csv(csv4)
 
@@ -65,7 +71,23 @@ CREATE TABLE IF NOT EXISTS patient_data (
 )
 ''')
 
-# Create Table 5: historic_tests to store historic gene panel contents
+# Create Table 5: bed38
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS bed38 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Chromosome TEXT,
+    Start INTEGER,
+    End INTEGER,
+    Name TEXT,
+    HGNC_ID TEXT,
+    Transcript TEXT,
+    Strand TEXT,
+    Type TEXT,
+    FOREIGN KEY (HGNC_ID) REFERENCES genes_info (HGNC_ID)
+)
+''')
+
+# Create Table 6: historic_tests to store historic gene panel contents
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS historic_tests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -92,13 +114,22 @@ df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy(
 df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 
+# Ensure HGNC_IDs in bed38 are consistent
+df_bed38['HGNC_ID'] = df_bed38['HGNC_ID'].str.strip()
+
+# Populate Table 5: bed38
+df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
+
 # Populate Table 4: patient_data with TEST patient information
 df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
 df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
 
-# Populate Table 5: historic_tests with TEST information
+# Populate Table 6: historic_tests with TEST information
 df_historic_tests.columns = ['Panel_ID', 'HGNC_ID', 'Confidence', 'Version']
 df_historic_tests.to_sql('historic_tests', conn, if_exists='replace',index=False)
 
 # Commit the changes
 conn.commit()
+
+# Close the connection when done
+conn.close()

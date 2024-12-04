@@ -4,9 +4,13 @@ from flask_restx import Resource
 from vimmo.API import api,get_db
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, UpdateParser
+from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, UpdateParser, LocalDownloadParser
+
 from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
 from vimmo.db.db import Query
+from vimmo.utils.localbed import local_bed_formatter
+
+
 
 
 panel_app_client = PanelAppClient()
@@ -54,6 +58,7 @@ class PanelSearch(Resource):
             panels_returned = query.get_panels_from_gene(hgnc_id=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
             return panels_returned
             # If no valid parameter is provided, return an error response
+
         return {"error": "No valid Panel_ID, Rcode, or HGNC_ID provided."}, 400
 
 
@@ -81,7 +86,6 @@ class PanelDownload(Resource):
         # Parse user-provided arguments from the request
         args = download_parser.parse_args()
 
-
         # # Apply custom validation
         try:
             validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
@@ -90,6 +94,8 @@ class PanelDownload(Resource):
 
         panel_id=args.get("Panel_ID",None)
         r_code=args.get("Rcode",None)
+        matches=args.get("Similar_Matches",None)
+        HGNC_ID=args.get("HGNC_ID",None)
 
 
         # Retrieve the database connection
@@ -109,9 +115,16 @@ class PanelDownload(Resource):
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
             gene_query="|".join(gene_query)
+        query = PanelQuery(db.conn)
+        
+        if not HGNC_ID:
+            gene_query=query.get_gene_list(panel_id,r_code,matches)
+            # Check if gene_query is a set of HGNC IDs
+            if isinstance(gene_query, dict) and "Message" in gene_query:
+                return gene_query, 400
         else:
-            gene_query = args.get("HGNC_ID",None)
-
+            gene_query=HGNC_ID
+            
 
         genome_build = args.get('genome_build', 'GRCh38')
         transcript_set = args.get('transcript_set', 'all')
@@ -150,6 +163,103 @@ class PanelDownload(Resource):
             download_name=filename
         )
 
+        
+        db.close()
+        
+         # Return the BED file as a downloadable response
+        if bed_file:
+            # Return the BED file using send_file
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
+
+
+       
+
+
+
+
+
+
+local_download_parser=LocalDownloadParser.create_parser()
+@panels_space.route('/download/local')
+class LocalPanelDownload(Resource):
+    @api.doc(parser=local_download_parser)
+    def get(self):
+        """
+        Endpoint to download panel data as a BED file.
+
+        Query Parameters:
+        - HGNC_ID (str): Gene identifier for querying (e.g., HGNC ID or symbol).
+        - genome_build (str): Genome build version (default: 'GRCh38').
+        - transcript_set (str): Transcript set to use (e.g., 'refseq', 'ensembl', 'all'; default: 'all').
+        - limit_transcripts (str): Specifies transcript filtering ('mane', 'select', 'all'; default: 'all').
+
+        Returns:
+        - FileResponse: A downloadable BED file containing gene data.
+        """
+        # Parse user-provided arguments from the request
+        args = local_download_parser.parse_args()
+
+
+        # # Apply custom validation
+        try:
+            validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
+        except ValueError as e:
+            return {"error": str(e)}, 400
+
+        panel_id=args.get("Panel_ID",None)
+        r_code=args.get("Rcode",None)
+        matches=args.get("Similar_Matches",None)
+        HGNC_ID=args.get("HGNC_ID",None)
+
+
+        # Retrieve the database connection
+        db = get_db()
+        # Initialize a query object with the database connection
+        query = PanelQuery(db.conn)
+        if not HGNC_ID:
+            gene_query=query.get_gene_list(panel_id,r_code,matches)
+            # Check if gene_query is a set of HGNC IDs
+            if isinstance(gene_query, dict) and "Message" in gene_query:
+                return gene_query, 400
+        else:
+            gene_query=HGNC_ID
+        
+        genome_build = args.get('genome_build', 'GRCh38')
+        local_bed_records=query.local_bed(gene_query,genome_build)
+        bed_file=local_bed_formatter(local_bed_records)
+
+
+
+        # Generate a meaningful filename for the download
+        if panel_id:
+            filename = f"{panel_id}_{genome_build}_Gencode.bed"
+        elif r_code:
+            filename = f"{r_code}_{genome_build}_Gencode.bed"
+        else:
+            filename = f"Genes_{genome_build}_Gencode.bed"
+
+        db.close()
+
+        if bed_file:
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
+
+
+
+    
 
 
 patient_space = api.namespace('patient', description='Return a patient panel provided by the user')
