@@ -1,7 +1,14 @@
 #!/bin/bash
 
+# set -e --> immediately exit if any command has non-zero exit code
+# set -u --> reference to any previously undefined variables causes error
+# set -o pipefail sets return code of a pipeline to that of the first command that fails, rather than the last executed
+set -euo pipefail
+
+
 # Get the absolute path to the current directory (where the script is being run)
-current_dir=$(pwd)
+current_dir=$(dirname "$(realpath "$0")")
+echo $current_dir
 
 # Find the absolute path to the root of the cloned repo (assuming .git exists at the root)
 repo_dir=$(git -C "$current_dir" rev-parse --show-toplevel 2>/dev/null)

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Find the directory where this script is located --> $0 is script being run, realpath gets the absolute path
 script_dir=$(dirname "$(realpath "$0")")
 
