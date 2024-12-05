@@ -4,10 +4,15 @@ import pandas as pd
 # Load the CSV files into pandas DataFrames
 csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 1
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
+bed_file = 'genes_exons38.bed'
 
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
+# Load the BED file into a pandas DataFrame
+df_bed38 = pd.read_csv(bed_file, sep='\t', header=None, names=[
+    'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
+])
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
 conn = sqlite3.connect('../../vimmo/db/panels_data.db')
@@ -62,7 +67,23 @@ CREATE TABLE IF NOT EXISTS patient_data (
 )
 ''')
 
-# Create Table 5: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
+# Create Table 5: bed38
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS bed38 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Chromosome TEXT,
+    Start INTEGER,
+    End INTEGER,
+    Name TEXT,
+    HGNC_ID TEXT,
+    Transcript TEXT,
+    Strand TEXT,
+    Type TEXT,
+    FOREIGN KEY (HGNC_ID) REFERENCES genes_info (HGNC_ID)
+)
+''')
+
+# Create Table 6: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel_genes_archive (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,5 +110,14 @@ df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy(
 df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 
+# Ensure HGNC_IDs in bed38 are consistent
+df_bed38['HGNC_ID'] = df_bed38['HGNC_ID'].str.strip()
+
+# Populate Table 5: bed38
+df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
+
 # Commit the changes
 conn.commit()
+
+# Close the connection when done
+conn.close()

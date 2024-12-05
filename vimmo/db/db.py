@@ -164,6 +164,7 @@ class PanelQuery:
             WHERE panel.Panel_ID LIKE ?
             '''
             result = cursor.execute(query, (panel_id_query,)).fetchall()
+
         else:
             # Exact match for Panel_ID
             query = f'''
@@ -239,3 +240,42 @@ class PanelQuery:
                 "HGNC ID": hgnc_id,
                 "Message": "Could not find any match for the HGNC ID."
             }
+        
+    def get_gene_list(self,panel_id,r_code,matches):
+        if panel_id:
+            panel_data = self.get_panel_data(panel_id=panel_id, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        elif r_code:
+            panel_data = self.get_panels_by_rcode(rcode=r_code, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        return gene_query
+    
+    def get_gene_symbol(self, ids_to_replace):
+
+        cursor = self.conn.cursor()
+        placeholders = ', '.join(['?'] * len(ids_to_replace))
+        query = f'''
+            SELECT HGNC_ID, HGNC_symbol
+            FROM genes_info
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+        
+        result = cursor.execute(query, list(ids_to_replace)).fetchall()
+        return result
+    
+    def local_bed(self, gene_query, genome_build):
+        if genome_build=="GRCh38":
+            cursor = self.conn.cursor()
+            # Prepare placeholders for SQL IN clause
+            placeholders = ','.join(['?'] * len(gene_query))
+            query = f'''
+            SELECT Chromosome, Start, End, Name, HGNC_ID, Transcript, Strand, Type
+            FROM bed38
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+            local_bed_records=cursor.execute(query, list(gene_query))
+            return local_bed_records
