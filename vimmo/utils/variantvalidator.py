@@ -2,7 +2,7 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
-from vimmo.db.db import PanelQuery
+from vimmo.db.db import Query
 from vimmo.API import get_db
 
 class VarValAPIError(Exception):
@@ -108,7 +108,7 @@ class VarValClient:
             # Retrieve the database connection
             db = get_db()
             # Initialize a query object with the database connection
-            query = PanelQuery(db.conn)
+            query = Query(db.conn)
             result = query.get_gene_symbol(ids_to_replace)
             id_to_symbol = {row[0]: row[1] for row in result}
         else:
