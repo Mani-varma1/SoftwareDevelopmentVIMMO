@@ -1,5 +1,5 @@
 import unittest
-from arg_validator import validate_panel_id_or_Rcode_or_hgnc  # Import the function to test
+from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
 
 
 class TestValidateIDOrRcodeOrHGNC(unittest.TestCase):
@@ -19,7 +19,7 @@ class TestValidateIDOrRcodeOrHGNC(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             validate_panel_id_or_Rcode_or_hgnc(args)
         # Ensure the error message mentions the invalid Panel_ID format
-        self.assertIn("Invalid format for 'Panel_ID': Must be a number", str(context.exception))
+        self.assertIn("Invalid input: 'Panel_ID' must be digits only", str(context.exception))
 
     def test_valid_rcode(self):
         """Test valid Rcode."""
@@ -29,9 +29,25 @@ class TestValidateIDOrRcodeOrHGNC(unittest.TestCase):
         except ValueError as e:
             self.fail(f"Function raised ValueError unexpectedly: {e}")
 
+    def test_valid_rcode_with_lowercase(self):
+        """Test valid Rcode with lowercase 'r' that should be converted to 'R'."""
+        args = {"Rcode": "r123"}  # Valid input: starts with lowercase "r", but should be converted to "R123"
+        try:
+            validate_panel_id_or_Rcode_or_hgnc(args)
+        except ValueError as e:
+            self.fail(f"Function raised ValueError unexpectedly: {e}")
+        self.assertEqual(args["Rcode"], "R123")  # Ensure the Rcode was transformed to "R123"
+
     def test_invalid_rcode(self):
-        """Test invalid Rcode format."""
-        args = {"Rcode": "r123"}  # Invalid: starts with lowercase "r"
+        """Test invalid Rcode format (should start with 'R' and be followed by digits only)."""
+        args = {"Rcode": "r123abc"}  # Invalid: starts with lowercase "r" and contains non-numeric characters
+        with self.assertRaises(ValueError) as context:
+            validate_panel_id_or_Rcode_or_hgnc(args)
+        self.assertIn("Invalid format for 'Rcode': Must start with 'R' followed by digits only", str(context.exception))
+
+    def test_invalid_rcode_missing_R(self):
+        """Test invalid Rcode format that doesn't start with 'R'."""
+        args = {"Rcode": "123"}  # Invalid: doesn't start with 'R'
         with self.assertRaises(ValueError) as context:
             validate_panel_id_or_Rcode_or_hgnc(args)
         self.assertIn("Invalid format for 'Rcode': Must start with 'R' followed by digits only", str(context.exception))
