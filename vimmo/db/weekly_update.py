@@ -204,7 +204,7 @@ def main():
 
     logging.info("Starting the panel update process.")
 
-    # URL for the API endpoint
+    # URL for the latest signed off panel versions API endpoint
     api_url = "https://panelapp.genomicsengland.co.uk/api/v1/panels/signedoff/?display=latest&page=1"
 
     # Initialize and connect to the database

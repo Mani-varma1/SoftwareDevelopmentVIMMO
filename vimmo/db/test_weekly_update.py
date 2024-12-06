@@ -69,6 +69,7 @@ def update_tester(cursor):
     )
 
     db.conn.commit()
+    db.conn.close()
 
 if __name__ == '__main__':
     db = Database()
