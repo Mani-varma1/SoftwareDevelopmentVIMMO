@@ -397,44 +397,111 @@ class Query:
      
         patient_records_rows = cursor.execute(query, (Patient_id,)).fetchall() # The returned query is a sqlite3 row object list[tuples()]
 
-        patient_records = [] # Instantiation of object for output list[list[]]
-        for tuple in patient_records_rows:  # Loop through the tuples returned by sql query
-            entry = []                      # Each list contains the values from the patient_data table row returned
-            entry.append(tuple["Rcode"])    # Append the values correspondings to the column 'Rcode'
-            entry.append(tuple["Version"])  # 'Version'
-            entry.append(tuple["Date"])     # 'Date'
-            patient_records.append(entry)   # Add the rows values to the output list
+        patient_records = {} # Instantiation of object for output dict
+        for record in patient_records_rows:
 
+            patient_records.update({record["Date"]: [record["Rcode"], record["Version"]]})
 
         return patient_records
         
-    def current_panel_contents(self, panelID: str) -> list[list]:
+    def current_panel_contents(self, panelID: str) -> dict:
         cursor = self.conn.cursor()
         operator = "="
 
         query = f"""
-        SELECT HGNC_ID, Version, Confidence
+        SELECT HGNC_ID, Confidence
         FROM panel_genes 
         WHERE panel_genes.Panel_ID {operator} ?
 """
-        current_panel_data = cursor.execute(query, (panelID)).fetchall()
-        return current_panel_data
-        
+        current_panel_data = cursor.execute(query, (panelID,)).fetchall()
 
-    def historic_panel_contents(self, panelID: str, version):
+        current_data = {} # Instantiation of object for output dict{}
+        for tuple in current_panel_data:  # Loop through the tuples (HGNC ID, Confidence)
+                                        
+            current_data.update({tuple["HGNC_ID"]: tuple["Confidence"]})   # Insert gene, conf pair into output dict
+        return current_data
+    
+    
+
+
+    def historic_panel_retrieval(self, panelID: str, version: float):
+        """ 
+        Returns panel contents for an archived panel version
+
+        Parameters
+        ----------
+        PanelID: str
+        The panelApp panelID for the queried R code
+
+        version: float
+        The version number of the archived panel
+
+        Returns
+        -------
+        historical_data: dict{}
+        The contents of the archived panel version
+
+
+        Notes
+        -----
+        - Executes a simple SQL query to Vimmo's 'panel_genes_archive' table (see db schema in repository)
+        - The dictionary returns key value pairs as follows {HGNC_ID:Confidence} 
+
+        Example
+        -----
+        Input: PanelID 635, version 2.1
+        Query class method: historic_panel_retrieval(635,2.1) -> {
+                                                                "HGNC:1071": 3,
+                                                                "HGNC:2186": 2,
+                                                                "HGNC:20000": 3
+                                                                }
+        """
+        
         cursor = self.conn.cursor()
         operator = "="
 
         query = f"""
-        SELECT Rcode, Version, Date
-        FROM historic_data
-        WHERE patient_data.Patient_ID {operator} ?
+        SELECT HGNC_ID, Confidence
+        FROM panel_genes_archive
+        WHERE panel_genes_archive.Panel_ID {operator} ? AND panel_genes_archive.Version {operator} ?
 """
 
         historic_panel_data = cursor.execute(query, (panelID, version)).fetchall()
-        return historic_panel_data
-        ...
+        historic_data = {} # Instantiation of object for output dict{}
+        for tuple in historic_panel_data:  # Loop through the tuples (HGNC ID, Confidence)
+                                        
+            historic_data.update({tuple["HGNC_ID"]: tuple["Confidence"]})   # Insert gene, conf pair into output dict
 
+        return historic_data
+
+    def compare_panel_versions(self, historic_version: dict, current_version: dict) -> dict:
+        # find genes added
+        genes_added = {}
+        for gene in current_version.keys():
+            if gene in historic_version.keys():
+                pass
+            else:
+                genes_added.update({gene:current_version[gene]})
+        # find genes remove
+        genes_removed = {}
+        for gene in historic_version.keys():
+            if gene in current_version:
+                pass
+            else:
+                genes_removed.update({gene:historic_version[gene]})
+        # find gene conf change
+        conf_changes = {}
+        for HGNC in current_version.keys():
+            if HGNC not in historic_version.keys(): # If gene new to panel, pass
+                pass
+            elif HGNC in historic_version.keys() and current_version[HGNC] == historic_version[HGNC]: # If gene confidence unchanged, pass
+                pass
+            
+            elif HGNC in historic_version.keys() and current_version[HGNC] != historic_version[HGNC]: # If gene in both versions and has changed, up
+                conf_changes.update({HGNC:(historic_version[HGNC],current_version[HGNC])})
+            
+
+        return [genes_added, genes_removed, conf_changes]
 
 class Update:
     def __init__(self,connection):

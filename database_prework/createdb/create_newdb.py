@@ -7,7 +7,8 @@ csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
 bed_file = 'genes_exons38.bed'
 
 csv3 = 'patient_info.csv' # TEST patient info for development
-csv4 = 'historic_tests.csv'
+
+csv4 = 'archived_data.csv'
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
@@ -15,8 +16,9 @@ df_panel_genes_raw = pd.read_csv(csv2)
 df_bed38 = pd.read_csv(bed_file, sep='\t', header=None, names=[
     'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
 ])
+
 df_patient_info = pd.read_csv(csv3)
-df_historic_tests = pd.read_csv(csv4)
+df_archived_data = pd.read_csv(csv4)
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
 conn = sqlite3.connect('../../vimmo/db/panels_data.db')
@@ -87,15 +89,15 @@ CREATE TABLE IF NOT EXISTS bed38 (
 )
 ''')
 
-# Create Table 6: historic_tests to store historic gene panel contents
+# Create Table 6: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS historic_tests (
+CREATE TABLE IF NOT EXISTS panel_genes_archive (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    panel_id INTEGER,
+    Panel_ID INTEGER,
     HGNC_ID TEXT,
-    confidence TEXT,
-    version DATE,
-    FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
+    Version TEXT,
+    Confidence INTEGER,
+    FOREIGN KEY (Panel_ID) REFERENCES panel (Panel_ID)
 )
 ''')
 
@@ -123,10 +125,11 @@ df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
 # Populate Table 4: patient_data with TEST patient information
 df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
 df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
-
-# Populate Table 6: historic_tests with TEST information
-df_historic_tests.columns = ['Panel_ID', 'HGNC_ID', 'Confidence', 'Version']
-df_historic_tests.to_sql('historic_tests', conn, if_exists='replace',index=False)
+ 
+# Populate Table 6: panel_genes_archive with TEST information
+df_archived_data.columns = ['Panel_ID', 'HGNC_ID', 'Version', 'Confidence']
+df_archived_data.to_sql('panel_genes_archive', conn, if_exists='replace',index=False)
+ 
 
 # Commit the changes
 conn.commit()
