@@ -115,7 +115,7 @@ class PanelDownload(Resource):
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
             gene_query="|".join(gene_query)
-        query = PanelQuery(db.conn)
+        query = Query(db.conn)
         
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
