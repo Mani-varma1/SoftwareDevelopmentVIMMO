@@ -16,10 +16,11 @@ class PanelAppClient:
         '''
         try:
             response = requests.get(url)
-        except :
-            raise PanelAppAPIError(f"Failed to get data from PanelApp API. Status code: {response.status_code}")
-        else:
+            response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
             return response.json()
+        except (requests.RequestException, ValueError):
+            raise PanelAppAPIError("An error occurred while accessing or processing data from the PanelApp API.")
+
 
     def get_genes(self, rcode, confidence_level=3):
         '''
@@ -60,7 +61,8 @@ class PanelAppClient:
         Here 2.5 is the version of R208, as of (26/11/24)
         """
         url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest' # Set the URL 
-        json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
-        version = json_data["results"][0]["version"] # Extract the version number from the json response
-
-        return version
+        try:
+            json_data = self._check_response(url)
+            return json_data["results"][0]["version"]
+        except Exception:
+            raise PanelAppAPIError("An error occurred while retrieving the latest version from the PanelApp API.")

@@ -144,8 +144,8 @@ class LocalDownloadParser:
             type=str,
             choices=['Gencode'],
             help="Only Gencode records can be downloaded from local endpoint.",
-            required=False,
-            default='ensemble'
+            required=True,
+            default='Gencode'
         )
         parser.add_argument(
             'limit_transcripts',
@@ -159,7 +159,7 @@ class LocalDownloadParser:
                 "Canonical records are returned if no Mane_Select and Mane_Plus_Canonical are found"
                 "these are indicated in the type encoded as : ms: Mane_Select, mpc: Mane_Plus_Clinical, can: Canonical"
             ),
-            required=False,
+            required=True,
             default='all'
         )
 

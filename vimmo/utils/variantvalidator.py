@@ -168,20 +168,41 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
-            chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
-            for transcript in gene.get('transcripts', []):
-                reference = transcript.get('reference', '.')
-                genomic_spans = transcript.get('genomic_spans', {})
-                for _, spans in genomic_spans.items():
-                    orientation = '+' if spans.get('orientation') == 1 else '-'
-                    for exon in spans.get('exon_structure', []):
-                        bed_rows.append({
-                            'chrom': chromosome,
-                            'start': exon['genomic_start'],
-                            'end': exon['genomic_end'],
-                            'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
-                            'strand': orientation
-                        })
+            transcripts = gene.get('transcripts', [])
+            # If no transcripts, create a NoRecord line
+            if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
+                bed_rows.append({
+                    'chrom': "NoRecord",
+                    'start': "NoRecord",
+                    'end': "NoRecord",
+                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'strand': "NoRecord"
+                })
+                continue
+
+            try:
+                chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
+                for transcript in gene.get('transcripts', []):
+                        reference = transcript.get('reference', "NA")
+                        genomic_spans = transcript.get('genomic_spans', {})
+                        for _, spans in genomic_spans.items():
+                            orientation = '+' if spans.get('orientation') == 1 else '-'
+                            for exon in spans.get('exon_structure', []):
+                                bed_rows.append({
+                                    'chrom': chromosome,
+                                    'start': exon['genomic_start'],
+                                    'end': exon['genomic_end'],
+                                    'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
+                                    'strand': orientation
+                                })
+            except:
+                bed_rows.append({
+                    'chrom': chromosome,
+                    'start': "Error",
+                    'end': "Error",
+                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'strand': "Error"
+                })
 
         # Convert rows into a DataFrame
         bed_df = pd.DataFrame(bed_rows)

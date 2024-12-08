@@ -388,11 +388,10 @@ class Query:
         
         """
         cursor = self.conn.cursor()
-        operator = "="
         query = f'''
         SELECT Rcode, Version, Date
         FROM patient_data
-        WHERE patient_data.Patient_ID {operator} ?
+        WHERE patient_data.Patient_ID = ?
 '''
      
         patient_records_rows = cursor.execute(query, (Patient_id,)).fetchall() # The returned query is a sqlite3 row object list[tuples()]
@@ -412,7 +411,7 @@ class Query:
         SELECT HGNC_ID, Confidence
         FROM panel_genes 
         WHERE panel_genes.Panel_ID {operator} ?
-"""
+        """
         current_panel_data = cursor.execute(query, (panelID,)).fetchall()
 
         current_data = {} # Instantiation of object for output dict{}
