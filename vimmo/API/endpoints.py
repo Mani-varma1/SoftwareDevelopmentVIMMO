@@ -222,7 +222,7 @@ class LocalPanelDownload(Resource):
         # Retrieve the database connection
         db = get_db()
         # Initialize a query object with the database connection
-        query = PanelQuery(db.conn)
+        query = Query(db.conn)
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
             # Check if gene_query is a set of HGNC IDs
