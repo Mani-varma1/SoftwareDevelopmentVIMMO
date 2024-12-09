@@ -124,6 +124,17 @@ class VarValClient:
         
         return "|".join(final_output)
 
+    def custom_sort(self,row):
+        if row['chrom'] in ["NoRecord", "Error"]:
+            return (float('inf'), float('inf'), float('inf'))  # Place "NoRecord" and "Error" at the end
+        try:
+            # Extract chromosome number, handle 'chr' prefix and X/Y
+            chrom_number = int(row['chrom'][3:]) if row['chrom'][3:].isdigit() else row['chrom'][3:]
+            start = int(row['start']) if row['start'] != "Error" else float('inf')
+            end = int(row['end']) if row['end'] != "Error" else float('inf')
+            return (chrom_number, start, end)
+        except:
+            return (float('inf'), float('inf'), float('inf'))  # Handle unexpected issues
 
 
     def parse_to_bed(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
@@ -206,6 +217,16 @@ class VarValClient:
 
         # Convert rows into a DataFrame
         bed_df = pd.DataFrame(bed_rows)
+        # Define a custom sorting function
+
+        # Add sorting key
+        bed_df['sort_key'] = bed_df.apply(self.custom_sort, axis=1)
+
+        # Sort DataFrame based on the key
+        bed_df = bed_df.sort_values('sort_key').drop(columns=['sort_key'])
+
+        # Reset index after sorting
+        bed_df.reset_index(drop=True, inplace=True)
 
         # Write the DataFrame to a BED file (BytesIO)
         output = BytesIO()

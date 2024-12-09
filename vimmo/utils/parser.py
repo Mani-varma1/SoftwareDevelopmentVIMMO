@@ -71,6 +71,71 @@ class PatientParser:
     
 
 
+class PatientBedParser:
+    """Parser for handling patient-related arguments."""
+    
+    @staticmethod
+    def create_parser():
+        """Create and return a request parser for patient-related arguments."""
+        parser = reqparse.RequestParser()
+        
+        # Argument for Patient ID
+        parser.add_argument(
+            'Patient ID',
+            type=str,
+            help='Type in Patient ID',
+            required=True
+        )
+        
+        # Argument for R code
+        parser.add_argument(
+            'R code',
+            type=str,
+            help='Type in R code',
+            required=False
+        )
+
+        parser.add_argument(
+            'version',
+            type=str,
+            help='Type in Version',
+            required=False
+        )
+        
+        parser.add_argument(
+            'genome_build',
+            type=str,
+            choices=['GRCh37', 'GRCh38'],
+            help="Specify the genome build (GRCh37 or GRCh38).",
+            required=True,
+            default='GRCh38'
+        )
+        parser.add_argument(
+            'transcript_set',
+            type=str,
+            choices=['refseq', 'ensembl', 'all'],
+            help="Specify the transcript set (refseq, ensembl, or all).",
+            required=True,
+            default='all'
+        )
+        parser.add_argument(
+            'limit_transcripts',
+            type=str,
+            choices=['mane_select + mane_plus_clinical', 'mane_select', 'canonical'],
+            help=(
+                "Limit transcripts to specific categories: "
+                "'mane_select + mane_plus_clinical' for MANE Select and Mane Plus Clinical, "
+                "'mane_select' for MANE Select only, "
+                "'canonical' for canonical transcripts."
+            ),
+            required=True,
+            default='mane_select'
+        )
+
+        return parser
+    
+
+
 
 class DownloadParser:
     """Parser for handling download-related arguments."""
