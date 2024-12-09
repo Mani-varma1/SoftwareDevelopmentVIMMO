@@ -164,6 +164,8 @@ class LocalDownloadParser:
         )
 
         return parser
+
+
 class UpdateParser:
     """Parser for updating the patient database."""
     @staticmethod
@@ -182,15 +184,5 @@ class UpdateParser:
             help='Type in R code (Required)',
             required = True
         )
-        parser.add_argument(
-            'Date',
-            type=str,
-            help='Type in the date the test was performed (YYYY-MM-DD) (Required)',
-            required = True
-        )
-        parser.add_argument(
-            'Version',
-            type=float,
-            help='Type the panel version if known (optional)'
-        )
+
         return parser
