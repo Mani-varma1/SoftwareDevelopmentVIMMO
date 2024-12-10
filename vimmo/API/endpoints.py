@@ -29,6 +29,10 @@ class PanelSearch(Resource):
         # Parse arguments from the request
         args = id_parser.parse_args()
 
+        # Normalize the Rcode to uppercase if it exists
+        if args.get("Rcode"):
+            args["Rcode"] = args["Rcode"].upper()  # Convert lowercase 'r' to uppercase 'R'
+
         # Apply custom validation for the parsed arguments
         try:
             validate_panel_id_or_Rcode_or_hgnc(args,panel_space=True)  # Ensure only one valid parameter is provided
