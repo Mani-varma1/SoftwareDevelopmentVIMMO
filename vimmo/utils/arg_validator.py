@@ -21,7 +21,7 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
             # Raise an error if conversion fails
             raise ValueError("Invalid input: 'Panel_ID' must be digits only (e.g., '123').")
 
-    # Validate Rcode: Matches lowercase 'r' followed by digits
+    # Validate Rcode: Must match 'R123' or 'r123'
     if rcode_value:
         if not re.fullmatch(rcode_pattern, rcode_value):  # Match pattern
             raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
