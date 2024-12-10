@@ -9,7 +9,7 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     - `Panel_ID`: Must be numeric.
     """
     # Pattern for Rcode: Matches strings starting with 'r' followed by digits (e.g., r123)
-    rcode_pattern = r"^r\d+$"
+    rcode_pattern =  r"^[rR]\d+$"
     # Pattern for HGNC_ID: Matches strings starting with 'HGNC:' followed by digits (e.g., HGNC:12345)
     hgnc_pattern = r"^HGNC:\d+$"
 
