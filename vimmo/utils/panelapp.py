@@ -59,8 +59,13 @@ class PanelAppClient:
         
         Here 2.5 is the version of R208, as of (26/11/24)
         """
+        
         url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest' # Set the URL 
         json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
-        version = json_data["results"][0]["version"] # Extract the version number from the json response
-
+        
+        try:
+            version = json_data["results"][0]["version"] # Extract the version number from the json response
+        except KeyError:
+            print("No response from input R code. Pleae check the R code exists at 'https://panelapp.genomicsengland.co.uk/panels/'")## Logging needed 
+            version = None
         return version
