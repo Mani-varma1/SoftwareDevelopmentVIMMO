@@ -25,7 +25,26 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
 
 
 def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
-    pass
+        # Define patterns for Panel_ID, Rcode, and HGNC_ID
+    rcode_pattern = r"^R\d+$"      # Pattern for Rcode: Starts with 'R', followed by digits only
+    panel_pattern = r"^\d+$"       # Pattern for Panel_ID: Matches only digits
+    hgnc_pattern = r"^HGNC:\d+$"   # Pattern for HGNC_ID: Starts with 'HGNC:', followed by digits
+
+    # Validate the format of Panel_ID - must be a number
+    if panel_id_value:
+        if not re.fullmatch(panel_pattern, str(panel_id_value)):  # Validate Panel_ID format
+            raise ValueError("Invalid format for 'Panel_ID': Must be a number (e.g., '1234').")
+
+    # Validate the format of Rcode - must start with 'R' and be followed by digits only
+    if rcode_value:
+        if not re.fullmatch(rcode_pattern, rcode_value):  # Validate Rcode format
+            raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
+
+    # Validate the format of HGNC_ID - must start with 'HGNC:' and be followed by digits only
+    if hgnc_id_value:
+        if not re.fullmatch(hgnc_pattern, hgnc_id_value):  # Validate HGNC_ID format
+            raise ValueError("Invalid format for 'HGNC_ID': It must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345').")
+        
 
 
 
