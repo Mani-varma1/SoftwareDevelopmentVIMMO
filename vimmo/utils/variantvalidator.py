@@ -2,7 +2,8 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
-import json
+from vimmo.db.db import Query
+from vimmo.API import get_db
 
 class VarValAPIError(Exception):
     """Custom exception for errors related to the PanelApp API."""
@@ -36,9 +37,12 @@ class VarValClient:
         try:
             response = requests.get(url)
         except :
-            raise VarValAPIError(f"Failed to get data from PanelApp API. Status code: {response.status_code}")
+            raise VarValAPIError(f"Failed to connect. Please check your internet connection and try again")
         else:
-            return response.json()
+            if response.ok:
+                return response.json()
+            else:
+                raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
         """
@@ -75,6 +79,64 @@ class VarValClient:
         return self._check_response(url)
     
 
+
+    def get_hgnc_ids_with_replacements(self, gene_query):
+        """
+        Retrieves HGNC_IDs for a given panel_id and replaces specified problematic HGNC_IDs with their HGNC_symbols.
+        
+        Parameters:
+        - panel_id (int): The ID of the panel to query.
+        - prob_gene_file (str): Path to the file containing problematic HGNC_IDs, one per line.
+        - db_path (str): Path to the SQLite database file.
+        
+        Returns:
+        - final_output (set): A set containing HGNC_IDs and HGNC_symbols with replacements made for problematic IDs.
+        """
+            
+        # Step 2: Load prob_gene_list from the file
+        with open('vimmo/utils/problem_genes.txt', 'r') as file:
+            prob_gene_list = [line.strip() for line in file if line.strip()]
+        
+        # Convert prob_gene_list to a set for faster lookup
+        prob_gene_set = set(prob_gene_list)
+        
+        # Step 3: Find the HGNC_IDs that need to be replaced
+        ids_to_replace = gene_query.intersection(prob_gene_set)
+        
+        # Step 4: Retrieve HGNC_symbols for the IDs to replace
+        if ids_to_replace:
+            # Retrieve the database connection
+            db = get_db()
+            # Initialize a query object with the database connection
+            query = Query(db.conn)
+            result = query.get_gene_symbol(ids_to_replace)
+            id_to_symbol = {row[0]: row[1] for row in result}
+        else:
+            id_to_symbol = {}
+        
+        # Step 5: Create the final set with replacements
+        final_output = set()
+        for hgnc_id in gene_query:
+            if hgnc_id in id_to_symbol:
+                final_output.add(id_to_symbol[hgnc_id])
+            else:
+                final_output.add(hgnc_id)
+        
+        return "|".join(final_output)
+
+    def custom_sort(self,row):
+        if row['chrom'] in ["NoRecord", "Error"]:
+            return (float('inf'), float('inf'), float('inf'))  # Place "NoRecord" and "Error" at the end
+        try:
+            # Extract chromosome number, handle 'chr' prefix and X/Y
+            chrom_number = int(row['chrom'][3:]) if row['chrom'][3:].isdigit() else row['chrom'][3:]
+            start = int(row['start']) if row['start'] != "Error" else float('inf')
+            end = int(row['end']) if row['end'] != "Error" else float('inf')
+            return (chrom_number, start, end)
+        except:
+            return (float('inf'), float('inf'), float('inf'))  # Handle unexpected issues
+
+
     def parse_to_bed(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
         """
         Fetches gene data from the API and converts it to BED file format.
@@ -99,6 +161,8 @@ class VarValClient:
         }
         limit_transcripts = limit_transcripts_map.get(limit_transcripts, limit_transcripts)
 
+        gene_query= self.get_hgnc_ids_with_replacements(gene_query)
+
         try:
             # Fetch gene data from the API
             gene_data = self.get_gene_data(
@@ -109,29 +173,60 @@ class VarValClient:
             )
         except VarValAPIError as e:
             raise VarValAPIError(f"Error fetching data: {str(e)}")
+        
+        
 
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
-            with open("R139.json", "w") as json_file:
-                json.dump(gene, json_file)
-            chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
-            for transcript in gene.get('transcripts', []):
-                reference = transcript.get('reference', '.')
-                genomic_spans = transcript.get('genomic_spans', {})
-                for accession, spans in genomic_spans.items():
-                    orientation = '+' if spans.get('orientation') == 1 else '-'
-                    for exon in spans.get('exon_structure', []):
-                        bed_rows.append({
-                            'chrom': chromosome,
-                            'start': exon['genomic_start'],
-                            'end': exon['genomic_end'],
-                            'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
-                            'strand': orientation
-                        })
+            transcripts = gene.get('transcripts', [])
+            # If no transcripts, create a NoRecord line
+            if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
+                bed_rows.append({
+                    'chrom': "NoRecord",
+                    'start': "NoRecord",
+                    'end': "NoRecord",
+                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'strand': "NoRecord"
+                })
+                continue
+
+            try:
+                chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
+                for transcript in gene.get('transcripts', []):
+                        reference = transcript.get('reference', "NA")
+                        genomic_spans = transcript.get('genomic_spans', {})
+                        for _, spans in genomic_spans.items():
+                            orientation = '+' if spans.get('orientation') == 1 else '-'
+                            for exon in spans.get('exon_structure', []):
+                                bed_rows.append({
+                                    'chrom': chromosome,
+                                    'start': exon['genomic_start'],
+                                    'end': exon['genomic_end'],
+                                    'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
+                                    'strand': orientation
+                                })
+            except:
+                bed_rows.append({
+                    'chrom': chromosome,
+                    'start': "Error",
+                    'end': "Error",
+                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'strand': "Error"
+                })
 
         # Convert rows into a DataFrame
         bed_df = pd.DataFrame(bed_rows)
+        # Define a custom sorting function
+
+        # Add sorting key
+        bed_df['sort_key'] = bed_df.apply(self.custom_sort, axis=1)
+
+        # Sort DataFrame based on the key
+        bed_df = bed_df.sort_values('sort_key').drop(columns=['sort_key'])
+
+        # Reset index after sorting
+        bed_df.reset_index(drop=True, inplace=True)
 
         # Write the DataFrame to a BED file (BytesIO)
         output = BytesIO()

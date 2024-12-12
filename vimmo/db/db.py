@@ -74,50 +74,15 @@ class Database:
             patient_id TEXT,
             panel_id INTEGER,
             rcode TEXT,
-            panel_version TEXT,
+            version INT,
+            date DATE,
             FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
         )
         ''')
 
         self.conn.commit()
 
-    def add_patient(self, patient_id: str, panel_id: Optional[int] = None, rcode: Optional[str] = None):
-        """Add a new patient record using either a panel_id or an rcode."""
-        cursor = self.conn.cursor()
-        if panel_id:
-            panel_data = cursor.execute('''
-            SELECT Panel_ID, Version, rcodes
-            FROM panel
-            WHERE Panel_ID = ?
-            ''', (panel_id,)).fetchone()
-            
-            if panel_data:
-                version, rcodes = panel_data["Version"], panel_data["rcodes"]
-                cursor.execute('''
-                INSERT INTO patient_data (patient_id, panel_id, rcode, panel_version)
-                VALUES (?, ?, ?, ?)
-                ''', (patient_id, panel_id, rcodes, version))
         
-        elif rcode:
-            rcode_query = f"%{rcode}%"
-            panel_data = cursor.execute('''
-            SELECT Panel_ID, Version, rcodes
-            FROM panel
-            WHERE rcodes LIKE ?
-            ''', (rcode_query,)).fetchone()
-            
-            if panel_data:
-                panel_id, version, rcodes = panel_data["Panel_ID"], panel_data["Version"], panel_data["rcodes"]
-                cursor.execute('''
-                INSERT INTO patient_data (patient_id, panel_id, rcode, panel_version)
-                VALUES (?, ?, ?, ?)
-                ''', (patient_id, panel_id, rcodes, version))
-        else:
-            print("Either panel_id or rcode must be provided.")
-            return None
-        
-        self.conn.commit()
-
     def get_patient_data(self, patient_id: str) -> List[Tuple]:
         """Retrieve patient data by patient_id."""
         cursor = self.conn.cursor()
@@ -137,7 +102,7 @@ class Database:
             self.conn.close()
             self.conn = None
         
-class PanelQuery:
+class Query:
     def __init__(self, connection):
         self.conn = connection
 
@@ -164,6 +129,7 @@ class PanelQuery:
             WHERE panel.Panel_ID LIKE ?
             '''
             result = cursor.execute(query, (panel_id_query,)).fetchall()
+
         else:
             # Exact match for Panel_ID
             query = f'''
@@ -239,3 +205,331 @@ class PanelQuery:
                 "HGNC ID": hgnc_id,
                 "Message": "Could not find any match for the HGNC ID."
             }
+        
+    def get_gene_list(self,panel_id,r_code,matches):
+        if panel_id:
+            panel_data = self.get_panel_data(panel_id=panel_id, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        elif r_code:
+            panel_data = self.get_panels_by_rcode(rcode=r_code, matches=matches)
+            if "Message" in panel_data:
+                return panel_data
+            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        return gene_query
+    
+    def get_gene_symbol(self, ids_to_replace):
+
+        cursor = self.conn.cursor()
+        placeholders = ', '.join(['?'] * len(ids_to_replace))
+        query = f'''
+            SELECT HGNC_ID, HGNC_symbol
+            FROM genes_info
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+        
+        result = cursor.execute(query, list(ids_to_replace)).fetchall()
+        return result
+    
+    def local_bed(self, gene_query, genome_build):
+        if genome_build=="GRCh38":
+            cursor = self.conn.cursor()
+            # Prepare placeholders for SQL IN clause
+            placeholders = ','.join(['?'] * len(gene_query))
+            query = f'''
+            SELECT Chromosome, Start, End, Name, HGNC_ID, Transcript, Strand, Type
+            FROM bed38
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+            local_bed_records=cursor.execute(query, list(gene_query))
+            return local_bed_records
+    
+    def check_patient_history(self, Patient_id: str, Rcode) -> str:
+            """
+            Retrieves the latest test version for a given patient and R code within the Vimmo database. 
+            
+            Parameters
+            ----------
+            Patient_id: str (required)
+            The patient id, linked to the test history for a given patient
+
+            Rcode: str (required)
+            A specific R code to search for a given patient
+            
+
+            Returns
+            -------
+            patient_history: float
+            The most recent version of a R code that a given patient has had
+            
+            Notes
+            -----
+            - Excutes a simple SQL query
+            - Queries the patient_data table
+            - For the entire test history of a patient, see return_all_records()
+
+            Example
+            -----
+            User UI input: Patient ID = 123, Rcode R208
+
+            Query class method: check_patient_history(123, R208) -> 2.5 
+
+            Here, '2.5' is the most recent version of R208 conducted on patient 123
+            """
+            
+            cursor = self.conn.cursor()
+            operator = "="
+            query = f'''
+            SELECT Version
+            FROM patient_data
+            WHERE DATE {operator} (SELECT MAX(DATE) FROM patient_data WHERE Rcode {operator} ? AND Patient_ID {operator} ?)         
+    '''
+            patient_history = cursor.execute(query, (Rcode, Patient_id)).fetchone()
+            return patient_history[0]
+
+    def get_db_latest_version(self, Rcode: str) -> str:
+        """
+        Returns the most uptodate panel verision stored within the Vimmo database for an input R code
+
+        Parameters
+        ----------
+        Rcode : str
+        The R code to search for in the Vimmo's database
+
+        Returns
+        -------
+        panel_id: str
+        The corresponding version for the corresponding R code panels_data.db - 'panel' table (see schema in repo)
+
+        Notes
+        -----
+        - Excutes a simple SQL query that that selections the
+
+        Example
+        -----
+        User UI input: R208
+        Query class method: rcode_to_panelID(R208) -> 635 
+        
+        Here 635 is the R208 panel ID, as of (26/11/24)
+        """
+        cursor = self.conn.cursor()
+        operator = "="
+        query = f'''
+        SELECT panel.Version
+        FROM panel
+        WHERE panel.rcodes {operator} ?
+        '''
+        database_version = cursor.execute(query, (Rcode,)).fetchone()
+        return str(database_version[0])
+    
+    def rcode_to_panelID(self, Rcode: str) -> str:
+        """
+        Returns the panelapp panel ID for an input panelapp Rcode
+
+        Parameters
+        ----------
+        Rcode : str
+        The R code to search for in the Vimmo's database
+
+        Returns
+        -------
+        panel_id[0]: str
+        The corresponding panel ID for the input R code
+
+
+        Notes
+        -----
+        - Executes a simple SQL query to Vimmo's 'panel' table (see db schema in repository root)
+        - panel_id[0] indexed to access the sql lite 'row' object type
+
+        Example
+        -----
+        User UI input: R208
+        Query class method: rcode_to_panelID(R208) -> 635 
+        
+        Here 635 is the R208 panel ID, as of (26/11/24)
+        """
+
+        cursor = self.conn.cursor()
+        operator = "="
+        query = f'''
+        SELECT Panel_ID
+        FROM panel
+        WHERE panel.rcodes {operator} ?
+        '''
+        panel_id = cursor.execute(query, (Rcode,)).fetchone()
+        return panel_id[0] 
+    
+    def return_all_records(self, Patient_id: str) -> str:
+        """
+        Returns all historical tests stored for a given patient
+
+        Parameters
+        ----------
+        Rcode : str
+        The R code to search for in the Vimmo's database
+
+        Returns
+        -------
+        patient_records: list[list[]]
+        The list of Rcodes, versions and dates that a patient has had
+
+
+        Notes
+        -----
+        - Executes a simple SQL query to Vimmo's 'patient_data' table (see db schema in repository root)
+        - Returns a list of lists. Each nested list represents a row in the 
+
+        Example
+        -----
+        User UI input: R208
+        Query class method: return_all_records(R208) -> [[R208, 2.5, 2000-1-5],[R132, 1, 2024-1-2]] 
+        
+        """
+        cursor = self.conn.cursor()
+        query = f'''
+        SELECT Rcode, Version, Date
+        FROM patient_data
+        WHERE patient_data.Patient_ID = ?
+'''
+     
+        patient_records_rows = cursor.execute(query, (Patient_id,)).fetchall() # The returned query is a sqlite3 row object list[tuples()]
+
+        patient_records = {} # Instantiation of object for output dict
+        for record in patient_records_rows:
+
+            patient_records.update({record["Date"]: [record["Rcode"], record["Version"]]})
+
+        return patient_records
+        
+    def current_panel_contents(self, panelID: str) -> dict:
+        cursor = self.conn.cursor()
+        operator = "="
+
+        query = f"""
+        SELECT HGNC_ID, Confidence
+        FROM panel_genes 
+        WHERE panel_genes.Panel_ID {operator} ?
+        """
+        current_panel_data = cursor.execute(query, (panelID,)).fetchall()
+
+        current_data = {} # Instantiation of object for output dict{}
+        for tuple in current_panel_data:  # Loop through the tuples (HGNC ID, Confidence)
+                                        
+            current_data.update({tuple["HGNC_ID"]: tuple["Confidence"]})   # Insert gene, conf pair into output dict
+        return current_data
+    
+    
+
+
+    def historic_panel_retrieval(self, panelID: str, version: float):
+        """ 
+        Returns panel contents for an archived panel version
+
+        Parameters
+        ----------
+        PanelID: str
+        The panelApp panelID for the queried R code
+
+        version: float
+        The version number of the archived panel
+
+        Returns
+        -------
+        historical_data: dict{}
+        The contents of the archived panel version
+
+
+        Notes
+        -----
+        - Executes a simple SQL query to Vimmo's 'panel_genes_archive' table (see db schema in repository)
+        - The dictionary returns key value pairs as follows {HGNC_ID:Confidence} 
+
+        Example
+        -----
+        Input: PanelID 635, version 2.1
+        Query class method: historic_panel_retrieval(635,2.1) -> {
+                                                                "HGNC:1071": 3,
+                                                                "HGNC:2186": 2,
+                                                                "HGNC:20000": 3
+                                                                }
+        """
+        
+        cursor = self.conn.cursor()
+        operator = "="
+
+        query = f"""
+        SELECT HGNC_ID, Confidence
+        FROM panel_genes_archive
+        WHERE panel_genes_archive.Panel_ID {operator} ? AND panel_genes_archive.Version {operator} ?
+"""
+
+        historic_panel_data = cursor.execute(query, (panelID, version)).fetchall()
+        historic_data = {} # Instantiation of object for output dict{}
+        for tuple in historic_panel_data:  # Loop through the tuples (HGNC ID, Confidence)
+                                        
+            historic_data.update({tuple["HGNC_ID"]: tuple["Confidence"]})   # Insert gene, conf pair into output dict
+
+        return historic_data
+
+    def compare_panel_versions(self, historic_version: dict, current_version: dict) -> dict:
+        # find genes added
+        genes_added = {}
+        for gene in current_version.keys():
+            if gene in historic_version.keys():
+                pass
+            else:
+                genes_added.update({gene:current_version[gene]})
+        # find genes remove
+        genes_removed = {}
+        for gene in historic_version.keys():
+            if gene in current_version:
+                pass
+            else:
+                genes_removed.update({gene:historic_version[gene]})
+        # find gene conf change
+        conf_changes = {}
+        for HGNC in current_version.keys():
+            if HGNC not in historic_version.keys(): # If gene new to panel, pass
+                pass
+            elif HGNC in historic_version.keys() and current_version[HGNC] == historic_version[HGNC]: # If gene confidence unchanged, pass
+                pass
+            
+            elif HGNC in historic_version.keys() and current_version[HGNC] != historic_version[HGNC]: # If gene in both versions and has changed, up
+                conf_changes.update({HGNC:(historic_version[HGNC],current_version[HGNC])})
+            
+
+        return [genes_added, genes_removed, conf_changes]
+
+class Update:
+    def __init__(self,connection):
+        self.conn = connection
+    
+    def add_record(self, patient_id: str, rcode: str, date, version: Optional[str]):
+        """Add a new patient record using either a panel_id or an rcode."""
+        cursor = self.conn.cursor()
+        # 1. Check if the record already exists
+        # YES - return 'record already exists'
+        # NO - Update db
+        operator = "="
+        does_exists = cursor.execute(f"""
+        SELECT Rcode, Date, Patient_ID
+        FROM Patient_data
+        WHERE Rcode {operator} ? AND Date {operator} ? AND Patient_ID {operator} ?
+        """, (rcode, date, patient_id)).fetchone()
+
+        if does_exists != None: # Check if the record is already in the table 
+            return f"Patient record (Patient id: {patient_id}, Rcode {rcode}, Date {date})"
+        elif version: # If version has been input
+            ...
+            # 1. fetch panel id from db (rcode_to_id())
+            # 2. add record to the panel (sql INSERT INTO query)
+        else: # If no version has been provided
+            ...
+            # fetch panel ID, current panel version (must check up-to-date)
+            # add record to the patient_history table
+            
+
+            
+            self.conn.commit()
