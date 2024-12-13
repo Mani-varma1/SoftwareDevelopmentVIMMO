@@ -36,3 +36,4 @@ include = ["vimmo*"]
 
 [project.scripts]
 vimmo = "vimmo.main:main"
+dbscheduler = "vimmo.db.scheduler:run_scheduler"
