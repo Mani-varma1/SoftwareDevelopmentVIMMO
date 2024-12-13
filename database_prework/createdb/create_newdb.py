@@ -6,6 +6,9 @@ csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
 bed_file = 'genes_exons38.bed'
 
+csv3 = 'patient_info.csv' # TEST patient info for development
+
+csv4 = 'archived_data.csv'
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
@@ -13,6 +16,9 @@ df_panel_genes_raw = pd.read_csv(csv2)
 df_bed38 = pd.read_csv(bed_file, sep='\t', header=None, names=[
     'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
 ])
+
+df_patient_info = pd.read_csv(csv3)
+df_archived_data = pd.read_csv(csv4)
 
 # Connect to SQLite database (it will create a new database file if it doesn't exist)
 conn = sqlite3.connect('../../vimmo/db/panels_data.db')
@@ -54,7 +60,7 @@ CREATE TABLE IF NOT EXISTS genes_info (
 )
 ''')
 
-# Create Table 4: patient_test_history to stores previous RCODES and versions
+# Create Table 4: patient_data to stores previous RCODES and versions
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS patient_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,6 +121,15 @@ df_bed38['HGNC_ID'] = df_bed38['HGNC_ID'].str.strip()
 
 # Populate Table 5: bed38
 df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
+
+# Populate Table 4: patient_data with TEST patient information
+df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
+df_patient_info.to_sql('patient_data', conn, if_exists='replace',index=False)
+ 
+# Populate Table 6: panel_genes_archive with TEST information
+df_archived_data.columns = ['Panel_ID', 'HGNC_ID', 'Version', 'Confidence']
+df_archived_data.to_sql('panel_genes_archive', conn, if_exists='replace',index=False)
+ 
 
 # Commit the changes
 conn.commit()

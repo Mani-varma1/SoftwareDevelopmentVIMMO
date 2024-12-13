@@ -54,16 +54,18 @@ class PatientParser:
         
         # Argument for Patient ID
         parser.add_argument(
-            '-f',
+            'Patient ID',
             type=str,
-            help='Type in Patient ID'
+            help='Type in Patient ID',
+            required=True
         )
         
         # Argument for R code
         parser.add_argument(
             'R code',
             type=str,
-            help='Type in R code'
+            help='Type in R code',
+            required=False
         )
         return parser
     
@@ -159,6 +161,28 @@ class LocalDownloadParser:
             ),
             required=False,
             default='all'
+        )
+
+        return parser
+
+
+class UpdateParser:
+    """Parser for updating the patient database."""
+    @staticmethod
+    def create_parser():
+        parser = reqparse.RequestParser()
+        
+        parser.add_argument(
+            'Patient ID',
+            type=str,
+            help='Type in Patient ID (Required)',
+            required = True
+        )
+        parser.add_argument(
+            'R code',
+            type=str,
+            help='Type in R code (Required)',
+            required = True
         )
 
         return parser
