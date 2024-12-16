@@ -265,62 +265,120 @@ class LocalPanelDownload(Resource):
 patient_space = api.namespace('patient', description='Return a patient panel provided by the user')
 patient_parser = PatientParser.create_parser()
 @patient_space.route("/patient")
-class PatientClass(Resource):
+class PatientResource(Resource):
     @api.doc(parser=patient_parser)
     def get(self):
-                # Collect Arguements
-        args = patient_parser.parse_args()
-        # Fetch the database and connect
-        db = get_db()
-        
+        """
+        Endpoint to handle GET requests to the patient namespace.
+         
+        Parameters
+        ----------
+        patient_id : str
+        Numerical identifier for a patient
+
+        rcode: str 
+        Panel app code for a rare disease gene panel
+
+        Notes
+        -----
+        - For detailed explanation - see documentation and flow chart ('Feature 2 decision tree')
+        - If ONLY an rcode is given, all patient records with that rcode are returned
+        - If ONLY a patient_id is given, all test records are returned for that patient
+        - if BOTH rcode & patient_id are given & the panel version has changed since patient X's last test
+          , a panel comparison will be returned 
+        Example
+        -----
+        User input rcode: R208
+        get(R208) -> {
+        "R code": "R208",
+        "Records": {
+            "2023-12-30": [
+            123,
+            2.1
+            ],
+        }
+        User input patient_id: 123
+        {
+        "Patient ID": "123",
+        "patient records": {
+            "2023-12-30": [
+            "R208",
+            2.1
+            ]
+        }
+        User input: rcode R208 patient_id 123 
+        {
+        "disclaimer": "Panel comparison up to date",
+        "status": "Version changed since last 123 had R208",
+        "Version": "2.5",
+        "Genes added": {
+            "HGNC:795": 3,
+            "HGNC:1101": 3,
+            "HGNC:16627": 3,
+            "HGNC:26144": 3,
+            "HGNC:9820": 3,
+            "HGNC:9823": 3
+        },
+        "Genes removed": {
+            "HGNC:1071": 3,
+            "HGNC:2186": 2,
+            "HGNC:20000": 3
+        },
+        "Confidence changes (old ver -> new ver)": {
+            "HGNC:1100": [
+            2,
+            3
+            ]
+        }
+        }
+         """
+        args = patient_parser.parse_args()  # Collect Arguements
+        db = get_db()  # Fetch the database and connect
         query = Query(db.conn)
         update = Update(db.conn)
-        # Return all records for a patient
-        if args["R code"] == None: # No Rcode input = show all Tests/version for a given patient ID workflow
-
-            patient_records = query.return_all_records(args["Patient ID"])
-   
-            return {"Patient ID": args["Patient ID"], "patient records":patient_records}
         
-
+        # Return all records for a patient
+        if args["R code"] is None:
+        # No Rcode input: Show all tests/versions for a given patient ID.
+            patient_records = query.return_all_records(args["Patient ID"])          
+            return {"Patient ID": args["Patient ID"],
+                    "patient records": patient_records}
+        
         # Return all patients for an R code
-        elif args["Patient ID"] == None: # No Patient input = return all patients who have had a given R code
-
-            patients_list = query.return_all_patients(args["R code"])
-
-            return {"R code": args["R code"], "Records": patients_list}
+        elif args["Patient ID"] is None:
+            # No Patient input: Return all patients who have had a given R code.
+            patients_list = query.return_all_patients(args["R code"])           
+            return {"R code": args["R code"],
+                    "Records": patients_list}
             
         else:
             # Version comparison workflow
-            # Check database version is up to date
-            panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id
-              
-            lastest_online_version = panel_app_client.get_latest_online_version(panel_id) # Retrive the latest online panel version
+            # Check database version is up to date.
+            panel_id = query.rcode_to_panelID(args["R code"])  # Convert R code to panel ID.
+            latest_online_version = panel_app_client.get_latest_online_version(panel_id)  # Retrive latest online panel version
             database_version = query.get_db_latest_version(args["R code"]) 
-            if lastest_online_version == None: # If online version can't be accessed/return no data
-                # complete comparison using database not updated with disclaimer
-                disclaimer = 'The latest version of panel app was unable to be contacted, results are on valid from (lastupdate date)'
             
-            elif database_version != lastest_online_version: # If our local version NOT same as panel app latest, then update database and continue
-            # Update db prior to comparison
-            # -Update the verison in the panel table
-                update.update_panels_table(args["R code"], lastest_online_version, panel_id)
+            if latest_online_version is None: 
+                # If online version can't be accessed, return with a disclaimer.
+                disclaimer = "The latest version of PanelApp could not be contacted. Results are valid from the last update date."
+            
+            elif database_version != latest_online_version: # If our local version NOT same as panel app latest, then update database and continue
+            #  Update the database to match the latest online version.
+                update.update_panels_version(args["R code"], latest_online_version, panel_id)
+                update.archive_panel_contents(panel_id, database_version)
+                update.update_gene_contents(args["R code"],panel_id)
                 disclaimer = 'Panel comparison up to date'
-                
-            # -Archive the old panel verison
-            # -Update the version in the panel_genes table
-
-
             else: 
-                disclaimer = 'Panel comparison up to date'# If our db is up-to-date, continue with panel comparison, without updating or a disclaimer in response
-            # At this point the database should be up to date and necessary disclaimers inplace prior to comparison
-            patient_history = query.check_patient_history(args["Patient ID"], args["R code"]) # Returns version of most recent panel used on patient for a given Rcode
-                             # Returns most recent panel version from db
+                # Database is up-to-date; no updates/disclaimers needed.
+                disclaimer = 'Panel comparison up to date'
             
+            
+            # At this point the database should be current and  necessary disclaimers inplace
+            patient_history = query.check_patient_history(args["Patient ID"], args["R code"])  # Returns most recent panel version from db             
             # Check if the patient is in the table
-            if patient_history == None: # Check if patient is in db with record of input R code
+            if patient_history is None:  # Check if patient is in db with record of input R code
                 patient_records = query.return_all_records(args["Patient ID"])
-                if patient_records: # if any record of patient exists - print records
+                if patient_records:  # if any record of patient exists - print records
                     return {"Status": f"There is NO record of patient {args['Patient ID']} recieving {args['R code']} within our records", "Patient records": patient_records} # Re
                 else: # if no record esists
                     return {"Status":f"There is NO record of patient {args['Patient ID']} recieving any R code within our records"} # Return explanatory message
@@ -347,24 +405,82 @@ class UpdateClass(Resource):
     @api.doc(parser=update_parser)
     
     def get(self):
+        """
+        Endpoint to handle GET requests to the update namespace.
+         
+        Parameters
+        ----------
+        patient_id : str 
+        Numerical identifier for a patient
+
+        rcode: str 
+        Panel app code for a rare disease gene panel
+
+        Notes
+        -----
+        - For detailed explanation - see documentation and flow chart ('Feature 2 decision tree')
+        - If ONLY an rcode is given, all patient records with that rcode are returned
+        - If ONLY a patient_id is given, all test records are returned for that patient
+        - if BOTH rcode & patient_id are given & the panel version has changed since patient X's last test
+          , a panel comparison will be returned 
+        Example
+        -----
+        User input rcode: R208
+        get(R208) -> {
+        "R code": "R208",
+        "Records": {
+            "2023-12-30": [
+            123,
+            2.1
+            ],
+        }
+        """
         args = update_parser.parse_args()
-        
+        ###
+        # INPUT VALIDATOR coming soon
+                #           (__)
+                #           (oo)
+                #    /-------\/
+                #   / |     ||
+                #  *  /\----/\
+                #     ~~    ~~
+
+
         db = get_db()
 
         update = Update(db.conn) # Instantiate an Update class object
-
+        query = Query(db.conn)   # Instantiate an Query  class object
+        panel_app_client = PanelAppClient()
         is_present = update.check_presence(args["Patient ID"], args["R code"]) # Check if record of patient ID, R code and Version already exists
 
         if is_present != False: # if a value is returned (test version), return an explanatory message
             return f'Patient {args["Patient ID"]} already has a record of {args["R code"]} version {is_present}'
         else:
-            # Update patient_data table with record
-            updated_record = update.add_record(args["Patient ID"], args["R code"])
-            return updated_record
+            # Check the database is up to date before updating the db
+            panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id
+            database_version = query.get_db_latest_version(args["R code"])
+            latest_online_version = float(panel_app_client.get_latest_online_version(panel_id))
+
+            if database_version != latest_online_version:
+                # Update version and panel contents (panel and panel_contents tables)
+            # - Update the verison in the panel table
+                update.update_panels_version(args["R code"], latest_online_version, panel_id)
+                
+            # - Archive the old panel verison
+                update.archive_panel_contents(panel_id, database_version)
+                             
+            # - Update the version in the panel_genes table
+                update.update_gene_contents(args["R code"],panel_id)
+    
+                # Then update patient record
+                updated_record = update.add_record(args["Patient ID"], args["R code"])
+                return {str(type(database_version)): str(type(latest_online_version))}
+            
+            else:
+                # Update patient_data table with record 
+                updated_record = update.add_record(args["Patient ID"], args["R code"])
+                return updated_record
 
 
-        # Need to check if the current database is up to date at the time of data entry
-        # Daily updates are run
-        # However, the database is updated and then the panel is updated after the daily database update
-        # The wrong information will be put into our db, faulting our db integrity
+        
        
