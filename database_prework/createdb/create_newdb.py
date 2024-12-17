@@ -114,6 +114,7 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel_genes_archive (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     Panel_ID INTEGER,
+               
     HGNC_ID TEXT,
     Version TEXT,
     Confidence INTEGER,
