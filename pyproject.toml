@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vimmo"
-version = "0.1.0"  # Static version field for bumpversion
+version = "0.1.1"  # Static version field for bumpversion
 description = "App that gives you stuff"
 readme = "README.md"
 authors = [
