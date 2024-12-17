@@ -1,13 +1,25 @@
 from flask import send_file
 from flask_restx import Resource
 from vimmo.API import api,get_db
+from vimmo.db.db_query import Query
+from vimmo.db.db_update import Update
+from vimmo.db.db_downgrade import Downgrade
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser,PatientBedParser, DownloadParser, UpdateParser, LocalDownloadParser,PatientLocalBedParser
-
-from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
-from vimmo.db.db import Query, Update
 from vimmo.utils.localbed import local_bed_formatter
+from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
+from vimmo.utils.parser import (
+    IDParser, 
+    PatientParser,
+    PatientBedParser,
+    DownloadParser, 
+    UpdateParser, 
+    LocalDownloadParser,
+    PatientLocalBedParser,
+    DowngradeParser
+)
+
+
 
 
 
@@ -700,6 +712,58 @@ class UpdateClass(Resource):
                 updated_record = update.add_record(args["Patient ID"], args["R code"])
                 return updated_record
 
+
+
+
+
+
+
+  
+downgrade_space = api.namespace('DowngradeRecords', description='Downgrade the Vimmo database with a panel and version from panel app')
+downgrade_parser = DowngradeParser.create_parser()
+@downgrade_space.route("")
+class DowngradeClass(Resource):
+    @api.doc(parser=downgrade_parser)
+    
+    def get(self):
+        args = downgrade_parser.parse_args()
+        rcode=args.get("R_Code")
+        version=args.get("version")
+
+        db = get_db()
+        downgrade = Downgrade(db.conn) # Instantiate an Update class object
+        query = Query(db.conn)   # Instantiate an Query  class object
+        panel_app_client = PanelAppClient()
+
+        database_version = query.get_db_latest_version(rcode)
+        if str(database_version) == version:
+            return {
+                    "message": "Requested version matches current database version",
+                    "current_version": database_version
+                }, 200
+        else:
+            panel_id=query.rcode_to_panelID(rcode)
+            if not panel_id:
+                return {"error": "Panel ID could not be identified for {rcode}"}
+
+                        # Get records from PanelApp
+            try:
+                panel_records = panel_app_client.dowgrade_records(panel_id=panel_id, version=version)
+                if not panel_records:
+                    return {"error": f"No records found for panel {panel_id} version {version}"}
+
+                                # Process and downgrade records
+                result = downgrade.process_downgrade(
+                    rcode=rcode,
+                    panel_id=panel_id,
+                    version=version,
+                    panel_records=panel_records
+                )
+
+            except:
+                pass
+
+        return result
 
         
        

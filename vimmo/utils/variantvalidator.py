@@ -2,7 +2,7 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
-from vimmo.db.db import Query
+from vimmo.db.db_query import Query
 from vimmo.API import get_db
 
 class VarValAPIError(Exception):

@@ -319,3 +319,26 @@ class UpdateParser:
         )
 
         return parser
+
+
+
+class DowngradeParser:
+    """Parser for downgrading the database for a given panel."""
+    @staticmethod
+    def create_parser():
+        parser = reqparse.RequestParser()
+        
+        parser.add_argument(
+            'R_Code',
+            type=str,
+            help='Type in R Code',
+            required = True
+        )
+        parser.add_argument(
+            'version',
+            type=str,
+            help='type in a previous version',
+            required = True
+        )
+
+        return parser
