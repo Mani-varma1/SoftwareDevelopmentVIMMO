@@ -72,6 +72,18 @@ The API will be available at:
 - Swagger UI Documentation: http://127.0.0.1:5000/
 
 
+## Version Update
+
+```bash
+# Patch version (0.1.0 → 0.1.1) 
+bumpversion patch
+
+# Minor version (0.1.0 → 0.2.0):
+bumpversion minor
+
+# Major version (0.1.0 → 1.0.0):
+bumpversion major
+```
 
 
 ## Testing
