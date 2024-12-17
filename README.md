@@ -73,7 +73,7 @@ The API will be available at:
 
 
 ## Version Update
-
+Use after git commit -m "message"
 ```bash
 # Patch version (0.1.0 → 0.1.1) 
 bumpversion patch
