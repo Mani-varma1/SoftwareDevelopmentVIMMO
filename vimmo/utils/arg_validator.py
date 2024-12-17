@@ -1,5 +1,40 @@
 import re
 
+
+def validate_hgnc_ids(hgnc_id_value):
+    """
+    Validates one or multiple HGNC_IDs provided as a comma-separated string.
+
+    Parameters
+    ----------
+    hgnc_ids_str : str
+        A string containing one or more HGNC IDs, e.g. "HGNC:12345" or "HGNC:12345,HGNC:67890".
+
+    Returns
+    -------
+    list of str
+        A list of valid HGNC IDs.
+
+    Raises
+    ------
+    ValueError
+        If any HGNC_ID does not match the required format.
+    """
+    # Pattern for HGNC_ID: Matches strings like 'HGNC:12345'
+    hgnc_pattern = r"^HGNC:\d+$"
+
+
+    # Validate each HGNC ID against the pattern
+    for hgnc_id in hgnc_id_value:
+        print(hgnc_id)
+        if not re.fullmatch(hgnc_pattern, hgnc_id):
+            raise ValueError(
+                f"Invalid format for 'HGNC_ID': '{hgnc_id}' must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
+            )
+        else:
+            continue
+
+
 def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     """
     Validates identifiers specifically for the panel space.
@@ -19,8 +54,6 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     """
     # Pattern for Rcode: Matches strings like 'r123' or 'R123'
     rcode_pattern = r"^[rR]\d+$"
-    # Pattern for HGNC_ID: Matches strings like 'HGNC:12345'
-    hgnc_pattern = r"^HGNC:\d+$"
 
     # Validate Panel_ID: Must be numeric
     if panel_id_value:
@@ -36,10 +69,9 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
 
     # Validate HGNC_ID: Must match 'HGNC:12345'
     if hgnc_id_value:
-        if not re.fullmatch(hgnc_pattern, hgnc_id_value):
-            raise ValueError(
-                "Invalid format for 'HGNC_ID': It must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
-            )
+        # We'll validate all HGNC IDs at once
+        # If this fails, it will raise ValueError
+        validate_hgnc_ids(hgnc_id_value)
 
 def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     """

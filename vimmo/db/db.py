@@ -6,7 +6,6 @@ import importlib.resources
 import os
 from datetime import date
 from vimmo.utils.panelapp import PanelAppClient
-import requests
 
 
 class Database:
@@ -40,50 +39,7 @@ class Database:
             db_path = self.get_db_path()
             self.conn = sqlite3.connect(db_path)
             self.conn.row_factory = sqlite3.Row
-    
-    def _initialize_tables(self):
-        """Create necessary tables if they don't exist."""
-        cursor = self.conn.cursor()
-        
-        # Create panel table (assuming it’s done elsewhere, but included here if needed)
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS panel (
-            Panel_ID INTEGER PRIMARY KEY,
-            rcodes TEXT,
-            Version TEXT
-        )
-        ''')
-        
-        # Create genes_info table (assuming it’s done elsewhere, but included here if needed)
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS genes_info (
-            HGNC_ID TEXT PRIMARY KEY,
-            Gene_ID TEXT,
-            HGNC_symbol TEXT,
-            Gene_Symbol TEXT,
-            GRCh38_Chr TEXT,
-            GRCh38_start INTEGER,
-            GRCh38_stop INTEGER,
-            GRCh37_Chr TEXT,
-            GRCh37_start INTEGER,
-            GRCh37_stop INTEGER
-        )
-        ''')
-        
-        # Create patient_data table
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS patient_data (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            patient_id TEXT,
-            panel_id INTEGER,
-            rcode TEXT,
-            version INT,
-            date DATE,
-            FOREIGN KEY (panel_id) REFERENCES panel (Panel_ID)
-        )
-        ''')
 
-        self.conn.commit()
 
         
     def get_patient_data(self, patient_id: str) -> List[Tuple]:
@@ -186,28 +142,62 @@ class Query:
                 "Message": "No matches found for this rcode."
             }
 
-    def get_panels_from_gene(self, hgnc_id: str, matches: bool=False) -> list[dict]:
-        cursor = self.conn.cursor()
-        operator = "LIKE" if matches else "="
-        query = f'''
-        SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
-        FROM panel
-        JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
-        JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
-        WHERE panel_genes.HGNC_ID {operator} ?
-        '''
+    def get_panels_from_gene_list(self, hgnc_ids: list[str], matches: bool=False) -> list[dict]:
+        """
+        Retrieves panels associated with multiple HGNC IDs.
 
-        result = cursor.execute(query, (hgnc_id,)).fetchall()
-        if result:
-            return {
-                "HGNC ID": hgnc_id,
-                "Panels": [dict(row) for row in result]
-            }
+        Parameters
+        ----------
+        hgnc_ids : list[str]
+            List of HGNC IDs (e.g., ["HGNC:12345", "HGNC:67890"]).
+        matches : bool
+            Whether to use wildcard matching or exact matching.
+            (For multiple IDs, we only perform exact matches here.)
+
+        Returns
+        -------
+        list[dict]
+            A list of dictionaries containing panel data for the given HGNC IDs.
+        """
+        cursor = self.conn.cursor()
+        
+        
+        
+        if matches:
+            # If matches is True, you might implement logic to do wildcard search for each ID,
+            # but this can become complex. For now, we assume matches=False or handle it as exact.
+            # For demonstration, we can handle matches by using LIKE for each ID combined with OR.
+            # Example:
+            # WHERE panel_genes.HGNC_ID LIKE ?
+            # OR panel_genes.HGNC_ID LIKE ?
+            # ...
+            # You would need to dynamically build the query.
+            
+            # But let's raise a NotImplementedError if needed:
+            raise NotImplementedError("Wildcard matching for multiple HGNC_IDs not implemented.")
         else:
-            return {
-                "HGNC ID": hgnc_id,
-                "Message": "Could not find any match for the HGNC ID."
-            }
+            # Exact matching using IN clause
+            placeholders = ','.join('?' * len(hgnc_ids))
+            query = f'''
+            SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
+            FROM panel
+            JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
+            JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
+            WHERE panel_genes.HGNC_ID IN ({placeholders})
+            '''
+
+            result = cursor.execute(query, tuple(hgnc_ids)).fetchall()
+
+            if result:
+                return {
+                    "HGNC_IDs": hgnc_ids,
+                    "Panels": [dict(row) for row in result]
+                }
+            else:
+                return {
+                    "HGNC_IDs": hgnc_ids,
+                    "Message": "Could not find any match for the provided HGNC IDs."
+                }
         
     def get_gene_list(self,panel_id,r_code,matches):
         if panel_id:

@@ -3,7 +3,7 @@ from flask_restx import Resource
 from vimmo.API import api,get_db
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser,PatientBedParser, DownloadParser, UpdateParser, LocalDownloadParser
+from vimmo.utils.parser import IDParser, PatientParser,PatientBedParser, DownloadParser, UpdateParser, LocalDownloadParser,PatientLocalBedParser
 
 from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
 from vimmo.db.db import Query, Update
@@ -33,6 +33,23 @@ class PanelSearch(Resource):
         if args.get("Rcode"):
             args["Rcode"] = args["Rcode"].upper()  # Convert lowercase 'r' to uppercase 'R'
 
+        # Check if HGNC_ID is provided
+        hgnc_id_value = args.get("HGNC_ID",None)
+        if hgnc_id_value:
+            if "," in hgnc_id_value:
+                try:
+                    # Split the HGNC_ID string into a list by commas
+                    hgnc_id_list = [h.strip() for h in hgnc_id_value.split(',') if h.strip()]
+                    # You can set HGNC_ID to None or remove it to avoid confusion
+                    args["HGNC_ID"] = hgnc_id_list
+
+                except Exception as e:
+                    # If something unexpected happens, return a descriptive error message
+                    return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
+            else:
+                args["HGNC_ID"] = [hgnc_id_value,]
+
+
         # Apply custom validation for the parsed arguments
         try:
             validate_panel_id_or_Rcode_or_hgnc(args,panel_space=True)  # Ensure only one valid parameter is provided
@@ -57,8 +74,8 @@ class PanelSearch(Resource):
             return panel_data
 
         elif args.get("HGNC_ID"):
-            # Fetch panels associated with a specific HGNC_ID with optional similar matches
-            panels_returned = query.get_panels_from_gene(hgnc_id=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
+            # Fetch panels associated with a specific HGNC_ID with optional similar matches or a using a list
+            panels_returned = query.get_panels_from_gene_list(hgnc_ids=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
             return panels_returned
             # If no valid parameter is provided, return an error response
 
@@ -267,7 +284,7 @@ class LocalPanelDownload(Resource):
 
 patient_space = api.namespace('patient', description='Return a patient panel provided by the user')
 patient_parser = PatientParser.create_parser()
-@patient_space.route("/patient")
+@patient_space.route("")
 class PatientResource(Resource):
     @api.doc(parser=patient_parser)
     def get(self):
@@ -462,7 +479,7 @@ class PatientBed(Resource):
                 return{f"{r_code}":"No record found for this panel"}
         
         database_version = query.get_db_latest_version(r_code)
-        if database_version != version:
+        if str(database_version) != version:
             return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
             
         else:
@@ -511,11 +528,85 @@ class PatientBed(Resource):
                     "Tip": "Please use local bed endpoint to download records"}, 400
 
 
+
+patient_local_bed = PatientLocalBedParser.create_parser()
+@patient_space.route("/local_bed")
+class PatientLocalBed(Resource):
+    @api.doc(parser=patient_local_bed)
+    def get(self):
+        args = patient_local_bed.parse_args()
+        patient_id=args.get("Patient ID",None)
+        r_code=args.get("R code",None)
+        version=args.get("version",None)
+        genome_build = args.get('genome_build', 'GRCh38')
+        # Fetch the database and connect
+        db = get_db()
+        query = Query(db.conn) 
+        if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
+            patient_records = query.return_all_records(patient_id)
+            if len(patient_records) >= 2:
+                return {"MESSAGE": "Multiple records found",
+                        "Patient ID": patient_id, 
+                        "patient records":patient_records, 
+                        "Tip": "Please select a panel and version"}
+            elif len(patient_records) == 0:
+                return{f"Please use the update space as no records were found for {patient_id}"}
+            else:
+                gene_query=query.get_gene_list(r_code)
+
+        elif r_code and not version:
+            patient_records = query.return_all_records(patient_id)
+            
+            # Filter records matching the given r_code
+            matching_records = {date: details for date, details in patient_records.items() if details[0] == r_code}
+
+            if matching_records:
+                # Extract unique versions for the r_code
+                unique_versions = {details[1] for details in matching_records.values()}
+                
+                if len(unique_versions) > 1:
+                    # If more than one version is found, return a message with details
+                    return f"{len(matching_records)} records were found for {r_code} with multiple versions: {', '.join(map(str, sorted(unique_versions)))}. Please specify the version."
+                else:
+                    version= next(iter(unique_versions))
+            else:
+                return{f"{r_code}":"No record found for this panel"}
+        
+        database_version = query.get_db_latest_version(r_code)
+        if str(database_version) != version:
+            return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
+            
+        else:
+            panel_data = query.get_panels_by_rcode(rcode=r_code)
+            if "Message" in panel_data:
+                return panel_data
+            else:
+                gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+
+    
+        local_bed_records=query.local_bed(gene_query,genome_build)
+        bed_file=local_bed_formatter(local_bed_records)
+
+        filename = f"{patient_id}_{r_code}_{genome_build}_Gencode.bed"
+
+        db.close()
+
+        if bed_file:
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
+
+
                 
     
 update_space = api.namespace('UpdatePatientRecords', description='Update the Vimmo database with a patients test history')
 update_parser = UpdateParser.create_parser()
-@update_space.route("/update")
+@update_space.route("")
 class UpdateClass(Resource):
     @api.doc(parser=update_parser)
     

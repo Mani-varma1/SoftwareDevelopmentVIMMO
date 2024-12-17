@@ -124,17 +124,87 @@ class VarValClient:
         
         return "|".join(final_output)
 
-    def custom_sort(self,row):
+    def custom_sort(self, row):
+        """
+        Generate a sorting key (a tuple) for a single DataFrame row representing a genomic location.
+
+        This function takes into account that chromosome labels, start, and end coordinates might not 
+        always be numeric. The goal is to return a tuple (chrom_number, start, end) that can be used to 
+        sort the rows in a meaningful genomic order. 
+        
+        - Numeric autosomes (1-22) are sorted naturally (1 < 2 < 3 ... < 22).
+        - The sex chromosomes X and Y are given numeric values after 22 (X=23, Y=24) so that they appear 
+        after the autosomes in sorted order.
+        - Any unknown, "Error", or "NoRecord" chromosomes are placed at the end by assigning them infinity.
+        - For start and end coordinates, if they cannot be converted to integers, they are assigned infinity.
+        - Rows with infinite values appear last in the final sorted list.
+        
+        Parameters
+        ----------
+        row : pd.Series
+            A row from a pandas DataFrame. Expected columns include:
+            - 'chrom': a string representing the chromosome (e.g., "chr1", "chrX", "NoRecord")
+            - 'start': start coordinate of the interval (integer or string)
+            - 'end': end coordinate of the interval (integer or string)
+            
+        Returns
+        -------
+        tuple of (int or float, int or float, int or float)
+            A tuple (chrom_number, start, end), where:
+            - chrom_number is an integer representing chromosome number or float('inf') if unknown/error.
+            - start and end are integers for numeric coordinates or float('inf') if invalid.
+        
+        Notes
+        -----
+        Sorting is crucial when generating a BED file to ensure that entries appear in a logically 
+        consistent genomic order. BED files typically start with chromosome 1 and ascend numerically 
+        through chromosomes, followed by chromosomes X and Y. Non-standard or error conditions are 
+        pushed to the end.
+        """
+        
+        # Check for special cases of unknown or error chromosomes.
         if row['chrom'] in ["NoRecord", "Error"]:
-            return (float('inf'), float('inf'), float('inf'))  # Place "NoRecord" and "Error" at the end
+            # Return a tuple of infinity values to push these records to the end of the sort order.
+            return (float('inf'), float('inf'), float('inf'))
+        
+        # Extract the chromosome substring (e.g., "chr1" -> "1", "chrX" -> "X")
+        # We assume all chromosome strings start with "chr" prefix.
         try:
-            # Extract chromosome number, handle 'chr' prefix and X/Y
-            chrom_number = int(row['chrom'][3:]) if row['chrom'][3:].isdigit() else row['chrom'][3:]
-            start = int(row['start']) if row['start'] != "Error" else float('inf')
-            end = int(row['end']) if row['end'] != "Error" else float('inf')
-            return (chrom_number, start, end)
+            chrom_substring = row['chrom'][3:]
         except:
-            return (float('inf'), float('inf'), float('inf'))  # Handle unexpected issues
+            # If something unexpected happens (e.g., 'chrom' not properly formatted), 
+            # place this record at the end.
+            return (float('inf'), float('inf'), float('inf'))
+        
+        # Convert the chromosome substring into a numeric value that can be sorted:
+        # - If it's a digit, convert directly to int.
+        # - If it's 'X', use 23.
+        # - If it's 'Y', use 24.
+        # - Otherwise, treat it as unknown and assign infinity.
+        if chrom_substring.isdigit():
+            chrom_number = int(chrom_substring)
+        elif chrom_substring == 'X':
+            chrom_number = 23
+        elif chrom_substring == 'Y':
+            chrom_number = 24
+        else:
+            # For other cases (e.g., 'M', or malformed), push to the end.
+            chrom_number = float('inf')
+        
+        # Attempt to convert start and end to integers.
+        # If they cannot be converted (e.g., "Error"), assign infinity.
+        try:
+            start = int(row['start'])
+        except:
+            start = float('inf')
+        
+        try:
+            end = int(row['end'])
+        except:
+            end = float('inf')
+        
+        # Return the sorting key tuple.
+        return (chrom_number, start, end)
 
 
     def parse_to_bed(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
