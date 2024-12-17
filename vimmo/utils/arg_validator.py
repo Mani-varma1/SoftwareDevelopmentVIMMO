@@ -13,8 +13,8 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
         ValueError: If any provided value does not match the expected format.
 
     Notes:
-        - `Rcode` must match the pattern 'r\d+' or 'R\d+' (e.g., 'R123').
-        - `HGNC_ID` must match the pattern 'HGNC:\d+' (e.g., 'HGNC:12345').
+        - `Rcode` must match the pattern 'r\\d+' or 'R\\d+' (e.g., 'R123').
+        - `HGNC_ID` must match the pattern 'HGNC:d+' (e.g., 'HGNC:12345').
         - `Panel_ID` must be numeric.
     """
     # Pattern for Rcode: Matches strings like 'r123' or 'R123'
@@ -43,20 +43,20 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
 
 def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     """
-    Validates identifiers specifically for the bed space.
+        Validates identifiers specifically for the bed space.
 
-    Args:
-        panel_id_value (str): Value of the Panel_ID (should be numeric).
-        rcode_value (str): Value of the Rcode (should start with 'R' followed by digits).
-        hgnc_id_value (str): Value of the HGNC_ID (should start with 'HGNC:' followed by digits).
+        Args:
+            panel_id_value (str): Value of the Panel_ID (should be numeric).
+            rcode_value (str): Value of the Rcode (should start with 'R' followed by digits).
+            hgnc_id_value (str): Value of the HGNC_ID (should start with 'HGNC:' followed by digits).
 
-    Raises:
-        ValueError: If any provided value does not match the expected format.
+        Raises:
+            ValueError: If any provided value does not match the expected format.
 
-    Notes:
-        - `Rcode` must match the pattern 'R\d+' (e.g., 'R123').
-        - `HGNC_ID` must match the pattern 'HGNC:\d+' (e.g., 'HGNC:12345').
-        - `Panel_ID` must be numeric.
+        Notes:
+            - `Rcode` must match the pattern 'R\\d+' (e.g., 'R123').
+            - `HGNC_ID` must match the pattern 'HGNC:\\d+' (e.g., 'HGNC:12345').
+            - `Panel_ID` must be numeric.
     """
     # Pattern for Rcode: Matches strings like 'R123'
     rcode_pattern = r"^R\d+$"
