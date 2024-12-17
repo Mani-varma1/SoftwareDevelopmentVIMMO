@@ -4,6 +4,9 @@ from sqlite3 import Connection
 from typing import Optional, List, Tuple, Dict, Any
 import importlib.resources
 import os
+from datetime import date
+from vimmo.utils.panelapp import PanelAppClient
+import requests
 
 
 class Database:
@@ -290,14 +293,17 @@ class Query:
             """
             
             cursor = self.conn.cursor()
-            operator = "="
-            query = f'''
+
+            
+            patient_history = cursor.execute(f'''
             SELECT Version
             FROM patient_data
-            WHERE DATE {operator} (SELECT MAX(DATE) FROM patient_data WHERE Rcode {operator} ? AND Patient_ID {operator} ?)         
-    '''
-            patient_history = cursor.execute(query, (Rcode, Patient_id)).fetchone()
-            return patient_history[0]
+            WHERE DATE = (SELECT MAX(DATE) FROM patient_data WHERE Rcode = ? AND Patient_ID = ?)         
+            ''', (Rcode, Patient_id)).fetchone()
+            if patient_history is None:
+                return None
+            else: 
+                return patient_history[0]
 
     def get_db_latest_version(self, Rcode: str) -> str:
         """
@@ -325,14 +331,18 @@ class Query:
         Here 635 is the R208 panel ID, as of (26/11/24)
         """
         cursor = self.conn.cursor()
-        operator = "="
-        query = f'''
+
+
+        database_version = cursor.execute( f'''
         SELECT panel.Version
         FROM panel
-        WHERE panel.rcodes {operator} ?
-        '''
-        database_version = cursor.execute(query, (Rcode,)).fetchone()
-        return str(database_version[0])
+        WHERE panel.rcodes = ?
+        ''', (Rcode,)).fetchone()
+        
+        if database_version == None:
+            return None
+        else:
+            return database_version[0]
     
     def rcode_to_panelID(self, Rcode: str) -> str:
         """
@@ -363,14 +373,18 @@ class Query:
         """
 
         cursor = self.conn.cursor()
-        operator = "="
-        query = f'''
+
+        
+        panel_id = cursor.execute(f'''
         SELECT Panel_ID
         FROM panel
-        WHERE panel.rcodes {operator} ?
-        '''
-        panel_id = cursor.execute(query, (Rcode,)).fetchone()
-        return panel_id[0] 
+        WHERE rcodes = ?
+        ''', (Rcode,)).fetchone()
+        
+        if panel_id is None:
+            return None
+        else:
+            return panel_id[0] 
     
     def return_all_records(self, Patient_id: str) -> str:
         """
@@ -399,35 +413,42 @@ class Query:
         
         """
         cursor = self.conn.cursor()
-        query = f'''
+        
+        patient_records_rows = cursor.execute(f'''
         SELECT Rcode, Version, Date
         FROM patient_data
-        WHERE patient_data.Patient_ID = ?
-'''
-     
-        patient_records_rows = cursor.execute(query, (Patient_id,)).fetchall() # The returned query is a sqlite3 row object list[tuples()]
+        WHERE Patient_ID = ?
+        ''', (Patient_id,)).fetchall()  # The returned query is a sqlite3 row object list[tuples()].
 
-        patient_records = {} # Instantiation of object for output dict
+        patient_records = {}  # Instantiation of object for output dict.
         for record in patient_records_rows:
-
             patient_records.update({record["Date"]: [record["Rcode"], record["Version"]]})
-
         return patient_records
-        
+    
+    def return_all_patients(self, Rcode: str) -> dict:       
+        cursor = self.conn.cursor()
+        rcode_records_rows = cursor.execute(f"""
+        SELECT Patient_ID, Version, Date
+        FROM patient_data
+        WHERE Rcode = ?
+        """, (Rcode,)).fetchall() 
+
+        rcode_records = {} # Instantiation of object for output dict
+        for record in rcode_records_rows:
+            rcode_records.update({record["Date"]: [record["Patient_ID"], record["Version"]]})
+        return rcode_records
+    
+
     def current_panel_contents(self, panelID: str) -> dict:
         cursor = self.conn.cursor()
-        operator = "="
-
         query = f"""
         SELECT HGNC_ID, Confidence
         FROM panel_genes 
-        WHERE panel_genes.Panel_ID {operator} ?
-        """
+        WHERE panel_genes.Panel_ID = ?
+"""
         current_panel_data = cursor.execute(query, (panelID,)).fetchall()
-
         current_data = {} # Instantiation of object for output dict{}
         for tuple in current_panel_data:  # Loop through the tuples (HGNC ID, Confidence)
-                                        
             current_data.update({tuple["HGNC_ID"]: tuple["Confidence"]})   # Insert gene, conf pair into output dict
         return current_data
     
@@ -511,36 +532,96 @@ class Query:
                 conf_changes.update({HGNC:(historic_version[HGNC],current_version[HGNC])})
             
 
-        return [genes_added, genes_removed, conf_changes]
+        return [genes_added, genes_removed, conf_changes] # Return the panel comparison information
 
 class Update:
     def __init__(self,connection):
         self.conn = connection
+        self.query = Query(self.conn)
+        self.papp = PanelAppClient(base_url="https://panelapp.genomicsengland.co.uk/api/v1/panels")
     
-    def add_record(self, patient_id: str, rcode: str, date, version: Optional[str]):
-        """Add a new patient record using either a panel_id or an rcode."""
+    def check_presence(self, patient_id: str, rcode: str):
+
+        current_version = str(self.query.get_db_latest_version(rcode)) # Retrieve the latest panel version from our db
+
         cursor = self.conn.cursor()
-        # 1. Check if the record already exists
-        # YES - return 'record already exists'
-        # NO - Update db
         operator = "="
         does_exists = cursor.execute(f"""
-        SELECT Rcode, Date, Patient_ID
-        FROM Patient_data
-        WHERE Rcode {operator} ? AND Date {operator} ? AND Patient_ID {operator} ?
-        """, (rcode, date, patient_id)).fetchone()
+        SELECT Version
+        FROM patient_data
+        WHERE Patient_ID {operator} ? AND Rcode {operator} ? AND Version {operator} ?
+        """, (patient_id, rcode, current_version)).fetchone() # query patient_data table for entries matching the query rcode, patient id and current version
+        
+        if does_exists != None: # if a value is returned, a patient record matches the query
+            return current_version # return the current version 
+        else:
+            return False 
 
-        if does_exists != None: # Check if the record is already in the table 
-            return f"Patient record (Patient id: {patient_id}, Rcode {rcode}, Date {date})"
-        elif version: # If version has been input
-            ...
-            # 1. fetch panel id from db (rcode_to_id())
-            # 2. add record to the panel (sql INSERT INTO query)
-        else: # If no version has been provided
-            ...
-            # fetch panel ID, current panel version (must check up-to-date)
-            # add record to the patient_history table
-            
+    
+    def add_record(self, patient_id: str, rcode: str) -> str:
+        """Add a new patient record using an rcode or panel_id."""
+        
+        version = str(self.query.get_db_latest_version(rcode)) # Retrieve the latest panel version from our db
+        panel_id = str(self.query.rcode_to_panelID(rcode))     # Retrieve the panel id for input Rcode
+        date_today = str(date.today())                         # Create object with date of query
+        cursor = self.conn.cursor()
+        
+        cursor.execute(f"""
+        INSERT INTO patient_data 
+        VALUES (?, ?, ?, ?, ?) 
+        """, (patient_id, panel_id, rcode, version, date_today)) # Insert data into table
+        
+        self.conn.commit()
+        return f'Check the db!'
+    
+    def update_panels_version(self, rcode, new_version, panel_id):
+        """ Update the panel table with new version """
+ 
+        cursor = self.conn.cursor()
+        operator = "="
+        cursor.execute(f"""
+        UPDATE panel
+        SET Panel_ID {operator} ?, rcodes {operator} ?, Version {operator} ?
+        WHERE Panel_ID {operator} ? AND rcodes {operator} ?
+        """, (panel_id,rcode,new_version,panel_id,rcode))
 
-            
-            self.conn.commit()
+        self.conn.commit()
+    
+    def archive_panel_contents(self, panel_id: str, archive_version: str):
+        """ Archive the contents of an outdated panel version """
+        cursor = self.conn.cursor()
+        cursor.execute(
+                    '''
+                    INSERT INTO panel_genes_archive (Panel_ID, HGNC_ID, Version, Confidence)
+                    SELECT Panel_ID, HGNC_ID, ?, Confidence
+                    FROM panel_genes
+                    WHERE Panel_ID = ?
+                    ''', (archive_version,panel_id,)
+
+                )
+        self.conn.commit()
+
+    def update_gene_contents(self, Rcode, panel_id):
+        """ Updates the panel_genes table with new panel version contents"""
+        genes = self.papp.get_genes_HGNC(Rcode)
+
+        cursor = self.conn.cursor()
+
+        cursor.execute(f"""
+        DELETE FROM panel_genes
+        WHERE Panel_ID = ?
+        """,(panel_id,))
+
+        for gene in genes:
+        
+            cursor.execute(f"""
+            INSERT INTO panel_genes (Panel_ID, HGNC_ID, Confidence)
+            VALUES (?, ?, ?)
+            """,(panel_id, gene, 3))
+        
+        self.conn.commit()
+        
+        return {panel_id: genes} 
+
+
+    
