@@ -581,8 +581,14 @@ class PatientLocalBed(Resource):
         
         database_version = query.get_db_latest_version(r_code)
         if str(database_version) != version:
-            return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
             
+            panel_ids= query.rcode_to_panelID(Rcode=r_code)
+            archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
+            gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
+
+            if not gene_query:
+                return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
+   
         else:
             panel_data = query.get_panels_by_rcode(rcode=r_code)
             if "Message" in panel_data:
