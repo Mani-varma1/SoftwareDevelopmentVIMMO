@@ -21,15 +21,24 @@ class PanelAppClient:
         else:
             return response.json()
 
-    def get_genes(self, rcode, confidence_level=3):
+    def get_genes_HUGO(self, rcode, confidence_level=3):
         '''
-        Query PanelApp API based on RCode --> return list of genes with specified confidence level.
+        Query PanelApp API based on RCode --> return list of genes (HUGO gene symbols) with a specified confidence level.
         '''
         url = f'{self.base_url}/{rcode}/genes/?confidence_level={confidence_level}'
         json_data = self._check_response(url)
         gene_symbols = [entry["gene_data"]["gene_symbol"] for entry in json_data.get("results", [])]
         return gene_symbols
     
+    def get_genes_HGNC(self, rcode, confidence_level=3):
+        """
+        Query PanelApp API base on Rcode --> return list of genes (HGNC id) with a specified confidence level.
+        """
+        url = f'{self.base_url}/{rcode}/genes/?confidence_level={confidence_level}'
+        json_data = self._check_response(url)
+        gene_symbols = [entry["gene_data"]["hgnc_id"] for entry in json_data.get("results", [])]
+        return gene_symbols
+
     def get_latest_online_version(self, panel_id: str) -> str: 
         """
         Returns the most recent signedoff panel version from the panelapp api
@@ -59,8 +68,21 @@ class PanelAppClient:
         
         Here 2.5 is the version of R208, as of (26/11/24)
         """
+        
         url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest' # Set the URL 
         json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
-        version = json_data["results"][0]["version"] # Extract the version number from the json response
-
+        
+        try:
+        # Safely extract the version
+            version_value = json_data["results"][0]["version"] # Extract the version number from the json response
+            if version_value is None:
+                raise TypeError("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
+            version = float(version_value)  # Convert to float
+        except (KeyError, ValueError):
+        
+            print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
+            version = None
+        
         return version
+
+    
