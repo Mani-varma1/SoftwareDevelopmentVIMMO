@@ -244,6 +244,17 @@ class Query:
             '''
             local_bed_records=cursor.execute(query, list(gene_query))
             return local_bed_records
+        elif genome_build=="GRCh37":
+            cursor = self.conn.cursor()
+            # Prepare placeholders for SQL IN clause
+            placeholders = ','.join(['?'] * len(gene_query))
+            query = f'''
+            SELECT Chromosome, Start, End, Name, HGNC_ID, Transcript, Strand, Type
+            FROM bed37
+            WHERE HGNC_ID IN ({placeholders})
+            '''
+            local_bed_records = cursor.execute(query, list(gene_query))
+            return local_bed_records
     
     def check_patient_history(self, Patient_id: str, Rcode) -> str:
             """
