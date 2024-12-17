@@ -97,11 +97,9 @@ class VarValClient:
         with open('vimmo/utils/problem_genes.txt', 'r') as file:
             prob_gene_list = [line.strip() for line in file if line.strip()]
         
-        # Convert prob_gene_list to a set for faster lookup
-        prob_gene_set = set(prob_gene_list)
         
         # Step 3: Find the HGNC_IDs that need to be replaced
-        ids_to_replace = gene_query.intersection(prob_gene_set)
+        ids_to_replace = [gene for gene in gene_query if gene in prob_gene_list]
         
         # Step 4: Retrieve HGNC_symbols for the IDs to replace
         if ids_to_replace:
@@ -121,7 +119,9 @@ class VarValClient:
                 final_output.add(id_to_symbol[hgnc_id])
             else:
                 final_output.add(hgnc_id)
-        
+
+        print(final_output)
+
         return "|".join(final_output)
 
     def custom_sort(self, row):
@@ -249,6 +249,7 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
+            print(gene)
             transcripts = gene.get('transcripts', [])
             # If no transcripts, create a NoRecord line
             if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
@@ -256,7 +257,7 @@ class VarValClient:
                     'chrom': "NoRecord",
                     'start': "NoRecord",
                     'end': "NoRecord",
-                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'name': f"{gene.get('requested_symbol')}_NoRecord",
                     'strand': "NoRecord"
                 })
                 continue
