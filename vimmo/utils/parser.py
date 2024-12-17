@@ -57,7 +57,7 @@ class PatientParser:
             'Patient ID',
             type=str,
             help='Type in Patient ID',
-            required=True
+            required=False
         )
         
         # Argument for R code
