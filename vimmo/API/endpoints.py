@@ -13,7 +13,7 @@ from vimmo.utils.localbed import local_bed_formatter
 
 
 
-panel_app_client = PanelAppClient()
+
 
 # Create a namespace for panel-related endpoints
 panels_space = api.namespace('panels', description='Return panel data provided by the user')
@@ -288,6 +288,7 @@ class PatientClass(Resource):
             panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id
               
             try:
+                panel_app_client = PanelAppClient()
                 latest_online_version = panel_app_client.get_latest_online_version(panel_id)
             except:
                 # If any error occurs, set latest_online_version to None and create the disclaimer
@@ -386,11 +387,7 @@ class PatientBed(Resource):
         
         database_version = query.get_db_latest_version(r_code)
         if database_version != version:
-            def archive_records():
-                pass
-            archive=archive_records()
-            if not archive:
-                return "Sorry provided version does not have any records. Provide a valid version"
+            return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
             
         else:
             panel_data = query.get_panels_by_rcode(rcode=r_code)
@@ -398,7 +395,6 @@ class PatientBed(Resource):
                 return panel_data
             else:
                 gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-                print(gene_query)
 
         
 
