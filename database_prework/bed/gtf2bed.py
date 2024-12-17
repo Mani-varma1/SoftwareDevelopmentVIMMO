@@ -4,9 +4,9 @@ import re
 
 # Input files
 hgnc_file = "genes4bed.txt"
-annotation_file = "gencode.v38_47.basic.annotation.gtf.gz"  # Gzipped GTF file
-output_bed_file = "genes_exons.bed"
-unmatched_hgnc_file = "unmatched_hgnc_ids.txt"
+annotation_file = "gencode.v37lift37.basic.annotation.gtf.gz"  # Gzipped GTF file
+output_bed_file = "genes_exons37.bed"
+unmatched_hgnc_file = "unmatched_37_hgnc_ids.txt"
 
 # Load HGNC IDs into a set
 with open(hgnc_file, "r") as f:

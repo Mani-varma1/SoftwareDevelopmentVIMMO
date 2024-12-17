@@ -4,7 +4,8 @@ import pandas as pd
 # Load the CSV files into pandas DataFrames
 csv1 = 'latest_panel_versions.csv'  # Update with actual file path for CSV file 1
 csv2 = 'genes.csv'  # Update with actual file path for CSV file 2
-bed_file = 'genes_exons38.bed'
+bed_file_37 = '../bed/genes_exons37.bed'
+bed_file_38 = '../bed/genes_exons38.bed'
 
 csv3 = 'patient_info.csv' # TEST patient info for development
 
@@ -13,7 +14,10 @@ csv4 = 'archived_data.csv'
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
 # Load the BED file into a pandas DataFrame
-df_bed38 = pd.read_csv(bed_file, sep='\t', header=None, names=[
+df_bed38 = pd.read_csv(bed_file_38, sep='\t', header=None, names=[
+    'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
+])
+df_bed37 = pd.read_csv(bed_file_37, sep='\t', header=None, names=[
     'Chromosome', 'Start', 'End', 'Name', 'HGNC_ID', 'Transcript', 'Strand', 'Type'
 ])
 
@@ -89,7 +93,23 @@ CREATE TABLE IF NOT EXISTS bed38 (
 )
 ''')
 
-# Create Table 6: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
+# Create Table 6: bed37
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS bed37 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Chromosome TEXT,
+    Start INTEGER,
+    End INTEGER,
+    Name TEXT,
+    HGNC_ID TEXT,
+    Transcript TEXT,
+    Strand TEXT,
+    Type TEXT,
+    FOREIGN KEY (HGNC_ID) REFERENCES genes_info (HGNC_ID)
+)
+''')
+
+# Create Table 7: archive panel_genes with Panel_ID, HGNC_ID, Version and Confidence
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel_genes_archive (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -116,11 +136,13 @@ df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy(
 df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 
-# Ensure HGNC_IDs in bed38 are consistent
+# Ensure HGNC_IDs in bed38 and bed37 are consistent
 df_bed38['HGNC_ID'] = df_bed38['HGNC_ID'].str.strip()
+df_bed37['HGNC_ID'] = df_bed37['HGNC_ID'].str.strip()
 
-# Populate Table 5: bed38
+# Populate Table 5: bed38 and bed37
 df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
+df_bed37.to_sql('bed37', conn, if_exists='replace', index=False)
 
 # Populate Table 4: patient_data with TEST patient information
 df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version','Date']
