@@ -2,7 +2,7 @@ import requests
 from urllib.parse import quote
 import pandas as pd
 from io import BytesIO
-from vimmo.db.db import Query
+from vimmo.db.db_query import Query
 from vimmo.API import get_db
 
 class VarValAPIError(Exception):
@@ -37,11 +37,13 @@ class VarValClient:
         try:
             response = requests.get(url)
         except :
+            print(f"Failed to connect. Please check your internet connection and try again", "Errro Mode= Error")
             raise VarValAPIError(f"Failed to connect. Please check your internet connection and try again")
         else:
             if response.ok:
                 return response.json()
             else:
+                print(f"Failed to get data from PanelApp API with Status code:{response.status_code}", "Error Mode = Warning")
                 raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
@@ -76,6 +78,7 @@ class VarValClient:
         )
 
         # Make the request and return the response
+        print(url, "Error Mode INFO")
         return self._check_response(url)
     
 
@@ -97,11 +100,9 @@ class VarValClient:
         with open('vimmo/utils/problem_genes.txt', 'r') as file:
             prob_gene_list = [line.strip() for line in file if line.strip()]
         
-        # Convert prob_gene_list to a set for faster lookup
-        prob_gene_set = set(prob_gene_list)
         
         # Step 3: Find the HGNC_IDs that need to be replaced
-        ids_to_replace = gene_query.intersection(prob_gene_set)
+        ids_to_replace = [gene for gene in gene_query if gene in prob_gene_list]
         
         # Step 4: Retrieve HGNC_symbols for the IDs to replace
         if ids_to_replace:
@@ -111,6 +112,7 @@ class VarValClient:
             query = Query(db.conn)
             result = query.get_gene_symbol(ids_to_replace)
             id_to_symbol = {row[0]: row[1] for row in result}
+            
         else:
             id_to_symbol = {}
         
@@ -121,20 +123,93 @@ class VarValClient:
                 final_output.add(id_to_symbol[hgnc_id])
             else:
                 final_output.add(hgnc_id)
-        
+
+        print(final_output, "Gene query output" "Error Mode INFO")
+
         return "|".join(final_output)
 
-    def custom_sort(self,row):
+    def custom_sort(self, row):
+        """
+        Generate a sorting key (a tuple) for a single DataFrame row representing a genomic location.
+
+        This function takes into account that chromosome labels, start, and end coordinates might not 
+        always be numeric. The goal is to return a tuple (chrom_number, start, end) that can be used to 
+        sort the rows in a meaningful genomic order. 
+        
+        - Numeric autosomes (1-22) are sorted naturally (1 < 2 < 3 ... < 22).
+        - The sex chromosomes X and Y are given numeric values after 22 (X=23, Y=24) so that they appear 
+        after the autosomes in sorted order.
+        - Any unknown, "Error", or "NoRecord" chromosomes are placed at the end by assigning them infinity.
+        - For start and end coordinates, if they cannot be converted to integers, they are assigned infinity.
+        - Rows with infinite values appear last in the final sorted list.
+        
+        Parameters
+        ----------
+        row : pd.Series
+            A row from a pandas DataFrame. Expected columns include:
+            - 'chrom': a string representing the chromosome (e.g., "chr1", "chrX", "NoRecord")
+            - 'start': start coordinate of the interval (integer or string)
+            - 'end': end coordinate of the interval (integer or string)
+            
+        Returns
+        -------
+        tuple of (int or float, int or float, int or float)
+            A tuple (chrom_number, start, end), where:
+            - chrom_number is an integer representing chromosome number or float('inf') if unknown/error.
+            - start and end are integers for numeric coordinates or float('inf') if invalid.
+        
+        Notes
+        -----
+        Sorting is crucial when generating a BED file to ensure that entries appear in a logically 
+        consistent genomic order. BED files typically start with chromosome 1 and ascend numerically 
+        through chromosomes, followed by chromosomes X and Y. Non-standard or error conditions are 
+        pushed to the end.
+        """
+        
+        # Check for special cases of unknown or error chromosomes.
         if row['chrom'] in ["NoRecord", "Error"]:
-            return (float('inf'), float('inf'), float('inf'))  # Place "NoRecord" and "Error" at the end
+            # Return a tuple of infinity values to push these records to the end of the sort order.
+            return (float('inf'), float('inf'), float('inf'))
+        
+        # Extract the chromosome substring (e.g., "chr1" -> "1", "chrX" -> "X")
+        # We assume all chromosome strings start with "chr" prefix.
         try:
-            # Extract chromosome number, handle 'chr' prefix and X/Y
-            chrom_number = int(row['chrom'][3:]) if row['chrom'][3:].isdigit() else row['chrom'][3:]
-            start = int(row['start']) if row['start'] != "Error" else float('inf')
-            end = int(row['end']) if row['end'] != "Error" else float('inf')
-            return (chrom_number, start, end)
+            chrom_substring = row['chrom'][3:]
         except:
-            return (float('inf'), float('inf'), float('inf'))  # Handle unexpected issues
+            # If something unexpected happens (e.g., 'chrom' not properly formatted), 
+            # place this record at the end.
+            return (float('inf'), float('inf'), float('inf'))
+        
+        # Convert the chromosome substring into a numeric value that can be sorted:
+        # - If it's a digit, convert directly to int.
+        # - If it's 'X', use 23.
+        # - If it's 'Y', use 24.
+        # - Otherwise, treat it as unknown and assign infinity.
+        if chrom_substring.isdigit():
+            chrom_number = int(chrom_substring)
+        elif chrom_substring == 'X':
+            chrom_number = 23
+        elif chrom_substring == 'Y':
+            chrom_number = 24
+        else:
+            # For other cases (e.g., 'M', or malformed), push to the end.
+            chrom_number = float('inf')
+        
+        # Attempt to convert start and end to integers.
+        # If they cannot be converted (e.g., "Error"), assign infinity.
+        try:
+            start = int(row['start'])
+        except:
+            start = float('inf')
+        
+        try:
+            end = int(row['end'])
+        except:
+            end = float('inf')
+        
+        # Return the sorting key tuple.
+        print(f"sorted key: {chrom_number}, {start}, {end},", "Error Mode=INFO")
+        return (chrom_number, start, end)
 
 
     def parse_to_bed(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
@@ -171,7 +246,9 @@ class VarValClient:
                 transcript_set=transcript_set,
                 limit_transcripts=limit_transcripts
             )
+            print("var val params:",gene_data, "Error mode = INFO")
         except VarValAPIError as e:
+            print(VarValAPIError(f"Error fetching data: {str(e)}"), "error mode - DEBUG")
             raise VarValAPIError(f"Error fetching data: {str(e)}")
         
         
@@ -179,6 +256,7 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
+            print(gene, "error mode = info")
             transcripts = gene.get('transcripts', [])
             # If no transcripts, create a NoRecord line
             if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
@@ -186,7 +264,7 @@ class VarValClient:
                     'chrom': "NoRecord",
                     'start': "NoRecord",
                     'end': "NoRecord",
-                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'name': f"{gene.get('requested_symbol')}_NoRecord",
                     'strand': "NoRecord"
                 })
                 continue
@@ -206,7 +284,8 @@ class VarValClient:
                                     'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
                                     'strand': orientation
                                 })
-            except:
+            except Exception:
+                print(Exception,"Ocurred when parsing data from var val","Error Mode= DEBUG")
                 bed_rows.append({
                     'chrom': chromosome,
                     'start': "Error",

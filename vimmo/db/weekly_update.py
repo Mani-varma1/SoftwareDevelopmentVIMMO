@@ -5,7 +5,6 @@ import random
 
 from db import Database
 
-
 def fetch_latest_versions(api_url):
     """
     Fetches the latest panel versions from a paginated API.
@@ -87,7 +86,7 @@ def update_or_insert_panel_versions(cursor, latest_versions):
 
         if existing_row:
             existing_id, existing_version = existing_row
-            # Update version if it differs
+            # Update version and archive old version genes if it differs
             if existing_version != latest_version:
                 latest_genes = fetch_latest_version_genes(panel_id, latest_version)
                 cursor.execute(
