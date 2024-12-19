@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=42", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "vimmo"
-version = "0.1.0"
+dynamic = ["version"]  # Use dynamic versioning
 description = "App that gives you stuff"
 readme = "README.md"
 authors = [
@@ -37,3 +37,6 @@ include = ["vimmo*"]
 [project.scripts]
 vimmo = "vimmo.main:main"
 dbscheduler = "vimmo.db.scheduler:run_scheduler"
+[tool.setuptools_scm]
+write_to = "vimmo/_version.py"
+

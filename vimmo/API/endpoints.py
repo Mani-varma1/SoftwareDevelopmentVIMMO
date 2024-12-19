@@ -1,18 +1,30 @@
 from flask import send_file
 from flask_restx import Resource
 from vimmo.API import api,get_db
+from vimmo.db.db_query import Query
+from vimmo.db.db_update import Update
+from vimmo.db.db_downgrade import Downgrade
 from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, UpdateParser, LocalDownloadParser
-
-from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc, patient_update_validator
-from vimmo.db.db import Query, Update
 from vimmo.utils.localbed import local_bed_formatter
+from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc, patient_update_validator
+from vimmo.utils.parser import (
+    IDParser, 
+    PatientParser,
+    PatientBedParser,
+    DownloadParser, 
+    UpdateParser, 
+    LocalDownloadParser,
+    PatientLocalBedParser,
+    DowngradeParser
+)
 
 
 
 
-panel_app_client = PanelAppClient()
+
+
+
 
 # Create a namespace for panel-related endpoints
 panels_space = api.namespace('panels', description='Return panel data provided by the user')
@@ -21,7 +33,7 @@ panels_space = api.namespace('panels', description='Return panel data provided b
 id_parser = IDParser.create_parser()
 
 # Define the Panel Search endpoint
-@panels_space.route('/')
+@panels_space.route('')
 class PanelSearch(Resource):
     # Document the API using the argument parser
     @api.doc(parser=id_parser)
@@ -32,6 +44,23 @@ class PanelSearch(Resource):
         # Normalize the Rcode to uppercase if it exists
         if args.get("Rcode"):
             args["Rcode"] = args["Rcode"].upper()  # Convert lowercase 'r' to uppercase 'R'
+
+        # Check if HGNC_ID is provided
+        hgnc_id_value = args.get("HGNC_ID",None)
+        if hgnc_id_value:
+            if "," in hgnc_id_value:
+                try:
+                    # Split the HGNC_ID string into a list by commas
+                    hgnc_id_list = [h.strip() for h in hgnc_id_value.split(',') if h.strip()]
+                    # You can set HGNC_ID to None or remove it to avoid confusion
+                    args["HGNC_ID"] = hgnc_id_list
+
+                except Exception as e:
+                    # If something unexpected happens, return a descriptive error message
+                    return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
+            else:
+                args["HGNC_ID"] = [hgnc_id_value,]
+
 
         # Apply custom validation for the parsed arguments
         try:
@@ -57,8 +86,8 @@ class PanelSearch(Resource):
             return panel_data
 
         elif args.get("HGNC_ID"):
-            # Fetch panels associated with a specific HGNC_ID with optional similar matches
-            panels_returned = query.get_panels_from_gene(hgnc_id=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
+            # Fetch panels associated with a specific HGNC_ID with optional similar matches or a using a list
+            panels_returned = query.get_panels_from_gene_list(hgnc_ids=args.get("HGNC_ID"), matches=args.get("Similar_Matches"))
             return panels_returned
             # If no valid parameter is provided, return an error response
 
@@ -159,12 +188,12 @@ class PanelDownload(Resource):
             filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
 
         # Return the BED file as a downloadable response
-        return send_file(
-            bed_file,
-            mimetype='text/plain',
-            as_attachment=True,
-            download_name=filename
-        )
+        # return send_file(
+        #     bed_file,
+        #     mimetype='text/plain',
+        #     as_attachment=True,
+        #     download_name=filename
+        # )
 
         
         db.close()
@@ -267,7 +296,7 @@ class LocalPanelDownload(Resource):
 
 patient_space = api.namespace('patient', description='Return a patient panel provided by the user')
 patient_parser = PatientParser.create_parser()
-@patient_space.route("/patient")
+@patient_space.route("")
 class PatientResource(Resource):
     @api.doc(parser=patient_parser)
     def get(self):
@@ -336,13 +365,11 @@ class PatientResource(Resource):
         }
          """
         args = patient_parser.parse_args()  # Collect Arguements
-        # Validate the input Rcode & Patient ID
         try:
             patient_update_validator(args)
         except ValueError as e:
             # Return an error response if validation fails
             return {"error": str(e)}, 400
-
         
         db = get_db()  # Fetch the database and connect
         query = Query(db.conn)
@@ -366,22 +393,30 @@ class PatientResource(Resource):
             # Version comparison workflow
             # Check database version is up to date.
             panel_id = query.rcode_to_panelID(args["R code"])  # Convert R code to panel ID.
-            latest_online_version = panel_app_client.get_latest_online_version(panel_id)  # Retrive latest online panel version
-            database_version = query.get_db_latest_version(args["R code"]) 
-            
-            if latest_online_version is None: 
-                # If online version can't be accessed, return with a disclaimer.
-                disclaimer = "The latest version of PanelApp could not be contacted. Results are valid from the last update date."
-            
-            elif database_version != latest_online_version: # If our local version NOT same as panel app latest, then update database and continue
-            #  Update the database to match the latest online version.
-                update.update_panels_version(args["R code"], latest_online_version, panel_id)
-                update.archive_panel_contents(panel_id, database_version)
-                update.update_gene_contents(args["R code"],panel_id)
-                disclaimer = 'Panel comparison up to date'
-            else: 
+            database_version = query.get_db_latest_version(args["R code"])
+            try:
+                panel_app_client = PanelAppClient()
+                latest_online_version = panel_app_client.get_latest_online_version(panel_id)
+            except:
+                # If any error occurs, set latest_online_version to None and create the disclaimer
+                latest_online_version = None
+                disclaimer = (
+                    "The latest version of PanelApp was unable to be contacted. "
+                    "Results are valid as of the last update date."
+                )
+            else:
+                if database_version != latest_online_version:
+                    try: # If our local version NOT same as panel app latest, then update database and continue
+                    #  Update the database to match the latest online version.
+                        update.update_panels_version(args["R code"], latest_online_version, panel_id)
+                        update.archive_panel_contents(panel_id, database_version)
+                        update.update_gene_contents(args["R code"],panel_id)
+                        disclaimer = 'Panel comparison up to date'
+                    except:
+                        disclaimer='Database update failed'
+                else: 
                 # Database is up-to-date; no updates/disclaimers needed.
-                disclaimer = 'Panel comparison up to date'
+                    disclaimer = 'Panel comparison up to date'
             
             
             # At this point the database should be current and  necessary disclaimers inplace
@@ -398,7 +433,8 @@ class PatientResource(Resource):
             elif patient_history == database_version: # The database version is the same as the historic version return the gene contents 
 
                 current_panel_data = query.current_panel_contents(panel_id)
-                return {"disclaimer": disclaimer,"status": f"No version change since last {args['Patient ID']} had {args['R code']}", "Version":f"{database_version}","Panel content":current_panel_data} # Explain no change found 
+                return {"disclaimer": disclaimer,"status": f"No version change since last {args["Patient ID"]} had {args['R code']}", 
+                        "Version":f"{database_version}","Panel content":{current_panel_data}}
                  
             else: #  If patient_ID in archive table with outdated version, find the difference between most recent archived panel version & the current panel version contents
                 # Comparison function
@@ -406,14 +442,207 @@ class PatientResource(Resource):
                 current_panel_data = query.current_panel_contents(panel_id)                                 # Retreieve current panel contents
                 version_comparison = query.compare_panel_versions(historic_panel_data,current_panel_data)   # Compare 
 
-                return {"disclaimer": disclaimer,"status": f"Version changed since last {args['Patient ID']} had {args['R code']}", "Version":f"{database_version}", "Genes added": version_comparison[0], "Genes removed": version_comparison[1], "Confidence changes (old ver -> new ver)": version_comparison[2]}
-        
+                return {"disclaimer": disclaimer,"status": f"Version changed since last {args["Patient ID"]} had {args['R code']}", 
+                        "Version":f"{database_version}", 
+                        "Genes added": version_comparison[0], 
+                        "Genes removed": version_comparison[1], 
+                        "Confidence changes (old ver -> new ver)": version_comparison[2]}
             
+
+
+
+patient_bed = PatientBedParser.create_parser()
+@patient_space.route("/bed")
+class PatientBed(Resource):
+    @api.doc(parser=patient_bed)
+    def get(self):
+        args = patient_bed.parse_args()
+        patient_id=args.get("Patient ID",None)
+        r_code=args.get("R code",None)
+        version=args.get("version",None)
+        genome_build = args.get('genome_build', 'GRCh38')
+        transcript_set = args.get('transcript_set', 'all')
+        limit_transcripts = args.get('limit_transcripts', 'mane_select')
+        # Fetch the database and connect
+        db = get_db()
+        query = Query(db.conn) 
+        if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
+            patient_records = query.return_all_records(patient_id)
+            if len(patient_records) >= 2:
+                return {"MESSAGE": "Multiple records found",
+                        "Patient ID": patient_id, 
+                        "patient records":patient_records, 
+                        "Tip": "Please select a panel and version"}
+            elif len(patient_records) == 0:
+                return{f"Please use the update space as no records were found for {patient_id}"}
+            else:
+                gene_query=query.get_gene_list(r_code)
+
+        elif r_code and not version:
+            patient_records = query.return_all_records(patient_id)
+            
+            # Filter records matching the given r_code
+            matching_records = {date: details for date, details in patient_records.items() if details[0] == r_code}
+
+            if matching_records:
+                # Extract unique versions for the r_code
+                unique_versions = {details[1] for details in matching_records.values()}
+                
+                if len(unique_versions) > 1:
+                    # If more than one version is found, return a message with details
+                    return f"{len(matching_records)} records were found for {r_code} with multiple versions: {', '.join(map(str, sorted(unique_versions)))}. Please specify the version."
+                else:
+                    version= next(iter(unique_versions))
+            else:
+                return{f"{r_code}":"No record found for this panel"}
+        
+        database_version = query.get_db_latest_version(r_code)
+        if str(database_version) != version:
+            
+            panel_ids= query.rcode_to_panelID(Rcode=r_code)
+            archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
+            gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
+
+            if not gene_query:
+                return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
+   
+    
+        else:
+            panel_ids = query.get_panels_by_rcode(rcode=r_code)
+            if "Message" in panel_ids:
+                return panel_ids
+            else:
+                gene_query={record["HGNC_ID"] for record in panel_ids["Associated Gene Records"]}
+
+        
+
+        # Initialize the VariantValidator client
+        var_val_client = VarValClient()
+
+        try:
+            # Generate the BED file content
+            bed_file = var_val_client.parse_to_bed(
+                gene_query=gene_query,
+                genome_build=genome_build,
+                transcript_set=transcript_set,
+                limit_transcripts=limit_transcripts
+            )
+        except VarValAPIError as e:
+            # Return an error response if processing fails
+            return {"error": str(e)}, 500
+
+
+        # Generate a meaningful filename for the download
+        filename = f"{patient_id}_{r_code}_{genome_build}_{limit_transcripts}.bed"
+
+
+        
+        db.close()
+        
+        # Return the BED file as a downloadable response
+        if bed_file:
+            # Return the BED file using send_file
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query.",
+                    "Tip": "Please use local bed endpoint to download records"}, 400
+
+
+
+patient_local_bed = PatientLocalBedParser.create_parser()
+@patient_space.route("/local_bed")
+class PatientLocalBed(Resource):
+    @api.doc(parser=patient_local_bed)
+    def get(self):
+        args = patient_local_bed.parse_args()
+        patient_id=args.get("Patient ID",None)
+        r_code=args.get("R code",None)
+        version=args.get("version",None)
+        genome_build = args.get('genome_build', 'GRCh38')
+        # Fetch the database and connect
+        db = get_db()
+        query = Query(db.conn) 
+        if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
+            patient_records = query.return_all_records(patient_id)
+            if len(patient_records) >= 2:
+                return {"MESSAGE": "Multiple records found",
+                        "Patient ID": patient_id, 
+                        "patient records":patient_records, 
+                        "Tip": "Please select a panel and version"}
+            elif len(patient_records) == 0:
+                return{f"Please use the update space as no records were found for {patient_id}"}
+            else:
+                gene_query=query.get_gene_list(r_code)
+
+        elif r_code and not version:
+            patient_records = query.return_all_records(patient_id)
+            
+            # Filter records matching the given r_code
+            matching_records = {date: details for date, details in patient_records.items() if details[0] == r_code}
+
+            if matching_records:
+                # Extract unique versions for the r_code
+                unique_versions = {details[1] for details in matching_records.values()}
+                
+                if len(unique_versions) > 1:
+                    # If more than one version is found, return a message with details
+                    return f"{len(matching_records)} records were found for {r_code} with multiple versions: {', '.join(map(str, sorted(unique_versions)))}. Please specify the version."
+                else:
+                    version= next(iter(unique_versions))
+            else:
+                return{f"{r_code}":"No record found for this panel"}
+        
+        database_version = query.get_db_latest_version(r_code)
+        if str(database_version) != version:
+            
+            panel_ids= query.rcode_to_panelID(Rcode=r_code)
+            archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
+            gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
+
+            if not gene_query:
+                return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
+   
+        else:
+            panel_data = query.get_panels_by_rcode(rcode=r_code)
+            if "Message" in panel_data:
+                return panel_data
+            else:
+                gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+
+    
+        local_bed_records=query.local_bed(gene_query,genome_build)
+        bed_file=local_bed_formatter(local_bed_records)
+
+        filename = f"{patient_id}_{r_code}_{genome_build}_Gencode.bed"
+
+        db.close()
+
+        if bed_file:
+            return send_file(
+                bed_file,
+                mimetype='text/plain',
+                as_attachment=True,
+                download_name=filename
+            )
+        else:
+            return {"error": "No BED data could be generated from the provided gene query."}, 400
+
+
+                
+    
 update_space = api.namespace('UpdatePatientRecords', description='Update the Vimmo database with a patients test history')
 update_parser = UpdateParser.create_parser()
-@update_space.route("/update")
+@update_space.route("")
 class UpdateClass(Resource):
-    """
+    @api.doc(parser=update_parser)
+    
+    def get(self):
+        """
         Endpoint to handle GET requests to the update namespace.
          
         Parameters
@@ -443,18 +672,11 @@ class UpdateClass(Resource):
             ],
         }
         """
-    @api.doc(parser=update_parser)
-    
-    def get(self):
-        
         args = update_parser.parse_args()
-        
         try: 
             patient_update_validator(args)
         except ValueError as e:
             return {"error": str(e)}, 400
-
-
 
         db = get_db()
 
@@ -469,7 +691,7 @@ class UpdateClass(Resource):
             # Check the database is up to date before updating the db
             panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id
             database_version = query.get_db_latest_version(args["R code"])
-            latest_online_version = panel_app_client.get_latest_online_version(panel_id)
+            latest_online_version = float(panel_app_client.get_latest_online_version(panel_id))
 
             if database_version != latest_online_version:
                 # Update version and panel contents (panel and panel_contents tables)
@@ -484,13 +706,65 @@ class UpdateClass(Resource):
     
                 # Then update patient record
                 updated_record = update.add_record(args["Patient ID"], args["R code"])
-                return {database_version: latest_online_version} ### Improved update explanatory message needed
+                return {str(type(database_version)): str(type(latest_online_version))}
             
             else:
                 # Update patient_data table with record 
                 updated_record = update.add_record(args["Patient ID"], args["R code"])
                 return updated_record
 
+
+
+
+
+
+
+  
+downgrade_space = api.namespace('DowngradeRecords', description='Downgrade the Vimmo database with a panel and version from panel app')
+downgrade_parser = DowngradeParser.create_parser()
+@downgrade_space.route("")
+class DowngradeClass(Resource):
+    @api.doc(parser=downgrade_parser)
+    
+    def get(self):
+        args = downgrade_parser.parse_args()
+        rcode=args.get("R_Code")
+        version=args.get("version")
+
+        db = get_db()
+        downgrade = Downgrade(db.conn) # Instantiate an Update class object
+        query = Query(db.conn)   # Instantiate an Query  class object
+        panel_app_client = PanelAppClient()
+
+        database_version = query.get_db_latest_version(rcode)
+        if str(database_version) == version:
+            return {
+                    "message": "Requested version matches current database version",
+                    "current_version": database_version
+                }, 200
+        else:
+            panel_id=query.rcode_to_panelID(rcode)
+            if not panel_id:
+                return {"error": "Panel ID could not be identified for {rcode}"}
+
+                        # Get records from PanelApp
+            try:
+                panel_records = panel_app_client.dowgrade_records(panel_id=panel_id, version=version)
+                if not panel_records:
+                    return {"error": f"No records found for panel {panel_id} version {version}"}
+
+                                # Process and downgrade records
+                result = downgrade.process_downgrade(
+                    rcode=rcode,
+                    panel_id=panel_id,
+                    version=version,
+                    panel_records=panel_records
+                )
+
+            except:
+                pass
+
+        return result
 
         
        
