@@ -1,6 +1,6 @@
 import unittest
-from flask import Flask
-#from flask_restx import inputs
+# from flask import Flask
+from flask_restx import reqparse
 from vimmo.utils.parser import IDParser#, PatientParser, DownloadParser
 
 
@@ -9,7 +9,7 @@ class TestIDParser(unittest.TestCase):
 
     def setUp(self):
         """Set up a Flask app and context for testing."""
-        self.app = Flask(__name__)
+        # self.app = Flask(__name__)
         self.parser = IDParser.create_parser()
 
 
