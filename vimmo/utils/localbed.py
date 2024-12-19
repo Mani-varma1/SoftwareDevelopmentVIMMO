@@ -3,6 +3,7 @@ from io import BytesIO
 
 
 def local_bed_formatter(db_records):
+    print("local bed records: ", db_records, "error mode - DEBUG")
     if db_records:
         bed_rows = []
         for row in db_records:
