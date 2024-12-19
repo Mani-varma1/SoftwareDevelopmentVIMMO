@@ -19,6 +19,8 @@ class PanelAppClient:
             response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
             return response.json()
         except (requests.RequestException, ValueError):
+            print("An error occurred while accessing or processing data from the PanelApp API.", "Error Mode Warning")
+            print(response.raise_for_status(), "ERROR mode= WArning")
             raise PanelAppAPIError("An error occurred while accessing or processing data from the PanelApp API.")
 
 
@@ -116,10 +118,14 @@ class PanelAppClient:
         
         Here 2.5 is the version of R208, as of (26/11/24)
         """
-        url = f'{self.base_url}/{panel_id}/?version={version}' # Set the URL
-        print(url) 
-        json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
-        return json_data
+        try:
+            url = f'{self.base_url}/{panel_id}/?version={version}' # Set the URL
+            print(url) 
+            json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
+            return json_data
+        except Exception:
+            print(Exception,"Error Mode= Error")
+            raise Exception
         # try:
             
         # except (KeyError, ValueError):
