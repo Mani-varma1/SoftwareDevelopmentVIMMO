@@ -5,7 +5,7 @@ from vimmo.utils.panelapp import  PanelAppClient
 from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
 from vimmo.utils.parser import IDParser, PatientParser, DownloadParser, UpdateParser, LocalDownloadParser
 
-from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
+from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc, patient_update_validator
 from vimmo.db.db import Query, Update
 from vimmo.utils.localbed import local_bed_formatter
 
@@ -336,6 +336,14 @@ class PatientResource(Resource):
         }
          """
         args = patient_parser.parse_args()  # Collect Arguements
+        # Validate the input Rcode & Patient ID
+        try:
+            patient_update_validator(args)
+        except ValueError as e:
+            # Return an error response if validation fails
+            return {"error": str(e)}, 400
+
+        
         db = get_db()  # Fetch the database and connect
         query = Query(db.conn)
         update = Update(db.conn)
@@ -405,10 +413,7 @@ update_space = api.namespace('UpdatePatientRecords', description='Update the Vim
 update_parser = UpdateParser.create_parser()
 @update_space.route("/update")
 class UpdateClass(Resource):
-    @api.doc(parser=update_parser)
-    
-    def get(self):
-        """
+    """
         Endpoint to handle GET requests to the update namespace.
          
         Parameters
@@ -438,15 +443,17 @@ class UpdateClass(Resource):
             ],
         }
         """
+    @api.doc(parser=update_parser)
+    
+    def get(self):
+        
         args = update_parser.parse_args()
-        ###
-        # INPUT VALIDATOR coming soon
-                #           (__)
-                #           (oo)
-                #    /-------\/
-                #   / |     ||
-                #  *  /\----/\
-                #     ~~    ~~
+        
+        try: 
+            patient_update_validator(args)
+        except ValueError as e:
+            return {"error": str(e)}, 400
+
 
 
         db = get_db()
@@ -462,7 +469,7 @@ class UpdateClass(Resource):
             # Check the database is up to date before updating the db
             panel_id = query.rcode_to_panelID(args["R code"]) # Convert the rcode into the panel id
             database_version = query.get_db_latest_version(args["R code"])
-            latest_online_version = float(panel_app_client.get_latest_online_version(panel_id))
+            latest_online_version = panel_app_client.get_latest_online_version(panel_id)
 
             if database_version != latest_online_version:
                 # Update version and panel contents (panel and panel_contents tables)
@@ -477,7 +484,7 @@ class UpdateClass(Resource):
     
                 # Then update patient record
                 updated_record = update.add_record(args["Patient ID"], args["R code"])
-                return {str(type(database_version)): str(type(latest_online_version))}
+                return {database_version: latest_online_version} ### Improved update explanatory message needed
             
             else:
                 # Update patient_data table with record 

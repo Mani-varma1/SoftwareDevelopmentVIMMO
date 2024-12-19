@@ -495,6 +495,53 @@ class Query:
         return historic_data
 
     def compare_panel_versions(self, historic_version: dict, current_version: dict) -> dict:
+        """ 
+        Returns difference in panel contents between two versions
+
+        Parameters
+        ----------
+        hitstoric_version: dict
+        {Gene_hgnc_id: confidence scores} for every gene in a historic panel version
+
+        current_version: dict
+        {Gene_hgnc_id: confidence scores} for every gene in the current panel version
+
+        version: float
+        The version number of the archived panel
+
+        Returns
+        -------
+        historical_data: list[dict]
+        Three dictionaries returned in output list:
+        1 - Genes added in new version
+        2 - Genes removed in new version
+        3 - Genes with altered confidence in new version
+
+
+        Notes
+        -----
+        - Three dictionaries using a for loops comparing presence of keys (genes) or confidene (value)
+        - 
+
+        Example
+        -----
+        *Example only demonstratory, not real data*
+        R208
+        compare_panel_versions(2, 3.4) -> 
+                {
+        
+        "Genes added": {
+            "HGNC:795": 3,
+            "HGNC:1100": 3,
+            "HGNC:1101": 3,
+            "HGNC:16627": 3,
+            "HGNC:26144": 3,
+            "HGNC:9820": 3,
+            "HGNC:9823": 3
+        },
+        "Genes removed": {"HGNC:9853": 3, "HGNC:9123": 3},
+        "Confidence changes (old ver -> new ver)": {"HGNC:9823": [3, 2]
+        """
         # find genes added
         genes_added = {}
         for gene in current_version.keys():

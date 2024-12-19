@@ -75,14 +75,12 @@ class PanelAppClient:
         try:
         # Safely extract the version
             version_value = json_data["results"][0]["version"] # Extract the version number from the json response
-            if version_value is None:
-                raise TypeError("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = float(version_value)  # Convert to float
-        except (KeyError, ValueError):
-        
-            print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = None
-        
-        return version
+            version = float(version_value)
+
+        except:
+            return KeyError({"Error":"Invalid or missing rcode. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'"})
+
+        else:
+            return version
 
     
