@@ -43,6 +43,8 @@ class Query:
             '''
             result = cursor.execute(query, (panel_id,)).fetchall()
 
+        print(panel_id, result, "error mode debug")
+
         if result:
             return {
                 "Panel_ID": panel_id,
@@ -72,6 +74,7 @@ class Query:
         '''
         result = cursor.execute(query, (rcode_query,)).fetchall()
 
+        print(rcode_query, result, "error mode debug")
         if result:
             return {
                 "Rcode": rcode,
@@ -128,6 +131,7 @@ class Query:
             '''
 
             result = cursor.execute(query, tuple(hgnc_ids)).fetchall()
+            print(hgnc_ids,result,"error mode debug")
 
             if result:
                 return {
@@ -151,6 +155,7 @@ class Query:
             if "Message" in panel_data:
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+        print("gene list:",gene_query,"Error Mode Debug")
         return gene_query
     
     def get_gene_symbol(self, ids_to_replace):
@@ -164,6 +169,7 @@ class Query:
             '''
         
         result = cursor.execute(query, list(ids_to_replace)).fetchall()
+        print("id replaced", ids_to_replace, "error mode = Debug")
         return result
     
     def local_bed(self, gene_query, genome_build):
@@ -177,6 +183,7 @@ class Query:
             WHERE HGNC_ID IN ({placeholders})
             '''
             local_bed_records=cursor.execute(query, list(gene_query))
+            print("local bed searched",gene_query, genome_build)
             return local_bed_records
         elif genome_build=="GRCh37":
             cursor = self.conn.cursor()
@@ -188,6 +195,7 @@ class Query:
             WHERE HGNC_ID IN ({placeholders})
             '''
             local_bed_records = cursor.execute(query, list(gene_query))
+            print("local bed searched",gene_query, genome_build)
             return local_bed_records
     
     def check_patient_history(self, Patient_id: str, Rcode) -> str:

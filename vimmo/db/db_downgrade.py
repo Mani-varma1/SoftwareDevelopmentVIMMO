@@ -23,6 +23,7 @@ class Downgrade:
     def change_panels_version(self, rcode: str, new_version: float, panel_id: str):
         """Update the panel table with the downgraded version"""
         cursor = self.conn.cursor()
+        print("Updatign panel version :",new_version, panel_id, rcode, "Error Mode = INFO")
         cursor.execute("""
             UPDATE panel 
             SET Version = ?
@@ -30,6 +31,7 @@ class Downgrade:
         """, (new_version, panel_id, rcode))
         
         if cursor.rowcount == 0:
+            print(f"No matching record found for Panel_ID: {panel_id} and rcode: {rcode}","Error Mode = Debug")
             raise ValueError(f"No matching record found for Panel_ID: {panel_id} and rcode: {rcode}")
         
 
@@ -96,6 +98,7 @@ class Downgrade:
                 return {"message": "No changes detected between versions"}
             
             # If there are changes, proceed with update
+            print(f"Db Deleting records {panel_id}", "Error Mode = INfo")
             cursor.execute("""
                 DELETE FROM panel_genes 
                 WHERE Panel_ID = ?
@@ -103,6 +106,7 @@ class Downgrade:
             
             # Insert new records
             for hgnc_id, confidence in new_genes:
+                print(f"Db is updating {panel_id},{hgnc_id},{confidence}", "Error Mode = INfo")
                 cursor.execute("""
                     INSERT INTO panel_genes (Panel_ID, HGNC_ID, Confidence)
                     VALUES (?, ?, ?)
@@ -116,6 +120,7 @@ class Downgrade:
             }
                 
         except Exception as e:
+            print(f"Failed to update gene contents: {str(e)}", "Error Mode = Warning")
             raise Exception(f"Failed to update gene contents: {str(e)}")
 
     
@@ -129,6 +134,7 @@ class Downgrade:
         try:
             # Start transaction
             cursor.execute("BEGIN TRANSACTION")
+            print("Db is using transaction to downgrade", "Error Mode = INfo")
             
             # Get current version before changes
             current_version = self.query.get_db_latest_version(rcode)
@@ -156,6 +162,7 @@ class Downgrade:
             
         except Exception as e:
             cursor.execute("ROLLBACK")
+            print(f"Failed to process downgrade: {str(e)}", "Error Mode = Warning")
             raise Exception(f"Failed to process downgrade: {str(e)}")
 
 

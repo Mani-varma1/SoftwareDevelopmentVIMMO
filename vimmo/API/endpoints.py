@@ -1,23 +1,26 @@
-from flask import send_file
-from flask_restx import Resource
-from vimmo.API import api,get_db
-from vimmo.db.db_query import Query
-from vimmo.db.db_update import Update
-from vimmo.db.db_downgrade import Downgrade
-from vimmo.utils.panelapp import  PanelAppClient
-from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
-from vimmo.utils.localbed import local_bed_formatter
-from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc, patient_update_validator
-from vimmo.utils.parser import (
-    IDParser, 
-    PatientParser,
-    PatientBedParser,
-    DownloadParser, 
-    UpdateParser, 
-    LocalDownloadParser,
-    PatientLocalBedParser,
-    DowngradeParser
-)
+try:
+    from flask import send_file
+    from flask_restx import Resource
+    from vimmo.API import api,get_db
+    from vimmo.db.db_query import Query
+    from vimmo.db.db_update import Update
+    from vimmo.db.db_downgrade import Downgrade
+    from vimmo.utils.panelapp import  PanelAppClient
+    from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
+    from vimmo.utils.localbed import local_bed_formatter
+    from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
+    from vimmo.utils.parser import (
+        IDParser, 
+        PatientParser,
+        PatientBedParser,
+        DownloadParser, 
+        UpdateParser, 
+        LocalDownloadParser,
+        PatientLocalBedParser,
+        DowngradeParser
+    )
+except:
+    print("Please log error", "Error Mode= Critical")
 
 
 
@@ -56,6 +59,8 @@ class PanelSearch(Resource):
                     args["HGNC_ID"] = hgnc_id_list
 
                 except Exception as e:
+
+                    print(f"'error' : 'Failed to process HGNC_ID list: {str(e)}'","error mode =  debug?")
                     # If something unexpected happens, return a descriptive error message
                     return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
             else:
@@ -73,6 +78,7 @@ class PanelSearch(Resource):
         db = get_db()
         # Initialize a query object with the database connection
         query = Query(db.conn)
+        print("DB connectgion made at time xx-xx-xx for panel endpoint", "error mode = INFO")
 
         # Handle requests based on the provided argument
         if args.get("Panel_ID"):
@@ -134,20 +140,22 @@ class PanelDownload(Resource):
         db = get_db()
         # Initialize a query object with the database connection
         query = Query(db.conn)
+        print("DB connectgion made at time xx-xx-xx for download endpoint", "error mode = INFO")
 
         if panel_id:
             panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
             if "Message" in panel_data:
+                print( panel_data, "Error mode= INFO")
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
             gene_query="|".join(gene_query)
         elif r_code:
             panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
             if "Message" in panel_data:
+                print( panel_data, "Error mode= INFO")
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
             gene_query="|".join(gene_query)
-        query = Query(db.conn)
         
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
@@ -168,6 +176,7 @@ class PanelDownload(Resource):
 
         try:
             # Generate the BED file content
+            print(f"var_val_client.parse_to_bed(gene_query={gene_query},genome_build={genome_build},transcript_set={transcript_set},limit_transcripts={limit_transcripts})", "Error Mdoe = INFO")
             bed_file = var_val_client.parse_to_bed(
                 gene_query=gene_query,
                 genome_build=genome_build,
@@ -176,6 +185,7 @@ class PanelDownload(Resource):
             )
         except VarValAPIError as e:
             # Return an error response if processing fails
+            print(f"error: {str(e)}", "Error Mode = Error")
             return {"error": str(e)}, 500
 
 
@@ -186,14 +196,6 @@ class PanelDownload(Resource):
             filename = f"{r_code}_{genome_build}_{limit_transcripts}.bed"
         else:
             filename = f"Genes_{genome_build}_{limit_transcripts}.bed"
-
-        # Return the BED file as a downloadable response
-        # return send_file(
-        #     bed_file,
-        #     mimetype='text/plain',
-        #     as_attachment=True,
-        #     download_name=filename
-        # )
 
         
         db.close()
@@ -208,6 +210,7 @@ class PanelDownload(Resource):
                 download_name=filename
             )
         else:
+            print(f"error, No BED data could be generated from the provided gene query.")
             return {"error": "No BED data could be generated from the provided gene query."}, 400
 
 
@@ -255,6 +258,7 @@ class LocalPanelDownload(Resource):
         db = get_db()
         # Initialize a query object with the database connection
         query = Query(db.conn)
+        print("DB connectgion made at time xx-xx-xx for local bed endpoint", "error mode = INFO")
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
             # Check if gene_query is a set of HGNC IDs
@@ -265,7 +269,9 @@ class LocalPanelDownload(Resource):
         
         genome_build = args.get('genome_build', 'GRCh38')
         local_bed_records=query.local_bed(gene_query,genome_build)
+        print(f"query.local_bed({gene_query},{genome_build})", "error mode = debug")
         bed_file=local_bed_formatter(local_bed_records)
+        print(f"local_bed_formatter({local_bed_records})", "error mode = debug")
 
 
 
@@ -277,8 +283,6 @@ class LocalPanelDownload(Resource):
         else:
             filename = f"Genes_{genome_build}_Gencode.bed"
 
-        db.close()
-
         if bed_file:
             return send_file(
                 bed_file,
@@ -287,6 +291,7 @@ class LocalPanelDownload(Resource):
                 download_name=filename
             )
         else:
+            print("Bed was not generated please enable Debug if needed", "Error Mode = Debug")
             return {"error": "No BED data could be generated from the provided gene query."}, 400
 
 
@@ -406,6 +411,7 @@ class PatientBed(Resource):
         limit_transcripts = args.get('limit_transcripts', 'mane_select')
         # Fetch the database and connect
         db = get_db()
+        print("DB connectgion made at time xx-xx-xx for patient bed endpoint", "error mode = INFO")
         query = Query(db.conn) 
         if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
             patient_records = query.return_all_records(patient_id)
@@ -435,6 +441,7 @@ class PatientBed(Resource):
                 else:
                     version= next(iter(unique_versions))
             else:
+                print(f"no records for {args}", "Error Mode = INFO")
                 return{f"{r_code}":"No record found for this panel"}
         
         database_version = query.get_db_latest_version(r_code)
@@ -445,12 +452,14 @@ class PatientBed(Resource):
             gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
 
             if not gene_query:
+                print("records not found for", panel_ids,archived_records,gene_query, "Error Mode Debug")
                 return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
    
     
         else:
             panel_ids = query.get_panels_by_rcode(rcode=r_code)
             if "Message" in panel_ids:
+                print(f"Missing panel IDs for {r_code}:",panel_ids, "ERROR mode INFO")
                 return panel_ids
             else:
                 gene_query={record["HGNC_ID"] for record in panel_ids["Associated Gene Records"]}
@@ -462,6 +471,7 @@ class PatientBed(Resource):
 
         try:
             # Generate the BED file content
+            print(f"var_val_client.parse_to_bed(gene_query={gene_query},genome_build={genome_build},transcript_set={transcript_set},limit_transcripts={limit_transcripts})", "Error Mdoe = INFO")
             bed_file = var_val_client.parse_to_bed(
                 gene_query=gene_query,
                 genome_build=genome_build,
@@ -470,6 +480,7 @@ class PatientBed(Resource):
             )
         except VarValAPIError as e:
             # Return an error response if processing fails
+            print(f"Varval returned an error {str(e)}", "Error Mode = Error")
             return {"error": str(e)}, 500
 
 
@@ -490,6 +501,7 @@ class PatientBed(Resource):
                 download_name=filename
             )
         else:
+            print("Bed was not generated please enable Debug", "Error Mode = Debug")
             return {"error": "No BED data could be generated from the provided gene query.",
                     "Tip": "Please use local bed endpoint to download records"}, 400
 
@@ -507,6 +519,7 @@ class PatientLocalBed(Resource):
         genome_build = args.get('genome_build', 'GRCh38')
         # Fetch the database and connect
         db = get_db()
+        print("DB connectgion made at time xx-xx-xx for patient local bed endpoint", "error mode = INFO")
         query = Query(db.conn) 
         if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
             patient_records = query.return_all_records(patient_id)
@@ -536,6 +549,7 @@ class PatientLocalBed(Resource):
                 else:
                     version= next(iter(unique_versions))
             else:
+                print(f"no records for {args}", "Error Mode = INFO")
                 return{f"{r_code}":"No record found for this panel"}
         
         database_version = query.get_db_latest_version(r_code)
@@ -545,12 +559,15 @@ class PatientLocalBed(Resource):
             archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
             gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
 
+
             if not gene_query:
+                print(f"no records for ID: {panel_ids},Archived: {archived_records},Result:{gene_query}", "Error Mode INFO")
                 return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
    
         else:
             panel_data = query.get_panels_by_rcode(rcode=r_code)
             if "Message" in panel_data:
+                print(f"Missing panel IDs for {r_code}:",panel_ids, "ERROR mode INFO")
                 return panel_data
             else:
                 gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
@@ -571,6 +588,7 @@ class PatientLocalBed(Resource):
                 download_name=filename
             )
         else:
+            print(f"Failed local BED for patient {patient_id}", "DB returned:",local_bed_records, "ERROR mode DEBUG")
             return {"error": "No BED data could be generated from the provided gene query."}, 400
 
 

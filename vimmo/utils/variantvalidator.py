@@ -37,11 +37,13 @@ class VarValClient:
         try:
             response = requests.get(url)
         except :
+            print(f"Failed to connect. Please check your internet connection and try again", "Errro Mode= Error")
             raise VarValAPIError(f"Failed to connect. Please check your internet connection and try again")
         else:
             if response.ok:
                 return response.json()
             else:
+                print(f"Failed to get data from PanelApp API with Status code:{response.status_code}", "Error Mode = Warning")
                 raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
@@ -76,6 +78,7 @@ class VarValClient:
         )
 
         # Make the request and return the response
+        print(url, "Error Mode INFO")
         return self._check_response(url)
     
 
@@ -109,6 +112,7 @@ class VarValClient:
             query = Query(db.conn)
             result = query.get_gene_symbol(ids_to_replace)
             id_to_symbol = {row[0]: row[1] for row in result}
+            
         else:
             id_to_symbol = {}
         
@@ -120,7 +124,7 @@ class VarValClient:
             else:
                 final_output.add(hgnc_id)
 
-        print(final_output)
+        print(final_output, "Gene query output" "Error Mode INFO")
 
         return "|".join(final_output)
 
@@ -204,6 +208,7 @@ class VarValClient:
             end = float('inf')
         
         # Return the sorting key tuple.
+        print(f"sorted key: {chrom_number}, {start}, {end},", "Error Mode=INFO")
         return (chrom_number, start, end)
 
 
@@ -241,7 +246,9 @@ class VarValClient:
                 transcript_set=transcript_set,
                 limit_transcripts=limit_transcripts
             )
+            print("var val params:",gene_data, "Error mode = INFO")
         except VarValAPIError as e:
+            print(VarValAPIError(f"Error fetching data: {str(e)}"), "error mode - DEBUG")
             raise VarValAPIError(f"Error fetching data: {str(e)}")
         
         
@@ -249,7 +256,7 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
-            print(gene)
+            print(gene, "error mode = info")
             transcripts = gene.get('transcripts', [])
             # If no transcripts, create a NoRecord line
             if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
@@ -277,7 +284,8 @@ class VarValClient:
                                     'name': f"{gene['current_symbol']}_exon{exon['exon_number']}_{reference}",
                                     'strand': orientation
                                 })
-            except:
+            except Exception:
+                print(Exception,"Ocurred when parsing data from var val","Error Mode= DEBUG")
                 bed_rows.append({
                     'chrom': chromosome,
                     'start': "Error",
