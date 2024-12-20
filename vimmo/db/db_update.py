@@ -71,7 +71,7 @@ class Update:
 
     def update_gene_contents(self, Rcode, panel_id):
         """ Updates the panel_genes table with new panel version contents"""
-        genes = self.papp.get_genes_HGNC(Rcode)
+        genes = self.papp.get_genes_HGNC(Rcode) # All HGNC:conf in panel version
 
         cursor = self.conn.cursor()
 
@@ -85,7 +85,7 @@ class Update:
             cursor.execute(f"""
             INSERT INTO panel_genes (Panel_ID, HGNC_ID, Confidence)
             VALUES (?, ?, ?)
-            """,(panel_id, gene, 3))
+            """,(panel_id, gene, genes[gene]))
         
         self.conn.commit()
         
