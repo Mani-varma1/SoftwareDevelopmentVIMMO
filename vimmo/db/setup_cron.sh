@@ -3,7 +3,7 @@
 # set -e --> immediately exit if any command has non-zero exit code
 # set -u --> reference to any previously undefined variables causes error
 # set -o pipefail sets return code of a pipeline to that of the first command that fails, rather than the last executed
-# set -euxo pipefail
+set -euo pipefail
 
 
 # Get the absolute path to the current directory (where the script is being run)
