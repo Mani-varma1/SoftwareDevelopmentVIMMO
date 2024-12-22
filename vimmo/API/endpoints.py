@@ -2,7 +2,7 @@ from vimmo.logger.logging_config import logger
 import sys
 try:
     from flask import send_file
-    from fl import Resource
+    from flask_restx import Resource
     from vimmo.API import api,get_db
     from vimmo.db.db_query import Query
     from vimmo.db.db_update import Update
