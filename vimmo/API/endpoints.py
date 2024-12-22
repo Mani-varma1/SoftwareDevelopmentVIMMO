@@ -1,5 +1,10 @@
-from vimmo.logger.logging_config import logger
 import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
+from vimmo.logger.logging_config import logger
+
 try:
     from flask import send_file
     from flask_restx import Resource
