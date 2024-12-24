@@ -24,23 +24,27 @@ class PanelAppClient:
             raise PanelAppAPIError("An error occurred while accessing or processing data from the PanelApp API.")
 
 
-    def get_genes_HUGO(self, rcode, confidence_level=3):
+    def get_genes_HUGO(self, rcode):
         '''
         Query PanelApp API based on RCode --> return list of genes (HUGO gene symbols) with a specified confidence level.
         '''
-        url = f'{self.base_url}/{rcode}/genes/?confidence_level={confidence_level}'
+        url = f'{self.base_url}/{rcode}/genes/'
         json_data = self._check_response(url)
         gene_symbols = [entry["gene_data"]["gene_symbol"] for entry in json_data.get("results", [])]
         return gene_symbols
     
-    def get_genes_HGNC(self, rcode, confidence_level=3):
+    def get_genes_HGNC(self, rcode):
         """
         Query PanelApp API base on Rcode --> return list of genes (HGNC id) with a specified confidence level.
         """
-        url = f'{self.base_url}/{rcode}/genes/?confidence_level={confidence_level}'
+        url = f'{self.base_url}/{rcode}/genes/'
         json_data = self._check_response(url)
-        gene_symbols = [entry["gene_data"]["hgnc_id"] for entry in json_data.get("results", [])]
-        return gene_symbols
+        
+        hgnc_confidence_dict = {
+        entry["gene_data"]["hgnc_id"]: entry["confidence_level"]
+         for entry in json_data.get("results", [])
+        }
+        return hgnc_confidence_dict
 
     def get_latest_online_version(self, panel_id: str) -> str: 
         """
@@ -78,15 +82,13 @@ class PanelAppClient:
         try:
         # Safely extract the version
             version_value = json_data["results"][0]["version"] # Extract the version number from the json response
-            if version_value is None:
-                raise TypeError("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = float(version_value)  # Convert to float
-        except (KeyError, ValueError):
-        
-            print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = None
-        
-        return version
+            version = float(version_value)
+
+        except:
+            return KeyError({"Error":"Invalid or missing rcode. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'"})
+
+        else:
+            return version
     
 
     def dowgrade_records(self, panel_id: str, version:str ) -> str: 

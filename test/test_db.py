@@ -1,7 +1,10 @@
 import unittest
 import sqlite3
 from unittest.mock import MagicMock
-from vimmo.db.db import Database, Query, Update
+from vimmo.db.db import Database
+from vimmo.db.db_query import Query
+from vimmo.db.db_update import Update
+from vimmo.db.db_downgrade import Downgrade
 
 
 class TestDatabase(unittest.TestCase):
@@ -9,7 +12,6 @@ class TestDatabase(unittest.TestCase):
         # Create an in-memory SQLite database for testing
         self.db = Database(":memory:")
         self.db.connect()
-        self.db._initialize_tables()
 
     def tearDown(self):
         # Close the database connection after each test
@@ -21,9 +23,9 @@ class TestDatabase(unittest.TestCase):
     def test_get_patient_data(self):
         # Insert mock data into the database
         cursor = self.db.conn.cursor()
-        cursor.execute("INSERT INTO panel (Panel_ID, rcodes, Version) VALUES (1, 'R208', '2.0')")
+        cursor.execute("INSERT INTO panel (Panel_ID, rcodes, Version) VALUES (1, 'R208', 2.0)")
         cursor.execute(
-            "INSERT INTO patient_data (Patient_ID, Rcode, Panel_ID, Date, Version) VALUES ('12345', 'R208', 1, '2024-12-14', '2.0')"
+            "INSERT INTO patient_data (Patient_ID, Rcode, Panel_ID, Date, Version) VALUES ('12345', 'R208', 1, '2024-12-14', 2.0)"
         )
         self.db.conn.commit()
 
@@ -38,7 +40,6 @@ class TestQuery(unittest.TestCase):
         # Create an in-memory SQLite database and initialize tables
         self.db = Database(":memory:")
         self.db.connect()
-        self.db._initialize_tables()
         self.query = Query(self.db.conn)
 
     def tearDown(self):
@@ -76,7 +77,6 @@ class TestUpdate(unittest.TestCase):
         # Create an in-memory SQLite database and initialize tables
         self.db = Database(":memory:")
         self.db.connect()
-        self.db._initialize_tables()
         self.update = Update(self.db.conn)
 
     def tearDown(self):

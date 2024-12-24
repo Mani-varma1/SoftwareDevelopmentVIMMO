@@ -255,3 +255,11 @@
 2024-12-24 12:08:22,265 - VIMMO - INFO - Exact match for Panel_ID: 1316
 2024-12-24 12:08:22,275 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
 2024-12-24 12:08:22,275 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 14:32:40,485 - VIMMO - INFO - Everything imported
+2024-12-24 14:32:40,829 - VIMMO - INFO - Everything imported
+2024-12-24 14:33:12,873 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-24 14:33:12,873 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-24 14:33:12,873 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-24 14:33:12,873 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-24 14:33:12,880 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-24 14:33:12,880 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.

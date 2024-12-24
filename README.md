@@ -72,7 +72,42 @@ The API will be available at:
 - Swagger UI Documentation: http://127.0.0.1:5000/
 
 
+## Version Update
+Use after git commit -m "message"
+```bash
+# Patch version (0.1.0 → 0.1.1) 
+bumpversion patch
 
+# Minor version (0.1.0 → 0.2.0):
+bumpversion minor
+
+# Major version (0.1.0 → 1.0.0):
+bumpversion major
+```
+
+## Docker
+```bash
+# file to start the docker image
+cd /SoftwareDevelopmentVIMMO
+
+# build the image
+docker build -t "name_of_image" .
+# start app container
+docker run  "name_of_image"
+# list the containers
+docker container ls
+# stop the container
+docker stop "name_of_container"
+#restart the container
+docker container restart "name_of_container"
+# delete the container
+docker rm <"ame_of_container"
+# list the images
+docker image ls
+# delete the image
+docker image rm "name_of_image"
+
+````
 
 ## Testing
 
