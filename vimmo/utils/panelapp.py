@@ -20,7 +20,7 @@ class PanelAppClient:
             return response.json()
         except (requests.RequestException, ValueError):
             print("An error occurred while accessing or processing data from the PanelApp API.", "Error Mode Warning")
-            print(response.raise_for_status(), "ERROR mode= WArning")
+            print(response.raise_for_status(), "ERROR mode= Warning")
             raise PanelAppAPIError("An error occurred while accessing or processing data from the PanelApp API.")
 
 
@@ -42,7 +42,7 @@ class PanelAppClient:
         gene_symbols = [entry["gene_data"]["hgnc_id"] for entry in json_data.get("results", [])]
         return gene_symbols
 
-    def get_latest_online_version(self, panel_id: str) -> str: 
+    def get_latest_online_version(self, panel_id: str) -> str:
         """
         Returns the most recent signedoff panel version from the panelapp api
 
@@ -68,25 +68,23 @@ class PanelAppClient:
         User UI input: R208
         Query class method: rcode_to_panelID(R208) -> 635 # converts rcode to panel_id (see db.py)
         get_latest_online_version(635) -> 2.5
-        
+
         Here 2.5 is the version of R208, as of (26/11/24)
         """
-        
-        url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest' # Set the URL 
-        json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
-        
+
+        url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest'  # Set the URL
+        json_data = self._check_response(url)  # Send get request to URL, if 200 return json format of the response
+
         try:
-        # Safely extract the version
-            version_value = json_data["results"][0]["version"] # Extract the version number from the json response
-            if version_value is None:
-                raise TypeError("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = float(version_value)  # Convert to float
-        except (KeyError, ValueError):
-        
-            print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-            version = None
-        
-        return version
+            # Safely extract the version
+            version_value = json_data["results"][0]["version"]  # Extract the version number from the json response
+            version = float(version_value)
+
+        except:
+            return KeyError({"Error": "Invalid or missing rcode. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'"})
+
+        else:
+            return version
     
 
     def dowgrade_records(self, panel_id: str, version:str ) -> str: 
@@ -126,10 +124,3 @@ class PanelAppClient:
         except Exception:
             print(Exception,"Error Mode= Error")
             raise Exception
-        # try:
-            
-        # except (KeyError, ValueError):
-        #     print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-        #     version = None
-        
-        # return version
