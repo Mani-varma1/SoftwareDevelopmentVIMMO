@@ -4,6 +4,7 @@ import pandas as pd
 from io import BytesIO
 from vimmo.db.db_query import Query
 from vimmo.API import get_db
+import os
 
 class VarValAPIError(Exception):
     """Custom exception for errors related to the PanelApp API."""
@@ -97,7 +98,9 @@ class VarValClient:
         """
             
         # Step 2: Load prob_gene_list from the file
-        with open('vimmo/utils/problem_genes.txt', 'r') as file:
+        db_dir=os.path.dirname(os.path.realpath(__file__))
+        prob_gene_file=os.path.join(db_dir,"problem_genes.txt")
+        with open(prob_gene_file, 'r') as file:
             prob_gene_list = [line.strip() for line in file if line.strip()]
         
         

@@ -433,7 +433,7 @@ class PatientResource(Resource):
 
                 current_panel_data = query.current_panel_contents(panel_id)
                 return {"disclaimer": disclaimer,"status": f"No version change since last {args["Patient ID"]} had {args['R code']}", 
-                        "Version":f"{database_version}","Panel content":{current_panel_data}}
+                        "Version":f"{database_version}","Panel content":current_panel_data}
                  
             else: #  If patient_ID in archive table with outdated version, find the difference between most recent archived panel version & the current panel version contents
                 # Comparison function

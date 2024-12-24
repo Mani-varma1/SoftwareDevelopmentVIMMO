@@ -2,12 +2,12 @@ import sqlite3
 import pandas as pd
 
 # 1. Load CSV files into pandas DataFrames
-csv1 = 'latest_panel_versions.csv'  # Should have columns: [Panel_ID, R_Code, Version]
-csv2 = 'genes.csv'                  # Should have columns for referencing: [Panel_ID, R_Code, HGNC ID, Confidence, etc.]
-bed_file_37 = '../bed/genes_exons37.bed'
-bed_file_38 = '../bed/genes_exons38.bed'
-csv3 = 'patient_info.csv'           # Should have columns: [Patient_ID, Panel_ID, R_Code, Version, Date]
-csv4 = 'archived_data.csv'          # Should have columns: [Panel_ID, R_Code, Version, Confidence]
+csv1 = 'latest_panel_versions.csv'  # Should have columns: [Panel_ID, rcodes, Version]
+csv2 = 'genes.csv'                  # Should have columns for referencing: [Panel_ID, rcodes, HGNC ID, Confidence, etc.]
+bed_file_37 = 'genes_exons37.bed'
+bed_file_38 = 'genes_exons38.bed'
+csv3 = 'patient_info.csv'           # Should have columns: [Patient_ID, Panel_ID, rcodes, Version, Date]
+csv4 = 'archived_data.csv'          # Should have columns: [Panel_ID, rcodes, Version, Confidence]
 
 df_panel = pd.read_csv(csv1)
 df_panel_genes_raw = pd.read_csv(csv2)
@@ -30,15 +30,15 @@ cursor.execute("PRAGMA foreign_keys = ON;")
 # cursor.execute("DROP TABLE IF EXISTS panel_genes;")
 # ... etc.
 
-# 4. Create tables with composite PK (Panel_ID, R_Code)
+# 4. Create tables with composite PK (Panel_ID, rcodes)
 
 # Table 1: panel
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel (
     Panel_ID INTEGER,
-    R_Code TEXT,
+    rcodes TEXT,
     Version TEXT,
-    PRIMARY KEY (Panel_ID, R_Code)
+    PRIMARY KEY (Panel_ID, rcodes)
 )
 ''')
 
@@ -47,10 +47,10 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel_genes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     Panel_ID INTEGER,
-    R_Code TEXT,
+    rcodes TEXT,
     HGNC_ID TEXT,
     Confidence INTEGER,
-    FOREIGN KEY (Panel_ID, R_Code) REFERENCES panel (Panel_ID, R_Code)
+    FOREIGN KEY (Panel_ID, rcodes) REFERENCES panel (Panel_ID, rcodes)
 )
 ''')
 
@@ -76,10 +76,10 @@ CREATE TABLE IF NOT EXISTS patient_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     patient_id TEXT,
     Panel_ID INTEGER,
-    R_Code TEXT,
+    rcodes TEXT,
     panel_version TEXT,
     date DATE,
-    FOREIGN KEY (Panel_ID, R_Code) REFERENCES panel (Panel_ID, R_Code)
+    FOREIGN KEY (Panel_ID, rcodes) REFERENCES panel (Panel_ID, rcodes)
 )
 ''')
 
@@ -120,15 +120,15 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS panel_genes_archive (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     Panel_ID INTEGER,
-    R_Code TEXT,
+    rcodes TEXT,
     Version TEXT,
     Confidence INTEGER,
-    FOREIGN KEY (Panel_ID, R_Code) REFERENCES panel (Panel_ID, R_Code)
+    FOREIGN KEY (Panel_ID, rcodes) REFERENCES panel (Panel_ID, rcodes)
 )
 ''')
 
 # 5. Populate Table 1: panel
-#    Ensure df_panel has columns [Panel_ID, R_Code, Version]
+#    Ensure df_panel has columns [Panel_ID, rcodes, Version]
 df_panel.to_sql('panel', conn, if_exists='replace', index=False)
 
 # 6. Populate Table 3: genes_info with unique gene entries
@@ -147,10 +147,10 @@ df_genes_info.columns = [
 df_genes_info.to_sql('genes_info', conn, if_exists='replace', index=False)
 
 # 7. Populate Table 2: panel_genes
-#    Make sure your CSV has columns [Panel ID, R_Code, HGNC ID, Confidence]
+#    Make sure your CSV has columns [Panel ID, rcodes, HGNC ID, Confidence]
 #    so we can rename them to match the DB columns:
-df_panel_genes = df_panel_genes_raw[['Panel ID', 'R_Code', 'HGNC ID', 'Confidence']].copy()
-df_panel_genes.columns = ['Panel_ID', 'R_Code', 'HGNC_ID', 'Confidence']
+df_panel_genes = df_panel_genes_raw[['Panel ID', 'HGNC ID', 'Confidence']].copy()
+df_panel_genes.columns = ['Panel_ID', 'HGNC_ID', 'Confidence']
 df_panel_genes.to_sql('panel_genes', conn, if_exists='replace', index=False)
 
 # 8. Populate bed38 and bed37
@@ -160,18 +160,17 @@ df_bed38.to_sql('bed38', conn, if_exists='replace', index=False)
 df_bed37.to_sql('bed37', conn, if_exists='replace', index=False)
 
 # 9. Populate patient_data
-#    Must contain columns: [Patient_ID, Panel_ID, R_Code, Version, Date]
+#    Must contain columns: [Patient_ID, Panel_ID, rcodes, Version, Date]
 #    We rename 'Version' -> 'panel_version'
-df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'R_Code', 'Version', 'Date']
-df_patient_info.rename(columns={'Version': 'panel_version'}, inplace=True)
+df_patient_info.columns = ['Patient_ID', 'Panel_ID', 'Rcode', 'Version', 'Date']
 df_patient_info.to_sql('patient_data', conn, if_exists='replace', index=False)
 
 # 10. Populate panel_genes_archive
-#     Must have columns: [Panel_ID, R_Code, Version, Confidence]
-df_archived_data.columns = ['Panel_ID', 'R_Code', 'Version', 'Confidence']
+#     Must have columns: [Panel_ID, rcodes, Version, Confidence]
+df_archived_data.columns = ['Panel_ID', 'HGNC_ID', 'Version', 'Confidence']
 df_archived_data.to_sql('panel_genes_archive', conn, if_exists='replace', index=False)
 
 # 11. Commit and close
 conn.commit()
 conn.close()
-print("Database updated with composite key (Panel_ID, R_Code).")
+print("Database updated with composite key (Panel_ID, rcodes).")
