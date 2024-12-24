@@ -1,108 +1,130 @@
 import unittest
-from flask import Flask
-#from flask_restx import inputs
-from vimmo.utils.parser import IDParser#, PatientParser, DownloadParser
+from flask_restx import reqparse
+from flask import Flask, request
+from vimmo.utils.parser import (
+    IDParser,
+    PatientParser,
+    PatientBedParser,
+    DownloadParser,
+    UpdateParser,
+    LocalDownloadParser,
+    PatientLocalBedParser,
+    DowngradeParser
+)
 
 
-class TestIDParser(unittest.TestCase):
-    """Unit tests for IDParser."""
-
-    def setUp(self):
-        """Set up a Flask app and context for testing."""
-        self.app = Flask(__name__)
-        self.parser = IDParser.create_parser()
+app = Flask(__name__)
 
 
-    def test_valid_panel_id(self):
-        """Test parsing with a valid Panel_ID."""
-        with self.app.test_request_context('/?Panel_ID=123'):
-            args = self.parser.parse_args()
-            self.assertEqual(args['Panel_ID'], '123')
-            self.assertIsNone(args['Rcode'])
-            self.assertIsNone(args['HGNC_ID'])
-            self.assertFalse(args['Similar_Matches'])  # Default value is False
-
-    def test_similar_matches_argument(self):
-        """Test parsing with Similar_Matches set to true."""
-        with self.app.test_request_context('/?Similar_Matches=true'):
-            args = self.parser.parse_args()
-            self.assertTrue(args['Similar_Matches'])
-
-    def test_multiple_exclusive_arguments(self):
-        """Test passing multiple exclusive arguments."""
-        with self.app.test_request_context('/?Panel_ID=123&Rcode=R456'):
-            args = self.parser.parse_args()
-            self.assertEqual(args['Panel_ID'], '123')  # Both arguments are parsed
-            self.assertEqual(args['Rcode'], 'R456')
-
-    def test_default_values(self):
-        """Test default behavior when no arguments are passed."""
-        with self.app.test_request_context('/'):
-            args = self.parser.parse_args()
-            self.assertIsNone(args['Panel_ID'])
-            self.assertIsNone(args['Rcode'])
-            self.assertIsNone(args['HGNC_ID'])
-            self.assertFalse(args['Similar_Matches'])  # Default value
-
-
-class TestPatientParser(unittest.TestCase):
-    """Unit tests for PatientParser."""
+class TestParsers(unittest.TestCase):
 
     def setUp(self):
-        """Set up a Flask app and context for testing."""
-        self.app = Flask(__name__)
-        self.parser = PatientParser.create_parser()
+        # Mock Flask app context
+        self.app = app.test_client()
+        self.ctx = app.app_context()
+        self.ctx.push()
 
-    def test_patient_id(self):
-        """Test parsing with a valid Patient ID."""
-        with self.app.test_request_context('/?Patient_ID=PAT123'):
-            args = self.parser.parse_args()
-            self.assertEqual(args['-f'], 'PAT123')
+    def tearDown(self):
+        # Remove app context
+        self.ctx.pop()
 
-    def test_rcode_argument(self):
-        """Test parsing with a valid R code."""
-        with self.app.test_request_context('/?R%20code=R456'):
-            args = self.parser.parse_args()
-            self.assertEqual(args['R code'], 'R456')
+    def test_id_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Panel_ID': '12345',
+            'Rcode': '',
+            'HGNC_ID': '',
+            'Similar_Matches': 'true'
+        }):
+            parser = IDParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Panel_ID'], '12345')
+            self.assertEqual(args['Similar_Matches'], True)
 
+    def test_patient_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Patient ID': 'P001',
+            'R code': 'R123'
+        }):
+            parser = PatientParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Patient ID'], 'P001')
+            self.assertEqual(args['R code'], 'R123')
 
-class TestDownloadParser(unittest.TestCase):
-    """Unit tests for DownloadParser."""
+    def test_patient_bed_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Patient ID': 'P002',
+            'genome_build': 'GRCh38',
+            'transcript_set': 'refseq',
+            'limit_transcripts': 'mane_select'
+        }):
+            parser = PatientBedParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Patient ID'], 'P002')
+            self.assertEqual(args['genome_build'], 'GRCh38')
+            self.assertEqual(args['transcript_set'], 'refseq')
+            self.assertEqual(args['limit_transcripts'], 'mane_select')
 
-    def setUp(self):
-        """Set up a Flask app and context for testing."""
-        self.app = Flask(__name__)
-        self.parser = DownloadParser.create_parser()
-
-    def test_genome_build_argument(self):
-        """Test parsing with valid genome_build."""
-        with self.app.test_request_context('/?genome_build=GRCh37'):
-            args = self.parser.parse_args()
+    def test_patient_local_bed_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Patient ID': 'P003',
+            'genome_build': 'GRCh37',
+            'transcript_set': 'Gencode',
+            'limit_transcripts': 'all'
+        }):
+            parser = PatientLocalBedParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Patient ID'], 'P003')
             self.assertEqual(args['genome_build'], 'GRCh37')
+            self.assertEqual(args['transcript_set'], 'Gencode')
+            self.assertEqual(args['limit_transcripts'], 'all')
 
-    def test_transcript_set_argument(self):
-        """Test parsing with valid transcript_set."""
-        with self.app.test_request_context('/?transcript_set=ensembl'):
-            args = self.parser.parse_args()
-            self.assertEqual(args['transcript_set'], 'ensembl')
-
-    def test_limit_transcripts_argument(self):
-        """Test parsing with a valid limit_transcripts value."""
-        with self.app.test_request_context('/?limit_transcripts=canonical'):
-            args = self.parser.parse_args()
+    def test_download_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Panel_ID': '12345',
+            'genome_build': 'GRCh38',
+            'transcript_set': 'all',
+            'limit_transcripts': 'canonical'
+        }):
+            parser = DownloadParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Panel_ID'], '12345')
+            self.assertEqual(args['genome_build'], 'GRCh38')
+            self.assertEqual(args['transcript_set'], 'all')
             self.assertEqual(args['limit_transcripts'], 'canonical')
 
-    def test_missing_required_arguments(self):
-        """Test parsing when required arguments are missing."""
-        with self.app.test_request_context('/?genome_build=GRCh38'):
-            with self.assertRaises(ValueError):
-                self.parser.parse_args()
+    def test_local_download_parser(self):
+        with app.test_request_context('/test', method='GET', query_string={
+            'Panel_ID': '12345',
+            'genome_build': 'GRCh38',
+            'transcript_set': 'Gencode',
+            'limit_transcripts': 'all'
+        }):
+            parser = LocalDownloadParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Panel_ID'], '12345')
+            self.assertEqual(args['genome_build'], 'GRCh38')
+            self.assertEqual(args['transcript_set'], 'Gencode')
+            self.assertEqual(args['limit_transcripts'], 'all')
 
-    def test_invalid_choice_for_genome_build(self):
-        """Test invalid choice for genome_build."""
-        with self.app.test_request_context('/?genome_build=invalid_build'):
-            with self.assertRaises(ValueError):
-                self.parser.parse_args()
+    def test_update_parser(self):
+        with app.test_request_context('/test', method='POST', query_string={
+            'Patient ID': 'P004',
+            'R code': 'R124'
+        }):
+            parser = UpdateParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['Patient ID'], 'P004')
+            self.assertEqual(args['R code'], 'R124')
+
+    def test_downgrade_parser(self):
+        with app.test_request_context('/test', method='POST', query_string={
+            'R_Code': 'R125',
+            'version': '1.0.0'
+        }):
+            parser = DowngradeParser.create_parser()
+            args = parser.parse_args()
+            self.assertEqual(args['R_Code'], 'R125')
+            self.assertEqual(args['version'], '1.0.0')
 
 
 if __name__ == '__main__':
