@@ -88,25 +88,24 @@ bumpversion major
 ## Docker
 ```bash
 # file to start the docker image
-cd /Docker_git/getting-started-app
-
-docker login
-docker container ls
-docker image ls
-docker container stop "name_of_container"
-docker container restart "name_of_container"
+cd /SoftwareDevelopmentVIMMO
 
 # build the image
-docker build -t getting-started .
+docker build -t "name_of_image" .
 # start app container
-docker run -d -p 127.0.0.1:3000:3000 getting-started
+docker run  "name_of_image"
+# list the containers
+docker container ls
 # stop the container
-docker stop <name_of_container>
+docker stop "name_of_container"
+#restart the container
+docker container restart "name_of_container"
 # delete the container
-docker rm <name_of_container>
-
-
-
+docker rm <"ame_of_container"
+# list the images
+docker image ls
+# delete the image
+docker image rm "name_of_image"
 
 ````
 

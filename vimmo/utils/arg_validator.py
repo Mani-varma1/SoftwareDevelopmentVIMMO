@@ -26,7 +26,7 @@ def validate_hgnc_ids(hgnc_id_value):
 
     # Validate each HGNC ID against the pattern
     for hgnc_id in hgnc_id_value:
-        print(hgnc_id)
+        # print(hgnc_id)
         if not re.fullmatch(hgnc_pattern, hgnc_id):
             raise ValueError(
                 f"Invalid format for 'HGNC_ID': '{hgnc_id}' must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
@@ -134,7 +134,7 @@ def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False)
         - Delegates validation to the appropriate validator based on context (`panel_space` or `bed_space`).
     """
     # Extract values from input arguments
-    print("validator recieved:",args,panel_space,bed_space,"Error Mode = INFO")
+    # print("validator recieved:",args,panel_space,bed_space,"Error Mode = INFO")
     panel_id_value = args.get('Panel_ID', None)
     rcode_value = args.get('Rcode', None)
     hgnc_id_value = args.get('HGNC_ID', None)
