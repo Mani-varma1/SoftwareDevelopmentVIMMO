@@ -22,6 +22,7 @@ class Database:
             with importlib.resources.path('vimmo.db', 'panels_data.db') as db_path:
                 return str(db_path)
         except Exception:
+            print(Exception,"db file could not be retrieved from installed package", "Error Mode = Error")
             # If that fails, try the development path
             current_dir = os.path.dirname(os.path.abspath(__file__))
             dev_db_path = os.path.join(current_dir, self.db_path)
@@ -29,6 +30,7 @@ class Database:
             if os.path.exists(dev_db_path):
                 return dev_db_path
             else:
+                print("database file could not be located", "Error mode=Critical")
                 raise FileNotFoundError("database file could not be located")
             
 

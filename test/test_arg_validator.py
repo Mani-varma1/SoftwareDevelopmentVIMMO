@@ -11,21 +11,21 @@ class TestValidationFunctions(unittest.TestCase):
     # Testing panel_space_validator
     def test_panel_space_validator_valid_lowercase_r(self):
         # Test valid Rcode with lowercase 'r'
-        panel_space_validator("123", "r123", "HGNC:45678")  # Should not raise any exceptions
+        panel_space_validator("123", "r123", ["HGNC:45678"])  # Should not raise any exceptions
 
     def test_panel_space_validator_valid_uppercase_R(self):
         # Test valid Rcode with uppercase 'R'
-        panel_space_validator("123", "R123", "HGNC:45678")  # Should not raise any exceptions
+        panel_space_validator("123", "R123", ["HGNC:45678"])  # Should not raise any exceptions
 
     def test_panel_space_validator_invalid_panel_id(self):
         # Test invalid Panel_ID (non-numeric)
         with self.assertRaises(ValueError):
-            panel_space_validator("abc", "r123", "HGNC:45678")
+            panel_space_validator("abc", "r123", ["HGNC:45678"])
 
     def test_panel_space_validator_invalid_rcode(self):
         # Test invalid Rcode (not matching pattern)
         with self.assertRaises(ValueError):
-            panel_space_validator("123", "invalidRcode", "HGNC:45678")
+            panel_space_validator("123", "invalidRcode", ["HGNC:45678",])
 
     def test_panel_space_validator_invalid_hgnc(self):
         # Test invalid HGNC_ID (missing HGNC:)

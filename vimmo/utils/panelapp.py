@@ -120,16 +120,9 @@ class PanelAppClient:
         """
         try:
             url = f'{self.base_url}/{panel_id}/?version={version}' # Set the URL
-            print(url) 
+            print(f"requesting data from endpoint: {url}", "Error_mode = INFO") 
             json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
             return json_data
         except Exception:
             print(Exception,"Error Mode= Error")
             raise Exception
-        # try:
-            
-        # except (KeyError, ValueError):
-        #     print("Invalid or missing version. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'")
-        #     version = None
-        
-        # return version
