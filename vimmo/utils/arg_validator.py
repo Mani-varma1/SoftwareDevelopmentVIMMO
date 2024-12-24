@@ -26,7 +26,7 @@ def validate_hgnc_ids(hgnc_id_value):
 
     # Validate each HGNC ID against the pattern
     for hgnc_id in hgnc_id_value:
-        print(hgnc_id)
+        # print(hgnc_id)
         if not re.fullmatch(hgnc_pattern, hgnc_id):
             raise ValueError(
                 f"Invalid format for 'HGNC_ID': '{hgnc_id}' must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
@@ -91,7 +91,7 @@ def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
             - `Panel_ID` must be numeric.
     """
     # Pattern for Rcode: Matches strings like 'R123'
-    rcode_pattern = r"^R\d+$"
+    rcode_pattern = r"^[rR]\d{2,3}$"
     # Pattern for Panel_ID: Matches numeric strings (e.g., '1234')
     panel_pattern = r"^\d+$"
     # Pattern for HGNC_ID: Matches strings like 'HGNC:12345'
@@ -134,7 +134,7 @@ def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False)
         - Delegates validation to the appropriate validator based on context (`panel_space` or `bed_space`).
     """
     # Extract values from input arguments
-    print("validator recieved:",args,panel_space,bed_space,"Error Mode = INFO")
+    # print("validator recieved:",args,panel_space,bed_space,"Error Mode = INFO")
     panel_id_value = args.get('Panel_ID', None)
     rcode_value = args.get('Rcode', None)
     hgnc_id_value = args.get('HGNC_ID', None)
@@ -153,3 +153,52 @@ def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False)
 
     if bed_space:
         bed_space_validator(panel_id_value, rcode_value, hgnc_id_value)
+
+
+
+
+def patient_update_validator(args):
+    """ Validates patient update inputs (Patient_ID and Rcode).
+
+
+    Args:
+        args (dict): Dictionary containing `Patient_ID` and `Rcode`.
+        
+    Raises:
+        ValueError: If validation fails due to simultaneous absent identifiers or invalid formats.
+
+    Notes:
+        - At least one identifier must be provided.
+        - Rcode should: 1) start with 'r' or 'R' 2) The proceeding values should be either 2 or 3 digits
+        - Patient ID has to contain only digits of any length >= 1.
+        """
+    # Extract values from input arguments
+    patient_id_value = args.get('Patient ID', None)  
+    rcode_value = args.get('R code', None) 
+
+     # Pattern for Patient_ID: Matches numeric strings (e.g., '1234')
+    patient_pattern = r"^\d+$"
+     # Pattern for Rcode: Matches strings like 'R123'
+    rcode_pattern = r"^[R]\d+$"
+    
+     # Validate Panel_ID
+    if patient_id_value:
+        if not re.fullmatch(patient_pattern, str(patient_id_value)):
+            raise ValueError("Invalid format for 'Patient_ID': Must be a number (e.g., '1234').")
+
+    # Validate Rcode
+    if rcode_value:
+        if not re.fullmatch(rcode_pattern, rcode_value):
+            raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
+    
+
+    # Ensure at least one identifier is provided
+    if not any([patient_id_value, rcode_value]):
+        raise ValueError(f"At least one of 'Panel_ID' or 'Rcode' must be provided. {patient_id_value}")
+    
+
+    # Ensure Rcode is real 
+    
+
+
+    

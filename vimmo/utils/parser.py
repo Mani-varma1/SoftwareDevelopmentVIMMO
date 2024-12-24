@@ -47,6 +47,12 @@ class IDParser:
 class PatientParser:
     """Parser for handling patient-related arguments."""
     
+    @staticmethod  
+    def upper_rcode(rcode):  # Convert all input Rcodes to upper case
+        if isinstance(rcode, str):
+            return rcode.upper()
+        raise ValueError("Input must be a string.") # Raise error if non str value input
+    
     @staticmethod
     def create_parser():
         """Create and return a request parser for patient-related arguments."""
@@ -63,7 +69,7 @@ class PatientParser:
         # Argument for R code
         parser.add_argument(
             'R code',
-            type=str,
+            type=PatientParser.upper_rcode,
             help='Type in R code',
             required=False
         )
@@ -301,6 +307,13 @@ class LocalDownloadParser:
 
 class UpdateParser:
     """Parser for updating the patient database."""
+    
+    @staticmethod  
+    def upper_rcode(rcode):  # Convert all input Rcodes to upper case
+        if isinstance(rcode, str):
+            return rcode.upper()
+        raise ValueError("Input must be a string.") # Raise error if non str value input
+    
     @staticmethod
     def create_parser():
         parser = reqparse.RequestParser()
