@@ -237,7 +237,7 @@ class Query:
             patient_history = cursor.execute(f'''
             SELECT Version
             FROM patient_data
-            WHERE DATE = (SELECT MAX(DATE) FROM patient_data WHERE Rcode = ? AND Patient_ID = ?)         
+            WHERE DATE = (SELECT MAX(DATE) FROM patient_data) AND Rcode = ? AND Patient_ID = ?         
             ''', (Rcode, Patient_id)).fetchone()
             if patient_history is None:
                 return None
@@ -273,9 +273,9 @@ class Query:
 
 
         database_version = cursor.execute( f'''
-        SELECT panel.Version
+        SELECT Version
         FROM panel
-        WHERE panel.rcodes = ?
+        WHERE rcodes = ?
         ''', (Rcode,)).fetchone()
         
         if database_version == None:
@@ -383,7 +383,7 @@ class Query:
         query = f"""
         SELECT HGNC_ID, Confidence
         FROM panel_genes 
-        WHERE panel_genes.Panel_ID = ?
+        WHERE Panel_ID = ?
 """
         current_panel_data = cursor.execute(query, (panelID,)).fetchall()
         current_data = {} # Instantiation of object for output dict{}
@@ -428,12 +428,12 @@ class Query:
         """
         
         cursor = self.conn.cursor()
-        operator = "="
+   
 
         query = f"""
         SELECT HGNC_ID, Confidence
         FROM panel_genes_archive
-        WHERE panel_genes_archive.Panel_ID {operator} ? AND panel_genes_archive.Version {operator} ?
+        WHERE Panel_ID = ? AND Version = ?
 """
 
         historic_panel_data = cursor.execute(query, (panelID, version)).fetchall()
