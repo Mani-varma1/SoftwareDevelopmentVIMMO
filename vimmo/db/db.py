@@ -1,4 +1,4 @@
-from vimmo.logger.logging_config import logger
+
 import sqlite3
 from sqlite3 import Connection
 from typing import Optional, List, Tuple, Dict, Any
@@ -19,23 +19,16 @@ class Database:
         """
         try:
             # First try to get the database from the installed package
-            logger.info("Attempting to get the database in the installed package")
             with importlib.resources.path('vimmo.db', 'panels_data.db') as db_path:
-                logger.info("Database is in the installed package: %s", db_path)
                 return str(db_path)
         except Exception:
-            logger.warning("failed to get the database in the installed package")
-
             # If that fails, try the development path
-            logger.info("Attempting to get the database in the development path")
             current_dir = os.path.dirname(os.path.abspath(__file__))
             dev_db_path = os.path.join(current_dir, self.db_path)
             
             if os.path.exists(dev_db_path):
-                logger.info("Database is in the development path at %s", dev_db_path)
                 return dev_db_path
             else:
-                logger.error("FileNotFoundError - database file could not be located in either the package or development path")
                 raise FileNotFoundError("database file could not be located")
             
 

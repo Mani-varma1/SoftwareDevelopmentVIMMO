@@ -29,7 +29,7 @@ console_handler.setLevel(logging.INFO) # Logs INFO level and  above to the conso
 console_handler.setFormatter(formatter)
 
 # Setting up the file handler for logging to a file with rotation
-file_handler = RotatingFileHandler(os.path.join(LOG_DIR, LOG_FILE), maxBytes=5 * 1024 * 1024, backupCount=3) # This rotates the logs when the file size exceeds 10 MB
+file_handler = RotatingFileHandler(os.path.join(LOG_DIR, LOG_FILE), maxBytes=10 * 1024 * 1024, backupCount=3) # This rotates the logs when the file size exceeds 10 MB
 file_handler.setLevel(logging.INFO) # Logs DEBUG level and above to the file
 file_handler.setFormatter(formatter)
 
