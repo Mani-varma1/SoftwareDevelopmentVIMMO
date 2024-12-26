@@ -1,4 +1,5 @@
 from vimmo.logger.logging_config import logger
+
 import requests
 from urllib.parse import quote
 import pandas as pd
