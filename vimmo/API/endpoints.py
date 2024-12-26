@@ -148,14 +148,12 @@ class PanelDownload(Resource):
                 print( panel_data, "Error mode= INFO")
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-            gene_query="|".join(gene_query)
         elif r_code:
             panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
             if "Message" in panel_data:
                 print( panel_data, "Error mode= INFO")
                 return panel_data
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-            gene_query="|".join(gene_query)
         
         if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
@@ -163,7 +161,7 @@ class PanelDownload(Resource):
             if isinstance(gene_query, dict) and "Message" in gene_query:
                 return gene_query, 400
         else:
-            gene_query=HGNC_ID
+            gene_query=[HGNC_ID,]
             
 
         genome_build = args.get('genome_build', 'GRCh38')

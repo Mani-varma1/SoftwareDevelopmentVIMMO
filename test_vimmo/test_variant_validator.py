@@ -188,7 +188,7 @@ class TestVarValClient(unittest.TestCase):
             self.client.get_gene_data("BRCA2")
         self.assertIn("Failed to get data from VarVal API with Status code:500", str(context.exception))
 
-    @patch('builtins.open', new_callable=mock_open, read_data="HGNC:123\nHGNC:999\n")
+    @patch('builtins.open', new_callable=mock_open, read_data="HGNC:12345678\nHGNC:999\n")
     @patch('vimmo.utils.variantvalidator.Query')
     @patch('vimmo.utils.variantvalidator.get_db')
     def test_get_hgnc_ids_with_replacements(self, mock_get_db, mock_query_cls, mock_file):
@@ -203,20 +203,21 @@ class TestVarValClient(unittest.TestCase):
 
         # Mock the query object to return pairs of (hgnc_id, hgnc_symbol)
         mock_query_instance = MagicMock()
-        mock_query_instance.get_gene_symbol.return_value = [("HGNC:123", "BRCA1_symbol")]
+        mock_query_instance.get_gene_symbol.return_value = [("HGNC:12345678", "TEST_symbol")]
+        print("hi")
         mock_query_cls.return_value = mock_query_instance
         
         # Call the method
-        gene_query = ["HGNC:123", "HGNC:456"]
+        gene_query = ["HGNC:12345678", "HGNC:456"]
         result = self.client.get_hgnc_ids_with_replacements(gene_query)
 
         # "HGNC:123" should be replaced by "BRCA1_symbol"
         # "HGNC:456" remains as is
-        self.assertIn("BRCA1_symbol", result)
+        self.assertIn("TEST_symbol", result)
         self.assertIn("HGNC:456", result)
 
         # Ensure the DB was called only for the problematic genes
-        mock_query_instance.get_gene_symbol.assert_called_once_with(["HGNC:123"])
+        mock_query_instance.get_gene_symbol.assert_called_once_with(["HGNC:12345678"])
 
     @patch('builtins.open', new_callable=mock_open, read_data="")
     @patch('vimmo.utils.variantvalidator.Query')
@@ -239,23 +240,46 @@ class TestVarValClient(unittest.TestCase):
         mock_get.return_value.ok = True
         mock_get.return_value.json.return_value = [
             {
-                "requested_symbol": "BRCA1",
+                "current_name": "BRCA1 DNA repair associated",
                 "current_symbol": "BRCA1",
+                "hgnc": "HGNC:1100",
+                "previous_symbol": "",
+                "requested_symbol": "BRCA1",
                 "transcripts": [
                     {
                         "annotations": {
-                            "chromosome": "17"
+                            "chromosome": "17",
+                            "db_xref": {
+                                "CCDS": "CCDS11453.1",
+                                "ensemblgene": None,
+                                "hgnc": "HGNC:1100",
+                                "ncbigene": "672",
+                                "select": "MANE"
+                            },
+                            "ensembl_select": False,
+                            "mane_plus_clinical": False,
+                            "mane_select": True,
+                            "map": "17q21.31",
+                            "note": "BRCA1 DNA repair associated",
+                            "refseq_select": True,
+                            "variant": "1"
                         },
-                        "reference": "RefSeq",
+                        "coding_end": 5705,
+                        "coding_start": 114,
+                        "description": "Homo sapiens BRCA1 DNA repair associated (BRCA1), transcript variant 1, mRNA",
                         "genomic_spans": {
-                            "NM_007294.3": {
-                                "orientation": 1,
+                            "NC_000017.11": {
+                                "end_position": 43125364,
                                 "exon_structure": [
                                     {
+                                        "cigar": "94=",
                                         "exon_number": 1,
-                                        "genomic_start": 43044295,
-                                        "genomic_end": 43044837
+                                        "genomic_end": 43125364,
+                                        "genomic_start": 43125271,
+                                        "transcript_end": 94,
+                                        "transcript_start": 1
                                     }
+                                    # More exons but this is just to check our parser is able to parse this format
                                 ]
                             }
                         }
