@@ -1,4 +1,3 @@
-from vimmo.logger.logging_config import logger
 import sqlite3
 from sqlite3 import Connection
 from typing import Optional, List, Tuple, Dict, Any
@@ -9,10 +8,7 @@ class Query:
 
     def get_panel_data(self, panel_id: Optional[int] = None, matches: bool=False):
         """Retrieve all records associated with a specific Panel_ID."""
-        logger.info("Pulling all records associated with Panel_ID: %s", panel_id)
-
         if panel_id is None:
-            logger.error("ValueError- Panel_ID must be provided")
             raise ValueError("Panel_ID must be provided.")
 
         cursor = self.conn.cursor()
@@ -21,7 +17,6 @@ class Query:
         # For numeric Panel_ID, LIKE is not typically used. Consider enforcing exact matches.
         if matches:
             # If 'matches' is True, you might want to convert the panel_id to a string and use LIKE
-            logger.debug("Using the LIKE query for Panel_ID: %s", panel_id)
             # However, this is unusual for numeric IDs. Consider whether this is necessary.
             panel_id_query = f"%{panel_id}%"
             query = f'''
@@ -37,7 +32,6 @@ class Query:
 
         else:
             # Exact match for Panel_ID
-            logger.info("Exact match for Panel_ID: %s", panel_id)
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
@@ -48,37 +42,25 @@ class Query:
             WHERE panel.Panel_ID = ?
             '''
             result = cursor.execute(query, (panel_id,)).fetchall()
-        logger.info("The run was successful for Panel_ID: %s, and retrieved %d records.", panel_id, len(result))
-        logger.debug("Run result: %s", result)
 
         print(panel_id, result, "error mode debug")
 
         if result:
-            logger.info("Returning %d records for Panel_ID: %s.", len(result), panel_id)
             return {
                 "Panel_ID": panel_id,
                 "Associated Gene Records": [dict(row) for row in result]
             }
         else:
-            logger.warning("No matches found for Panel_ID: %s.", panel_id)
             return {
                 "Panel_ID": panel_id,
                 "Message": "No matches found."
             }
 
-
     def get_panels_by_rcode(self, rcode: str, matches: bool = False):
         """Retrieve all records associated with a specific rcode."""
-        logger.info("Pulling all records associated with R_code: %s.", rcode)
-
-        if rcode is None:
-            logger.error("ValueError- R_code must be provided")
-            raise ValueError("R_code must be provided.")
         cursor = self.conn.cursor()
         operator = "LIKE" if matches else "="
         rcode_query = f"%{rcode}%" if matches else rcode
-
-        logger.debug("Using operator '%s' with R_code query: %s.", operator, rcode_query)
 
         # Query by rcode
         query = f'''
@@ -90,20 +72,15 @@ class Query:
         JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
         WHERE panel.rcodes {operator} ?
         '''
-        logger.debug("Running SQL query: %s.", query)
-
         result = cursor.execute(query, (rcode_query,)).fetchall()
-        logger.info("Query ran successfully for R_code: %s, and retrieved %d records.", rcode, len(result))
 
         print(rcode_query, result, "error mode debug")
         if result:
-            logger.info("Returning %d records for R_code: %s.", len(result), rcode)
             return {
                 "Rcode": rcode,
                 "Associated Gene Records": [dict(row) for row in result]
             }
         else:
-            logger.warning("No matches found for R_code: %s.", rcode)
             return {
                 "Rcode": rcode,
                 "Message": "No matches found for this rcode."
@@ -126,12 +103,6 @@ class Query:
         list[dict]
             A list of dictionaries containing panel data for the given HGNC IDs.
         """
-        logger.info("Pulling all records associated with HGNC_ID: %s.", hgnc_ids)
-
-        if hgnc_ids is None:
-            logger.error("ValueError- HGNC_ID must be provided")
-            raise ValueError("HGNC_ID must be provided.")
-
         cursor = self.conn.cursor()
         
         
@@ -147,11 +118,9 @@ class Query:
             # You would need to dynamically build the query.
             
             # But let's raise a NotImplementedError if needed:
-            logger.warning("Wildcard matching for multiple HGNC_IDs not implemented")
             raise NotImplementedError("Wildcard matching for multiple HGNC_IDs not implemented.")
         else:
             # Exact matching using IN clause
-            logger.info("Exact match for HGNC_ID: %s", hgnc_ids)
             placeholders = ','.join('?' * len(hgnc_ids))
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, genes_info.Gene_Symbol
@@ -160,56 +129,39 @@ class Query:
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
             WHERE panel_genes.HGNC_ID IN ({placeholders})
             '''
-            logger.debug("Running SQL query: %s.", query)
 
             result = cursor.execute(query, tuple(hgnc_ids)).fetchall()
-            logger.info("Query ran successfully for HGNC_ID: %s, and retrieved %d records.", hgnc_ids, len(result))
-
             print(hgnc_ids,result,"error mode debug")
 
             if result:
-                logger.info("Returning %d records for HGNC_ID: %s.", len(result), hgnc_ids)
                 return {
                     "HGNC_IDs": hgnc_ids,
                     "Panels": [dict(row) for row in result]
                 }
             else:
-                logger.warning("No matches found for HGNC_ID: %s.", hgnc_ids)
                 return {
                     "HGNC_IDs": hgnc_ids,
                     "Message": "Could not find any match for the provided HGNC IDs."
                 }
         
     def get_gene_list(self,panel_id,r_code,matches):
-        logger.info("Pulling the gene list associated with Panel_ID: %s, R_code: %s.", panel_id, r_code)
-
         if panel_id:
-            logger.debug("Pulling the panel data for Panel_ID: %s.", panel_id)
             panel_data = self.get_panel_data(panel_id=panel_id, matches=matches)
             if "Message" in panel_data:
-                logger.warning("No panel data found for Panel_ID: %s.", panel_id)
                 return panel_data
-            logger.info("Successfully pulled panel data for Panel_ID: %s.", panel_id)
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
         elif r_code:
-            logger.debug("Pulling the panel data for R_code: %s.", r_code)
             panel_data = self.get_panels_by_rcode(rcode=r_code, matches=matches)
             if "Message" in panel_data:
-                logger.warning("No panel data found for R_code: %s.", r_code)
                 return panel_data
-            logger.info("Successfully pulled panel data for R_code: %s.", r_code)
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-        logger.debug("Gene list: %s", gene_query)
         print("gene list:",gene_query,"Error Mode Debug")
         return gene_query
     
     def get_gene_symbol(self, ids_to_replace):
-        logger.info("Pulling the gene_symbol called with IDs to replace: %s.", ids_to_replace)
 
         cursor = self.conn.cursor()
         placeholders = ', '.join(['?'] * len(ids_to_replace))
-
-        logger.debug("Running SQL query with placeholders for IDs: %s.", placeholders)
         query = f'''
             SELECT HGNC_ID, HGNC_symbol
             FROM genes_info
@@ -217,7 +169,6 @@ class Query:
             '''
         
         result = cursor.execute(query, list(ids_to_replace)).fetchall()
-        logger.debug("id replaced: %s.", ids_to_replace)
         print("id replaced", ids_to_replace, "error mode = Debug")
         return result
     
