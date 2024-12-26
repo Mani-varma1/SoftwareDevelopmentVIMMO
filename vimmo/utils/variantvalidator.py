@@ -7,7 +7,7 @@ from vimmo.API import get_db
 import os
 
 class VarValAPIError(Exception):
-    """Custom exception for errors related to the PanelApp API."""
+    """Custom exception for errors related to the VarVal API."""
     pass
 
 
@@ -44,10 +44,10 @@ class VarValClient:
             if response.ok:
                 return response.json()
             else:
-                print(f"Failed to get data from PanelApp API with Status code:{response.status_code}", "Error Mode = Warning")
-                raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
+                print(f"Failed to get data from VarVal API with Status code:{response.status_code}", "Error Mode = Warning")
+                raise VarValAPIError(f"Failed to get data from VarVal API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
-    def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
+    def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
         """
         Fetches gene data from the VariantValidator API.
 
