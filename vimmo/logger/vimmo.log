@@ -312,3 +312,9 @@
 2024-12-26 20:53:07,275 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:22366']
 2024-12-26 20:53:07,278 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:22366'], and retrieved 0 records.
 2024-12-26 20:53:07,279 - VIMMO - WARNING - No matches found for HGNC_ID: ['HGNC:22366'].
+2024-12-26 21:49:48,103 - VIMMO - INFO - Everything imported
+2024-12-26 21:49:48,451 - VIMMO - INFO - Everything imported
+2024-12-26 21:49:59,544 - VIMMO - ERROR - At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.
+2024-12-26 21:50:07,165 - VIMMO - INFO - Validation for panel space
+2024-12-26 21:50:07,165 - VIMMO - INFO - Validating HGNC_ID
+2024-12-26 21:50:07,165 - VIMMO - ERROR - Invalid format for 'HGNC_ID': '.' must start with 'HGNC:' followed by digits only.
