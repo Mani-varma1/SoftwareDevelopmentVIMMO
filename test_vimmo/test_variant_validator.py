@@ -38,8 +38,10 @@ import unittest
 from unittest.mock import patch, mock_open, MagicMock, call
 from io import BytesIO
 import pandas as pd
-from vimmo.API import app  # Ensures Flask/DB init order
-from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
+# Use patch to mock the imports
+with patch('vimmo.API.app'):  # Ensures Flask/DB init order
+    from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
+
 
 
 class TestVarValClient(unittest.TestCase):
@@ -204,7 +206,6 @@ class TestVarValClient(unittest.TestCase):
         # Mock the query object to return pairs of (hgnc_id, hgnc_symbol)
         mock_query_instance = MagicMock()
         mock_query_instance.get_gene_symbol.return_value = [("HGNC:12345678", "TEST_symbol")]
-        print("hi")
         mock_query_cls.return_value = mock_query_instance
         
         # Call the method
@@ -236,50 +237,57 @@ class TestVarValClient(unittest.TestCase):
         mock_query_instance.get_gene_symbol.return_value = []
         mock_query_cls.return_value = mock_query_instance
 
-        # Mock API response for get_gene_data
-        mock_get.return_value.ok = True
-        mock_get.return_value.json.return_value = [
+        # (2) Mock VariantValidator JSON with two transcripts, each having two exons
+        mock_json = [
             {
-                "current_name": "BRCA1 DNA repair associated",
                 "current_symbol": "BRCA1",
-                "hgnc": "HGNC:1100",
-                "previous_symbol": "",
-                "requested_symbol": "BRCA1",
                 "transcripts": [
                     {
+                        # Orientation -1 => strand will be '-'
+                        # Reference => "NM_007294.4"
+                        "reference": "NM_007294.4",
                         "annotations": {
                             "chromosome": "17",
-                            "db_xref": {
-                                "CCDS": "CCDS11453.1",
-                                "ensemblgene": None,
-                                "hgnc": "HGNC:1100",
-                                "ncbigene": "672",
-                                "select": "MANE"
-                            },
-                            "ensembl_select": False,
-                            "mane_plus_clinical": False,
-                            "mane_select": True,
-                            "map": "17q21.31",
-                            "note": "BRCA1 DNA repair associated",
-                            "refseq_select": True,
-                            "variant": "1"
                         },
-                        "coding_end": 5705,
-                        "coding_start": 114,
-                        "description": "Homo sapiens BRCA1 DNA repair associated (BRCA1), transcript variant 1, mRNA",
                         "genomic_spans": {
                             "NC_000017.11": {
-                                "end_position": 43125364,
+                                "orientation": -1,
                                 "exon_structure": [
                                     {
-                                        "cigar": "94=",
                                         "exon_number": 1,
-                                        "genomic_end": 43125364,
                                         "genomic_start": 43125271,
-                                        "transcript_end": 94,
-                                        "transcript_start": 1
+                                        "genomic_end": 43125364
+                                    },
+                                    {
+                                        "exon_number": 2,
+                                        "genomic_start": 43124017,
+                                        "genomic_end": 43124115
                                     }
-                                    # More exons but this is just to check our parser is able to parse this format
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        # Orientation -1 => strand will be '-'
+                        # Reference => "ENST00000357654.9"
+                        "reference": "ENST00000357654.9",
+                        "annotations": {
+                            "chromosome": "17",
+                        },
+                        "genomic_spans": {
+                            "NC_000017.11": {
+                                "orientation": -1,
+                                "exon_structure": [
+                                    {
+                                        "exon_number": 1,
+                                        "genomic_start": 43125271,
+                                        "genomic_end": 43125364
+                                    },
+                                    {
+                                        "exon_number": 2,
+                                        "genomic_start": 43124017,
+                                        "genomic_end": 43124115
+                                    }
                                 ]
                             }
                         }
@@ -287,19 +295,45 @@ class TestVarValClient(unittest.TestCase):
                 ]
             }
         ]
-                
-        # Call parse_to_bed
-        bed_io = self.client.parse_to_bed(gene_query=["HGNC:1100"])  # e.g., "BRCA1"
+
+        mock_get.return_value.ok = True
+        mock_get.return_value.json.return_value = mock_json
+
+        # (3) Call parse_to_bed
+        bed_io = self.client.parse_to_bed(
+            gene_query=["HGNC:1100"],  # or "BRCA1"
+            genome_build="GRCh38",
+            transcript_set="all",
+            limit_transcripts="mane_select"  # or "mane_select", etc.
+        )
         self.assertIsInstance(bed_io, BytesIO)
-        
-        # Read the resulting BED data
+
+        # (4) Read and split the resulting BED lines
         bed_data = bed_io.read().decode('utf-8').strip().split('\n')
-        
-        # Expect one line: chr17 <start> <end> BRCA1_exon1_RefSeq +
-        # Because orientation=1 -> strand '+'
-        expected_line = "chr17\t43044295\t43044837\tBRCA1_exon1_RefSeq\t+"
-        self.assertEqual(len(bed_data), 1)
-        self.assertEqual(bed_data[0], expected_line)
+        self.assertEqual(len(bed_data), 4, "Should produce 4 lines (2 exons × 2 transcripts).")
+
+        # (5) Because code sorts by chrom/start/end, we expect the lines in ascending order.
+        # In ascending numerical order, exon2 (start=43124017) < exon1 (start=43125271).
+        # So each transcript’s exon2 line appears before its exon1 line.
+        # Also, the two transcripts have the same coordinates, since we are using a mocked dict to compare order is maintained.
+        # A likely final order is:
+        #   - Transcript1 Exon2
+        #   - Transcript2 Exon2
+        #   - Transcript1 Exon1
+        #   - Transcript2 Exon1
+
+        # Construct the *expected* lines. Since orientation=-1 => strand='-'
+        # reference is appended in the 4th column after exon number (ex: _NM_007294.4)
+        expected_bed_lines = [
+            "chr17\t43124017\t43124115\tBRCA1_exon2_NM_007294.4\t-",
+            "chr17\t43124017\t43124115\tBRCA1_exon2_ENST00000357654.9\t-",
+            "chr17\t43125271\t43125364\tBRCA1_exon1_NM_007294.4\t-",
+            "chr17\t43125271\t43125364\tBRCA1_exon1_ENST00000357654.9\t-"
+        ]
+
+        # (6) Check that your actual lines match exactly.
+        self.assertListEqual(bed_data, expected_bed_lines)
+
 
 
 if __name__ == '__main__':
