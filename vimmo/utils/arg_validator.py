@@ -109,10 +109,8 @@ def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
 
     # Validate HGNC_ID: Must match 'HGNC:12345'
     if hgnc_id_value:
-        if not re.fullmatch(hgnc_pattern, hgnc_id_value):
-            raise ValueError(
-                "Invalid format for 'HGNC_ID': It must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
-            )
+        validate_hgnc_ids(hgnc_id_value)
+
 
 def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False):
     """
@@ -153,3 +151,27 @@ def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False)
 
     if bed_space:
         bed_space_validator(panel_id_value, rcode_value, hgnc_id_value)
+
+
+
+
+def hgnc_to_list(args):
+            # Check if HGNC_ID is provided
+        hgnc_id_value = args.get("HGNC_ID",None)
+        if hgnc_id_value:
+            if "," in hgnc_id_value:
+                try:
+                    # Split the HGNC_ID string into a list by commas
+                    hgnc_id_list = [h.strip() for h in hgnc_id_value.split(',') if h.strip()]
+                    # You can set HGNC_ID to None or remove it to avoid confusion
+                    args["HGNC_ID"] = hgnc_id_list
+
+                except Exception as e:
+
+                    print(f"'error' : 'Failed to process HGNC_ID list: {str(e)}'","error mode =  debug?")
+                    # If something unexpected happens, return a descriptive error message
+                    return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
+            else:
+                args["HGNC_ID"] = [hgnc_id_value,]
+
+        return args

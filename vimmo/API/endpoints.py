@@ -8,7 +8,7 @@ try:
     from vimmo.utils.panelapp import  PanelAppClient
     from vimmo.utils.variantvalidator import VarValClient, VarValAPIError
     from vimmo.utils.localbed import local_bed_formatter
-    from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc
+    from vimmo.utils.arg_validator import validate_panel_id_or_Rcode_or_hgnc, hgnc_to_list
     from vimmo.utils.parser import (
         IDParser, 
         PatientParser,
@@ -44,27 +44,12 @@ class PanelSearch(Resource):
         # Parse arguments from the request
         args = id_parser.parse_args()
 
+        if args.get("HGNC_ID"):
+            args=hgnc_to_list(args=args)
+
         # Normalize the Rcode to uppercase if it exists
         if args.get("Rcode"):
             args["Rcode"] = args["Rcode"].upper()  # Convert lowercase 'r' to uppercase 'R'
-
-        # Check if HGNC_ID is provided
-        hgnc_id_value = args.get("HGNC_ID",None)
-        if hgnc_id_value:
-            if "," in hgnc_id_value:
-                try:
-                    # Split the HGNC_ID string into a list by commas
-                    hgnc_id_list = [h.strip() for h in hgnc_id_value.split(',') if h.strip()]
-                    # You can set HGNC_ID to None or remove it to avoid confusion
-                    args["HGNC_ID"] = hgnc_id_list
-
-                except Exception as e:
-
-                    print(f"'error' : 'Failed to process HGNC_ID list: {str(e)}'","error mode =  debug?")
-                    # If something unexpected happens, return a descriptive error message
-                    return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
-            else:
-                args["HGNC_ID"] = [hgnc_id_value,]
 
 
         # Apply custom validation for the parsed arguments
@@ -124,6 +109,9 @@ class PanelDownload(Resource):
         # Parse user-provided arguments from the request
         args = download_parser.parse_args()
 
+        if args.get("HGNC_ID", None):
+            args=hgnc_to_list(args=args)
+
         # # Apply custom validation
         try:
             validate_panel_id_or_Rcode_or_hgnc(args, bed_space=True)
@@ -141,29 +129,30 @@ class PanelDownload(Resource):
         # Initialize a query object with the database connection
         query = Query(db.conn)
         print("DB connectgion made at time xx-xx-xx for download endpoint", "error mode = INFO")
+        if not args["HGNC_ID"]:
+            if panel_id:
+                panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
+                if "Message" in panel_data:
+                    print( panel_data, "Error mode= INFO")
+                    return panel_data
+                gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+            elif r_code:
+                panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
+                if "Message" in panel_data:
+                    print( panel_data, "Error mode= INFO")
+                    return panel_data
+                gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
 
-        if panel_id:
-            panel_data = query.get_panel_data(panel_id=args.get("Panel_ID"), matches=args.get("Similar_Matches"))
-            if "Message" in panel_data:
-                print( panel_data, "Error mode= INFO")
-                return panel_data
-            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-        elif r_code:
-            panel_data = query.get_panels_by_rcode(rcode=args.get("Rcode"), matches=args.get("Similar_Matches"))
-            if "Message" in panel_data:
-                print( panel_data, "Error mode= INFO")
-                return panel_data
-            gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-        
-        if not HGNC_ID:
             gene_query=query.get_gene_list(panel_id,r_code,matches)
             # Check if gene_query is a set of HGNC IDs
             if isinstance(gene_query, dict) and "Message" in gene_query:
                 return gene_query, 400
         else:
-            gene_query=[HGNC_ID,]
-            
+            gene_query=args["HGNC_ID"]
+        
 
+            
+            
         genome_build = args.get('genome_build', 'GRCh38')
         transcript_set = args.get('transcript_set', 'all')
         limit_transcripts = args.get('limit_transcripts', 'mane_select')
@@ -239,6 +228,8 @@ class LocalPanelDownload(Resource):
         # Parse user-provided arguments from the request
         args = local_download_parser.parse_args()
 
+        if args.get("HGNC_ID", None):
+            args=hgnc_to_list(args=args)
 
         # # Apply custom validation
         try:
