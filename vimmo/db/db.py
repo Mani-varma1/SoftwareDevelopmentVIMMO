@@ -41,21 +41,7 @@ class Database:
             db_path = self.get_db_path()
             self.conn = sqlite3.connect(db_path)
             self.conn.row_factory = sqlite3.Row
-
-
-        
-    def get_patient_data(self, patient_id: str) -> List[Tuple]:
-        """Retrieve patient data by patient_id."""
-        cursor = self.conn.cursor()
-        query = '''
-        SELECT patient_data.patient_id, patient_data.panel_id, patient_data.rcode, patient_data.panel_version,
-               panel.rcodes, panel.Version
-        FROM patient_data
-        JOIN panel ON patient_data.panel_id = panel.Panel_ID
-        WHERE patient_data.patient_id = ?
-        '''
-        result = cursor.execute(query, (patient_id,)).fetchall()
-        return [dict(row) for row in result]  # Convert rows to dictionaries for easy JSON conversion
+            
     
     def close(self):
         """Close the database connection."""

@@ -117,7 +117,7 @@ class TestDatabase(unittest.TestCase):
             INSERT INTO patient_data 
             (Patient_ID, Panel_ID, Rcode, Version, Date) 
             VALUES 
-            (?, 01010, 'R208', '2.0', '2024-12-14')
+            (?, 0000111, 'R208', '2.0', '2024-12-14')
         """, (test_patient_id,))
         
         # Retrieve the patient data using the method being tested
