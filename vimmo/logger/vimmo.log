@@ -263,3 +263,52 @@
 2024-12-24 14:33:12,873 - VIMMO - INFO - Exact match for Panel_ID: 1316
 2024-12-24 14:33:12,880 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
 2024-12-24 14:33:12,880 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 20:29:11,078 - VIMMO - INFO - Everything imported
+2024-12-24 20:29:11,415 - VIMMO - INFO - Everything imported
+2024-12-24 20:30:50,972 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-24 20:30:50,972 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-24 20:30:50,972 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-24 20:30:50,973 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-24 20:30:50,978 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-24 20:30:50,979 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 20:31:00,479 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-24 20:31:00,479 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-24 20:31:00,479 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-24 20:31:00,504 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-24 20:31:00,504 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 20:31:47,750 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-24 20:31:47,750 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-24 20:31:47,750 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-24 20:31:47,750 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-24 20:31:47,759 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-24 20:31:47,759 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 20:31:47,760 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 1316, R_code: None.
+2024-12-24 20:31:47,760 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-24 20:31:47,760 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-24 20:31:47,768 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-24 20:31:47,768 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-24 20:31:47,768 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 1316.
+2024-12-24 21:28:09,340 - VIMMO - INFO - Everything imported
+2024-12-24 21:28:09,343 - VIMMO - INFO - Everything imported
+2024-12-24 21:49:08,281 - VIMMO - INFO - Everything imported
+2024-12-24 21:49:08,284 - VIMMO - INFO - Everything imported
+2024-12-26 18:10:01,075 - VIMMO - INFO - Everything imported
+2024-12-26 18:10:01,414 - VIMMO - INFO - Everything imported
+2024-12-26 18:10:27,241 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-26 18:10:27,241 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-26 18:10:27,252 - VIMMO - INFO - Pulling all records associated with R_code: R123.
+2024-12-26 18:10:27,299 - VIMMO - INFO - Query ran successfully for R_code: R123, and retrieved 2 records.
+2024-12-26 18:10:27,299 - VIMMO - INFO - Returning 2 records for R_code: R123.
+2024-12-26 20:51:58,922 - VIMMO - INFO - Everything imported
+2024-12-26 20:51:59,267 - VIMMO - INFO - Everything imported
+2024-12-26 20:52:43,598 - VIMMO - INFO - Validating HGNC_ID: ['HGNC_ID:22366']
+2024-12-26 20:52:43,598 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'HGNC_ID:22366' must start with 'HGNC:' followed by digits only.
+2024-12-26 20:53:07,274 - VIMMO - INFO - Validating HGNC_ID: ['HGNC:22366']
+2024-12-26 20:53:07,275 - VIMMO - INFO - Validated HGNC_ID: HGNC:22366
+2024-12-26 20:53:07,275 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:22366'] successful
+2024-12-26 20:53:07,275 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-26 20:53:07,275 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-26 20:53:07,275 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:22366'].
+2024-12-26 20:53:07,275 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:22366']
+2024-12-26 20:53:07,278 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:22366'], and retrieved 0 records.
+2024-12-26 20:53:07,279 - VIMMO - WARNING - No matches found for HGNC_ID: ['HGNC:22366'].
