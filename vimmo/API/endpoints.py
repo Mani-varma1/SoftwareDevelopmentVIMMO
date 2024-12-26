@@ -1,6 +1,5 @@
 from vimmo.logger.logging_config import logger
 import sys
-
 try:
     from flask import send_file
     from flask_restx import Resource
@@ -25,6 +24,7 @@ try:
     )
     
     logger.info("Everything imported")
+    # log.info("Everything imported")
 except:
     logger.info("Please log error")
     sys.exit(1)
