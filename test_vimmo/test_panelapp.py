@@ -1,25 +1,3 @@
-# import unittest
-# from unittest.mock import patch, Mock
-# from vimmo.utils.panelapp import PanelAppClient, PanelAppAPIError
-#
-# class TestPanelAppClientInit(unittest.TestCase):
-#     def test_default_base_url(self):
-#         # Test initialization with the default base URL
-#         client = PanelAppClient()
-#         self.assertEqual(client.base_url, 'https://panelapp.genomicsengland.co.uk/api/v1/panels')
-#
-#     def test_custom_base_url(self):
-#         # Test initialization with a custom base URL
-#         custom_url = 'https://custom-url.com/api'
-#         client = PanelAppClient(base_url=custom_url)
-#         self.assertEqual(client.base_url, custom_url)
-#
-#
-#
-# if __name__ == '__main__':
-#     unittest.main()
-
-
 import unittest
 from unittest.mock import patch, Mock
 from vimmo.utils.panelapp import PanelAppClient, PanelAppAPIError
@@ -31,7 +9,7 @@ class TestPanelAppClient(unittest.TestCase):
         # Set up a default instance of PanelAppClient for testing
         self.client = PanelAppClient()
 
-    @patch('panelapp.PanelAppClient._check_response')  # Mock the _check_response method
+    @patch('vimmo.utils.panelapp.PanelAppClient._check_response')  # Mock the _check_response method
     def test_get_genes_HUGO_success(self, mock_check_response):
         # Simulate a successful API response
         mock_check_response.return_value = {
@@ -54,7 +32,7 @@ class TestPanelAppClient(unittest.TestCase):
         expected_url = f'{self.client.base_url}/{rcode}/genes/?confidence_level={confidence_level}'
         mock_check_response.assert_called_once_with(expected_url)
 
-    @patch('panelapp.PanelAppClient._check_response')  # Mock the _check_response method
+    @patch('vimmo.utils.panelapp.PanelAppClient._check_response')  # Mock the _check_response method
     def test_get_genes_HUGO_empty_results(self, mock_check_response):
         # Simulate an API response with no results
         mock_check_response.return_value = {"results": []}
@@ -67,7 +45,7 @@ class TestPanelAppClient(unittest.TestCase):
         # Assert an empty list is returned
         self.assertEqual(result, [])
 
-    @patch('panelapp.PanelAppClient._check_response')  # Mock the _check_response method
+    @patch('vimmo.utils.panelapp.PanelAppClient._check_response')  # Mock the _check_response method
     def test_get_genes_HUGO_missing_gene_data(self, mock_check_response):
         # Simulate an API response with missing "gene_data"
         mock_check_response.return_value = {

@@ -135,6 +135,43 @@ class TestVarValClient(unittest.TestCase):
             (float('inf'), float('inf'), float('inf'))
         )
 
+    def test_custom_sort_edge_cases(self):
+        """
+        Tests the custom_sort function's handling of non-standard chromosome names and coordinates.
+        
+        This comprehensive test verifies proper sorting behavior for:
+        - Standard chromosomes (1-22, X, Y)
+        - Mitochondrial DNA (MT)
+        - Unplaced contigs (Un)
+        - Empty or malformed chromosome names
+        - Various coordinate formats
+        
+        The sorting function should maintain a consistent ordering while properly
+        handling edge cases and invalid inputs.
+        """
+        test_data = pd.DataFrame([
+            {'chrom': 'chr1', 'start': '1000', 'end': '2000'},
+            {'chrom': 'chrMT', 'start': '500', 'end': '1500'},  # Mitochondrial
+            {'chrom': 'chr23', 'start': '750', 'end': '1750'},  # Invalid chromosome number
+            {'chrom': 'chrUn', 'start': '100', 'end': '200'},   # Unplaced contig
+            {'chrom': 'chr', 'start': '300', 'end': '400'},     # Missing chromosome number
+            {'chrom': '', 'start': '1', 'end': ''}             # Empty chromosome and end
+        ])
+
+        # Test sorting of non-standard chromosomes
+        self.assertEqual(
+            self.client.custom_sort(test_data.iloc[1]),  # chrMT
+            (float('inf'), 500, 1500)
+        )
+        self.assertEqual(
+            self.client.custom_sort(test_data.iloc[4]),  # chr
+            (float('inf'), 300, 400)
+        )
+        self.assertEqual(
+            self.client.custom_sort(test_data.iloc[5]),  # empty
+            (float('inf'), float('1'), float('inf'))
+        )
+
     @patch('requests.get')
     def test_get_gene_data_success(self, mock_get):
         """
@@ -333,6 +370,200 @@ class TestVarValClient(unittest.TestCase):
 
         # (6) Check that your actual lines match exactly.
         self.assertListEqual(bed_data, expected_bed_lines)
+
+
+
+    @patch('builtins.open', new_callable=mock_open, read_data="")
+    @patch('vimmo.utils.variantvalidator.Query')
+    @patch('vimmo.utils.variantvalidator.get_db')
+    @patch('requests.get')
+    def test_parse_to_bed_missing_transcripts(self, mock_get, mock_get_db, mock_query_cls, mock_file):
+        """
+        Tests handling of API responses where the transcripts array is empty or missing.
+        
+        This test verifies that the client correctly handles cases where gene data is
+        returned but no transcript information is available. Such cases might occur for:
+        - Pseudogenes
+        - Recently discovered genes
+        - Genes not yet annotated in the selected genome build
+        
+        The expected behavior is to generate a "NoRecord" entry in the BED file with
+        appropriate placeholder values.
+        
+        Test Steps:
+        1. Mock database and query setup
+        2. Simulate API response with empty transcripts
+        3. Call parse_to_bed
+        4. Verify correct formatting of "NoRecord" entry
+        
+        Args:
+            mock_get: Mocked requests.get function
+            mock_get_db: Mocked database connection
+            mock_query_cls: Mocked Query class
+            mock_file: Mocked file operations
+        """
+        mock_db_instance = MagicMock()
+        mock_db_instance.conn = "fake_connection"
+        mock_get_db.return_value = mock_db_instance
+
+        mock_query_instance = MagicMock()
+        mock_query_instance.get_gene_symbol.return_value = []
+        mock_query_cls.return_value = mock_query_instance
+
+        # Mock API response with missing transcripts
+        mock_json = [{
+            "current_symbol": "BRCA1",
+            "requested_symbol": "BRCA1",
+            "transcripts": []  # Empty transcripts array
+        }]
+
+        mock_get.return_value.ok = True
+        mock_get.return_value.json.return_value = mock_json
+
+        bed_io = self.client.parse_to_bed(
+            gene_query=["BRCA1"],
+            genome_build="GRCh38"
+        )
+
+        bed_data = bed_io.read().decode('utf-8').strip().split('\n')
+        expected_line = "NoRecord\tNoRecord\tNoRecord\tBRCA1_NoRecord\tNoRecord"
+        self.assertEqual(bed_data[0], expected_line)
+
+
+
+    @patch('builtins.open', new_callable=mock_open, read_data="")
+    @patch('vimmo.utils.variantvalidator.Query')
+    @patch('vimmo.utils.variantvalidator.get_db')
+    @patch('requests.get')
+    def test_parse_to_bed_api_error_response(self, mock_get, mock_get_db, mock_query_cls, mock_file):
+        """
+        Tests handling of API error responses where the server returns an error message
+        instead of gene data.
+        
+        This test verifies the client's behavior when receiving an error response like:
+        [
+            {
+                "error": "Unable to retrieve data from the VVTA, please contact admin",
+                "requested_symbol": "TRAC"
+            }
+        ]
+        
+        The client should:
+        1. Recognize the error response structure
+        2. Handle it gracefully without crashing
+        3. Generate appropriate "Error" entries in the BED file
+        4. Preserve the gene symbol information for debugging
+        
+        Test Steps:
+        1. Set up mock infrastructure
+        2. Simulate API error response
+        3. Process through parse_to_bed
+        4. Verify error handling in output
+        
+        Args:
+            mock_get: Mocked requests.get function
+            mock_get_db: Mocked database connection
+            mock_query_cls: Mocked Query class
+            mock_file: Mocked file operations
+        """
+        # Set up database and query mocks
+        mock_db_instance = MagicMock()
+        mock_get_db.return_value = mock_db_instance
+
+        mock_query_instance = MagicMock()
+        mock_query_instance.get_gene_symbol.return_value = []
+        mock_query_cls.return_value = mock_query_instance
+
+        # Mock API error response
+        mock_json = [{
+            "error": "Unable to retrieve data from the VVTA, please contact admin",
+            "requested_symbol": "TRAC"
+        }]
+
+        mock_get.return_value.ok = True
+        mock_get.return_value.json.return_value = mock_json
+
+        # Process the error response
+        bed_io = self.client.parse_to_bed(
+            gene_query=["TRAC"],
+            genome_build="GRCh38"
+        )
+
+        # Read and verify the output
+        bed_data = bed_io.read().decode('utf-8').strip().split('\n')
+        
+        # The BED file should contain one line with Error markers
+        self.assertEqual(len(bed_data), 1)
+        
+        # Split the BED line into its components
+        bed_fields = bed_data[0].split('\t')
+        
+        # Verify the format of the error entry
+        self.assertEqual(bed_fields[0], "NoRecord")  # chromosome
+        self.assertEqual(bed_fields[1], "NoRecord")  # start
+        self.assertEqual(bed_fields[2], "NoRecord")  # end
+        self.assertEqual(bed_fields[3], "TRAC_NoRecord")  # name includes original symbol
+        self.assertEqual(bed_fields[4], "NoRecord")  # strand
+
+
+
+    @patch('builtins.open', new_callable=mock_open, read_data="")
+    @patch('vimmo.utils.variantvalidator.Query')
+    @patch('vimmo.utils.variantvalidator.get_db')
+    @patch('requests.get')
+    def test_parse_to_bed_missing_genomic_spans(self, mock_get, mock_get_db, mock_query_cls, mock_file):
+        """
+        Tests behavior when API response contains transcripts without genomic span information.
+        
+        This test verifies proper handling of cases where transcript data exists but
+        genomic coordinates are missing. This scenario might occur due to:
+        - Incomplete genome annotations
+        - Data synchronization issues
+        - API response truncation
+        
+        Expected behavior is to generate an error entry in the BED file while
+        maintaining the ability to process other valid entries.
+        
+        Test Steps:
+        1. Configure mock objects for database and API
+        2. Create test response with missing genomic spans
+        3. Process through parse_to_bed
+        4. Verify error handling and output format
+        
+        Args:
+            mock_get: Mocked requests.get function
+            mock_get_db: Mocked database connection
+            mock_query_cls: Mocked Query class
+            mock_file: Mocked file operations
+        """
+        mock_db_instance = MagicMock()
+        mock_get_db.return_value = mock_db_instance
+
+        mock_query_instance = MagicMock()
+        mock_query_cls.return_value = mock_query_instance
+
+        # Mock API response with missing genomic spans
+        mock_json = [{
+            "current_symbol": "TEST",
+            "transcripts": [{
+                "annotations": {
+                    "chromosome": "1"
+                },
+                "reference": "NM_TEST",
+                "genomic_spans": {}  # Empty genomic spans
+            }]
+        }]
+
+        mock_get.return_value.ok = True
+        mock_get.return_value.json.return_value = mock_json
+
+        bed_io = self.client.parse_to_bed(
+            gene_query=["TEST"],
+            genome_build="GRCh38"
+        )
+
+        bed_data = bed_io.read().decode('utf-8').strip().split('\n')
+        self.assertTrue("Error" in bed_data[0])
 
 
 

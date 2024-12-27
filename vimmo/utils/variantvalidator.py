@@ -274,12 +274,14 @@ class VarValClient:
 
             try:
                 chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
-                for transcript in gene.get('transcripts', []):
-                        reference = transcript.get('reference', "NA")
-                        genomic_spans = transcript.get('genomic_spans', {})
+                for transcript in gene['transcripts']:
+                        reference = transcript['reference']
+                        genomic_spans = transcript['genomic_spans']
+                        if len(genomic_spans) < 1:
+                            raise ValueError("Missing data")
                         for _, spans in genomic_spans.items():
-                            orientation = '+' if spans.get('orientation') == 1 else '-'
-                            for exon in spans.get('exon_structure', []):
+                            orientation = '+' if spans['orientation'] == 1 else '-'
+                            for exon in spans['exon_structure']:
                                 bed_rows.append({
                                     'chrom': chromosome,
                                     'start': exon['genomic_start'],
@@ -290,14 +292,15 @@ class VarValClient:
             except Exception:
                 print(Exception,"Ocurred when parsing data from var val","Error Mode= DEBUG")
                 bed_rows.append({
-                    'chrom': chromosome,
+                    'chrom': "Error",
                     'start': "Error",
                     'end': "Error",
-                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'name': f"{gene.get('current_symbol', gene_query)}_Error",
                     'strand': "Error"
                 })
 
         # Convert rows into a DataFrame
+        print(bed_rows)
         bed_df = pd.DataFrame(bed_rows)
         # Define a custom sorting function
 
