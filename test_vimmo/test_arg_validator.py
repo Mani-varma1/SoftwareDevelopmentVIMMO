@@ -40,7 +40,7 @@ class TestValidationFunctions(unittest.TestCase):
 
     # Bed Space Validator Tests
     def test_bed_space_validator_valid(self):
-        bed_space_validator("123", "R123", "HGNC:45678")  # Should not raise exceptions
+        bed_space_validator("123", "R123", ["HGNC:45678"])  # Should not raise exceptions
 
     def test_bed_space_validator_invalid_panel_id(self):
         with self.assertRaises(ValueError) as err:
@@ -63,11 +63,11 @@ class TestValidationFunctions(unittest.TestCase):
         self.assertIn("Invalid format for 'HGNC_ID'", str(err.exception))
 
     def test_bed_space_validator_multiple_hgnc_valid(self):
-        bed_space_validator("123", "R123", "HGNC:12345")  # change to list when mani update it
+        bed_space_validator("123", "R123", ["HGNC:12345"])
 
     def test_bed_space_validator_multiple_hgnc_invalid(self):
         with self.assertRaises(ValueError) as err:
-            bed_space_validator("123", "R123", "HGNC:12345,Invalid")
+            bed_space_validator("123", "R123", ["HGNC:12345,Invalid"])
         self.assertIn("Invalid format for 'HGNC_ID'", str(err.exception))
 
     # HGNC ID Validation Tests
