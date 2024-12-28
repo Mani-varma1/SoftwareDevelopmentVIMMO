@@ -22,7 +22,8 @@ class Query:
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
-                   genes_info.GRCh38_start, genes_info.GRCh38_stop
+                   genes_info.GRCh38_start, genes_info.GRCh38_stopgenes_info.GRCh37_Chr,
+                   genes_info.GRCh37_start, genes_info.GRCh37_stop
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
@@ -35,7 +36,8 @@ class Query:
             query = f'''
             SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                    genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
-                   genes_info.GRCh38_start, genes_info.GRCh38_stop
+                   genes_info.GRCh38_start, genes_info.GRCh38_stop, genes_info.GRCh37_Chr,
+                   genes_info.GRCh37_start, genes_info.GRCh37_stop
             FROM panel
             JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
             JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID
@@ -66,7 +68,8 @@ class Query:
         query = f'''
         SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
                genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
-               genes_info.GRCh38_start, genes_info.GRCh38_stop
+               genes_info.GRCh38_start, genes_info.GRCh38_stop, genes_info.GRCh37_Chr,
+                genes_info.GRCh37_start, genes_info.GRCh37_stop
         FROM panel
         JOIN panel_genes ON panel.Panel_ID = panel_genes.Panel_ID
         JOIN genes_info ON panel_genes.HGNC_ID = genes_info.HGNC_ID

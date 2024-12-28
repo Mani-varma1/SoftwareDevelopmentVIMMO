@@ -3,21 +3,21 @@ from vimmo.db.db_query import Query
 from datetime import date
 
 class Update:
-    def __init__(self,connection):
+    def __init__(self, connection, test_mode=False):
         self.conn = connection
         self.query = Query(self.conn)
         self.papp = PanelAppClient(base_url="https://panelapp.genomicsengland.co.uk/api/v1/panels")
+        self.test_mode = test_mode
     
     def check_presence(self, patient_id: str, rcode: str):
 
         current_version = str(self.query.get_db_latest_version(rcode)) # Retrieve the latest panel version from our db
 
         cursor = self.conn.cursor()
-        operator = "="
         does_exists = cursor.execute(f"""
         SELECT Version
         FROM patient_data
-        WHERE Patient_ID {operator} ? AND Rcode {operator} ? AND Version {operator} ?
+        WHERE Patient_ID = ? AND Rcode = ? AND Version = ?
         """, (patient_id, rcode, current_version)).fetchone() # query patient_data table for entries matching the query rcode, patient id and current version
         
         if does_exists != None: # if a value is returned, a patient record matches the query
@@ -39,7 +39,9 @@ class Update:
         VALUES (?, ?, ?, ?, ?) 
         """, (patient_id, panel_id, rcode, version, date_today)) # Insert data into table
         
-        self.conn.commit()
+        # Only commit if not in test mode
+        if not self.test_mode:
+            self.conn.commit()
         return f'Check the db!'
     
     def update_panels_version(self, rcode, new_version, panel_id):
