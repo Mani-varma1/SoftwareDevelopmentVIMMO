@@ -4,9 +4,10 @@ import pandas as pd
 from io import BytesIO
 from vimmo.db.db_query import Query
 from vimmo.API import get_db
+import os
 
 class VarValAPIError(Exception):
-    """Custom exception for errors related to the PanelApp API."""
+    """Custom exception for errors related to the VarVal API."""
     pass
 
 
@@ -43,10 +44,10 @@ class VarValClient:
             if response.ok:
                 return response.json()
             else:
-                print(f"Failed to get data from PanelApp API with Status code:{response.status_code}", "Error Mode = Warning")
-                raise VarValAPIError(f"Failed to get data from PanelApp API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
+                print(f"Failed to get data from VarVal API with Status code:{response.status_code}", "Error Mode = Warning")
+                raise VarValAPIError(f"Failed to get data from VarVal API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
-    def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='all'):
+    def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
         """
         Fetches gene data from the VariantValidator API.
 
@@ -97,7 +98,9 @@ class VarValClient:
         """
             
         # Step 2: Load prob_gene_list from the file
-        with open('vimmo/utils/problem_genes.txt', 'r') as file:
+        db_dir=os.path.dirname(os.path.realpath(__file__))
+        prob_gene_file=os.path.join(db_dir,"problem_genes.txt")
+        with open(prob_gene_file, 'r') as file:
             prob_gene_list = [line.strip() for line in file if line.strip()]
         
         
@@ -271,12 +274,14 @@ class VarValClient:
 
             try:
                 chromosome = f"chr{gene['transcripts'][0]['annotations']['chromosome']}"
-                for transcript in gene.get('transcripts', []):
-                        reference = transcript.get('reference', "NA")
-                        genomic_spans = transcript.get('genomic_spans', {})
+                for transcript in gene['transcripts']:
+                        reference = transcript['reference']
+                        genomic_spans = transcript['genomic_spans']
+                        if len(genomic_spans) < 1:
+                            raise ValueError("Missing data")
                         for _, spans in genomic_spans.items():
-                            orientation = '+' if spans.get('orientation') == 1 else '-'
-                            for exon in spans.get('exon_structure', []):
+                            orientation = '+' if spans['orientation'] == 1 else '-'
+                            for exon in spans['exon_structure']:
                                 bed_rows.append({
                                     'chrom': chromosome,
                                     'start': exon['genomic_start'],
@@ -287,14 +292,15 @@ class VarValClient:
             except Exception:
                 print(Exception,"Ocurred when parsing data from var val","Error Mode= DEBUG")
                 bed_rows.append({
-                    'chrom': chromosome,
+                    'chrom': "Error",
                     'start': "Error",
                     'end': "Error",
-                    'name': f"{gene.get('current_symbol', gene_query)}_NoRecord",
+                    'name': f"{gene.get('current_symbol', gene_query)}_Error",
                     'strand': "Error"
                 })
 
         # Convert rows into a DataFrame
+        print(bed_rows)
         bed_df = pd.DataFrame(bed_rows)
         # Define a custom sorting function
 
