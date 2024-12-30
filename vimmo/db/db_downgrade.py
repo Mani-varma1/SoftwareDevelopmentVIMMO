@@ -1,3 +1,4 @@
+from vimmo.logger.logging_config import logger
 from vimmo.db.db_query import Query
 from vimmo.db.db_update import Update
 from vimmo.utils.panelapp import PanelAppClient
@@ -31,6 +32,7 @@ class Downgrade:
         """, (new_version, panel_id, rcode))
         
         if cursor.rowcount == 0:
+            logger.warning("No matching record found for Panel_ID: %s and R_code: %s.", panel_id, rcode)
             print(f"No matching record found for Panel_ID: {panel_id} and rcode: {rcode}","Error Mode = Debug")
             raise ValueError(f"No matching record found for Panel_ID: {panel_id} and rcode: {rcode}")
         
@@ -98,6 +100,7 @@ class Downgrade:
                 return {"message": "No changes detected between versions"}
             
             # If there are changes, proceed with update
+            logger.info(f"Db deleting records {panel_id}")
             print(f"Db Deleting records {panel_id}", "Error Mode = INfo")
             cursor.execute("""
                 DELETE FROM panel_genes 
@@ -106,6 +109,7 @@ class Downgrade:
             
             # Insert new records
             for hgnc_id, confidence in new_genes:
+                logger.info(f"Db is updating {panel_id}, {hgnc_id}, {confidence}")
                 print(f"Db is updating {panel_id},{hgnc_id},{confidence}", "Error Mode = INfo")
                 cursor.execute("""
                     INSERT INTO panel_genes (Panel_ID, HGNC_ID, Confidence)
@@ -120,6 +124,7 @@ class Downgrade:
             }
                 
         except Exception as e:
+            logger.warning(f"Failed to update gene contents: {str(e)}")
             print(f"Failed to update gene contents: {str(e)}", "Error Mode = Warning")
             raise Exception(f"Failed to update gene contents: {str(e)}")
 
@@ -134,6 +139,7 @@ class Downgrade:
         try:
             # Start transaction
             cursor.execute("BEGIN TRANSACTION")
+            logger.info("Db is using transaction to downgrade")
             print("Db is using transaction to downgrade", "Error Mode = INfo")
             
             # Get current version before changes
@@ -162,6 +168,7 @@ class Downgrade:
             
         except Exception as e:
             cursor.execute("ROLLBACK")
+            logger.warning(f"Failed to process downgrade: {str(e)}")
             print(f"Failed to process downgrade: {str(e)}", "Error Mode = Warning")
             raise Exception(f"Failed to process downgrade: {str(e)}")
 
