@@ -47,6 +47,7 @@ class Database:
             self.conn = sqlite3.connect(db_path)
             self.conn.row_factory = sqlite3.Row
             
+            
     
     def close(self):
         """Close the database connection."""
