@@ -47,7 +47,7 @@ RUN pip install --upgrade pip
 RUN pip install -e .
 
 # Expose port 5001 to the outside world
-EXPOSE 5001
+EXPOSE 5000
 
 # Run the application (main.py) when the container starts
 CMD ["python", "vimmo/main.py"]
