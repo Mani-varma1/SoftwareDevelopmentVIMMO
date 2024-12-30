@@ -1,4 +1,5 @@
 from vimmo.logger.logging_config import logger
+
 import requests
 
 class PanelAppAPIError(Exception):
