@@ -22,6 +22,7 @@ class Database:
             with importlib.resources.path('vimmo.db', 'panels_data.db') as db_path:
                 return str(db_path)
         except Exception:
+            print(Exception,"db file could not be retrieved from installed package", "Error Mode = Error")
             # If that fails, try the development path
             current_dir = os.path.dirname(os.path.abspath(__file__))
             dev_db_path = os.path.join(current_dir, self.db_path)
@@ -29,6 +30,7 @@ class Database:
             if os.path.exists(dev_db_path):
                 return dev_db_path
             else:
+                print("database file could not be located", "Error mode=Critical")
                 raise FileNotFoundError("database file could not be located")
             
 
@@ -39,21 +41,7 @@ class Database:
             db_path = self.get_db_path()
             self.conn = sqlite3.connect(db_path)
             self.conn.row_factory = sqlite3.Row
-
-
-        
-    def get_patient_data(self, patient_id: str) -> List[Tuple]:
-        """Retrieve patient data by patient_id."""
-        cursor = self.conn.cursor()
-        query = '''
-        SELECT patient_data.patient_id, patient_data.panel_id, patient_data.rcode, patient_data.panel_version,
-               panel.rcodes, panel.Version
-        FROM patient_data
-        JOIN panel ON patient_data.panel_id = panel.Panel_ID
-        WHERE patient_data.patient_id = ?
-        '''
-        result = cursor.execute(query, (patient_id,)).fetchall()
-        return [dict(row) for row in result]  # Convert rows to dictionaries for easy JSON conversion
+            
     
     def close(self):
         """Close the database connection."""

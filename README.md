@@ -87,26 +87,19 @@ bumpversion major
 
 ## Docker
 ```bash
-# file to start the docker image
-cd /SoftwareDevelopmentVIMMO
+# to run docker make sure you are in route directory of the project
+cd <your_file_path>/SoftwareDevelopmentVIMMO
 
-# build the image
-docker build -t "name_of_image" .
-# start app container
-docker run  "name_of_image"
-# list the containers
-docker container ls
-# stop the container
-docker stop "name_of_container"
-#restart the container
-docker container restart "name_of_container"
-# delete the container
-docker rm <"ame_of_container"
-# list the images
-docker image ls
-# delete the image
-docker image rm "name_of_image"
+# make sure your docker daemon is running if you are on mac/windows use docker desktop
+  
+# if you are on linux use
+sudo systemctl start docker
 
+# to build the image
+docker-compose build
+
+# to run the container 
+docker-compose up
 ````
 
 ## Testing
@@ -115,6 +108,9 @@ In root directory (<path>/SoftwareDevelopmentVIMMO) :
 ```bash
 # Using the command to automagically find and run tests
 python -m unittest discover
+
+# if you want to test individual folder
+python -m unittest <name_of_the_file>
 ```
 
 how to exit
