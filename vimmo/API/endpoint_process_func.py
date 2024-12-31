@@ -65,13 +65,25 @@ def bed_processor(query, patient_id, r_code, version, args, logger):
         
     else:
         patient_records = query.return_all_records(patient_id)
-        key = next(iter(patient_records))
-        first_date_records = patient_records[key]
-        
-        # Get the first date's data for this R-code
-        dated_records = next(iter(first_date_records))
-        record_data = first_date_records[dated_records]
-        patient_record_version = record_data[1]
+        if len(patient_records) > 1:
+            # Get all versions for comparison
+            patient_record_version = None
+            for record_num in patient_records:
+                date_record = next(iter(patient_records[record_num]))
+                record_data = patient_records[record_num][date_record]
+                current_version = record_data[1]
+                if str(current_version) == str(version):
+                    patient_record_version = current_version
+
+        else:
+            key = next(iter(patient_records))
+            first_date_records = patient_records[key]
+            
+            # Get the first date's data for this R-code
+            dated_records = next(iter(first_date_records))
+            record_data = first_date_records[dated_records]
+            patient_record_version = record_data[1]
+
 
         if not str(version) == str(patient_record_version):
             response["type"] = "message"
