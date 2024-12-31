@@ -1,3 +1,4 @@
+from vimmo.logger.logging_config import logger
 import requests
 from urllib.parse import quote
 import pandas as pd
@@ -38,13 +39,14 @@ class VarValClient:
         try:
             response = requests.get(url)
         except :
-            print(f"Failed to connect. Please check your internet connection and try again", "Errro Mode= Error")
+            logger.error(f"Failed to connect to {url}. Please check your internet connection and try again.")
             raise VarValAPIError(f"Failed to connect. Please check your internet connection and try again")
         else:
             if response.ok:
+                logger.info(f"Successfully pulled data from URL: {url}")
                 return response.json()
             else:
-                print(f"Failed to get data from VarVal API with Status code:{response.status_code}", "Error Mode = Warning")
+                logger.warning(f"Failed to get data from VarVal API with status code:{response.status_code}")
                 raise VarValAPIError(f"Failed to get data from VarVal API with Status code:{response.status_code}. Please switch to local endpoint if you still need data.")
 
     def get_gene_data(self, gene_query, genome_build='GRCh38', transcript_set='all', limit_transcripts='mane_select'):
@@ -79,7 +81,7 @@ class VarValClient:
         )
 
         # Make the request and return the response
-        print(url, "Error Mode INFO")
+        logger.info(f"Pulling gene data from URL: {url}.")
         return self._check_response(url)
     
 
@@ -102,10 +104,12 @@ class VarValClient:
         prob_gene_file=os.path.join(db_dir,"problem_genes.txt")
         with open(prob_gene_file, 'r') as file:
             prob_gene_list = [line.strip() for line in file if line.strip()]
+        logger.info("Loaded problematic gene list successfully.")
         
         
         # Step 3: Find the HGNC_IDs that need to be replaced
         ids_to_replace = [gene for gene in gene_query if gene in prob_gene_list]
+        logger.info(f"IDs to replace identified: {ids_to_replace}")
         
         # Step 4: Retrieve HGNC_symbols for the IDs to replace
         if ids_to_replace:
@@ -115,9 +119,11 @@ class VarValClient:
             query = Query(db.conn)
             result = query.get_gene_symbol(ids_to_replace)
             id_to_symbol = {row[0]: row[1] for row in result}
+            logger.info(f"HGNC_symbols retrieved for ID replacement: {id_to_symbol}")
             
         else:
             id_to_symbol = {}
+            logger.info("No IDs to replace found.")
         
         # Step 5: Create the final set with replacements
         final_output = set()
@@ -126,8 +132,7 @@ class VarValClient:
                 final_output.add(id_to_symbol[hgnc_id])
             else:
                 final_output.add(hgnc_id)
-
-        print(final_output, "Gene query output" "Error Mode INFO")
+        logger.info(f"Gene query output: {final_output}")
 
         return "|".join(final_output)
 
@@ -211,7 +216,7 @@ class VarValClient:
             end = float('inf')
         
         # Return the sorting key tuple.
-        print(f"sorted key: {chrom_number}, {start}, {end},", "Error Mode=INFO")
+        logger.info(f"sorted key: {chrom_number}, {start}, {end}")
         return (chrom_number, start, end)
 
 
@@ -249,9 +254,9 @@ class VarValClient:
                 transcript_set=transcript_set,
                 limit_transcripts=limit_transcripts
             )
-            print("var val params:",gene_data, "Error mode = INFO")
+            logger.info(f"var val params: {gene_data}")
         except VarValAPIError as e:
-            print(VarValAPIError(f"Error fetching data: {str(e)}"), "error mode - DEBUG")
+            logger.debug(f"Error fetching data from VariantValidator API: {str(e)}")
             raise VarValAPIError(f"Error fetching data: {str(e)}")
         
         
@@ -259,7 +264,7 @@ class VarValClient:
         # Parse the gene data into BED format
         bed_rows = []
         for gene in gene_data:
-            print(gene, "error mode = info")
+            logger.info(f"Gene: {gene}")
             transcripts = gene.get('transcripts', [])
             # If no transcripts, create a NoRecord line
             if not transcripts or 'annotations' not in transcripts[0] or 'chromosome' not in transcripts[0]['annotations']:
@@ -290,7 +295,7 @@ class VarValClient:
                                     'strand': orientation
                                 })
             except Exception:
-                print(Exception,"Ocurred when parsing data from var val","Error Mode= DEBUG")
+                logger.debug(f"{Exception} ocurred when parsing data from var val")
                 bed_rows.append({
                     'chrom': "Error",
                     'start': "Error",
@@ -300,11 +305,13 @@ class VarValClient:
                 })
 
         # Convert rows into a DataFrame
+        logger.info("Converting parsed data into DataFrame.")
         print(bed_rows)
         bed_df = pd.DataFrame(bed_rows)
         # Define a custom sorting function
 
         # Add sorting key
+        logger.info("Sorting the DataFrame.")
         bed_df['sort_key'] = bed_df.apply(self.custom_sort, axis=1)
 
         # Sort DataFrame based on the key
@@ -314,6 +321,7 @@ class VarValClient:
         bed_df.reset_index(drop=True, inplace=True)
 
         # Write the DataFrame to a BED file (BytesIO)
+        logger.info("Writing the DataFrame to BED file format.")
         output = BytesIO()
         bed_string = bed_df.to_csv(
             sep='\t',
@@ -323,4 +331,5 @@ class VarValClient:
         )
         output.write(bed_string.encode('utf-8'))
         output.seek(0)
+        logger.info("BED file generation completed successfully.")
         return output

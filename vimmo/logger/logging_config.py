@@ -4,11 +4,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 # from vimmo.logger.logging_config import console_handler, file_handler
-LOG_DIR = "/home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/logger"
-LOG_FILE = "/home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/logger/vimmo.log"
+LOG_DIR = os.path.dirname(os.path.realpath(__file__))
+# print(f"Log DIR: {LOG_DIR}")
+LOG_FILE = os.path.join(LOG_DIR,"vimmo.log")
+# print(f"Log FILE: {LOG_FILE}")
 
-if not os.path.exists(LOG_DIR):
-    os.makedirs(LOG_DIR)
+
 
 # Logger creation
 
@@ -25,28 +26,14 @@ formatter = logging.Formatter(
 
 # Setting up the console handler for logging to the terminal
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO) # Logs INFO level and  above to the console
+console_handler.setLevel(logging.ERROR) # Logs INFO level and  above to the console
 console_handler.setFormatter(formatter)
 
 # Setting up the file handler for logging to a file with rotation
-file_handler = RotatingFileHandler(os.path.join(LOG_DIR, LOG_FILE), maxBytes=10 * 1024 * 1024, backupCount=3) # This rotates the logs when the file size exceeds 10 MB
+file_handler = RotatingFileHandler(os.path.join(LOG_DIR, LOG_FILE), maxBytes=5 * 1024 * 1024, backupCount=3) # This rotates the logs when the file size exceeds 10 MB
 file_handler.setLevel(logging.INFO) # Logs DEBUG level and above to the file
 file_handler.setFormatter(formatter)
 
 # Adding handlers to the logger
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
-# def create_connection():
-#     """Create a database connection to the database. """
-#     try:
-#         logger.debug("Attempting to connect to the database.")
-#         # raise ConnectionError("Database connection failed.")
-#     except Exception as e:
-#         logger.error("Database connection error: %s", e)
-
-# if __name__ == "__main__":
-#     logger.info("Starting VIMMO")
-
-#     create_connection()
-
-#     logger.info("Shutting down VIMMO")

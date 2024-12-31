@@ -35,7 +35,7 @@ class Database:
                 logger.info("Database is in the development path at %s", dev_db_path)
                 return dev_db_path
             else:
-                logger.error("FileNotFoundError - database file could not be located in either the package or development path")
+                logger.error("Database file could not be located in either the package or development path")
                 raise FileNotFoundError("database file could not be located")
             
 

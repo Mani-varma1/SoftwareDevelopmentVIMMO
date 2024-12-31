@@ -51,9 +51,8 @@ class Query:
             '''
             result = cursor.execute(query, (panel_id,)).fetchall()
         logger.info("The run was successful for Panel_ID: %s, and retrieved %d records.", panel_id, len(result))
-        logger.debug("Run result: %s", result)
+        logger.debug(f"Panel_ID: {panel_id}, Result: {result}")
 
-        print(panel_id, result, "error mode debug")
 
         if result:
             logger.info("Returning %d records for Panel_ID: %s.", len(result), panel_id)
@@ -98,7 +97,8 @@ class Query:
         result = cursor.execute(query, (rcode_query,)).fetchall()
         logger.info("Query ran successfully for R_code: %s, and retrieved %d records.", rcode, len(result))
 
-        print(rcode_query, result, "error mode debug")
+        logger.debug(f"R_code Query: {rcode_query}, Result: {result}")
+        
         if result:
             logger.info("Returning %d records for R_code: %s.", len(result), rcode)
             return {
@@ -167,8 +167,8 @@ class Query:
 
             result = cursor.execute(query, tuple(hgnc_ids)).fetchall()
             logger.info("Query ran successfully for HGNC_ID: %s, and retrieved %d records.", hgnc_ids, len(result))
-
-            print(hgnc_ids,result,"error mode debug")
+            logger.debug(f"HGNC_ID: {hgnc_ids}, Result: {result}")
+            
 
             if result:
                 logger.info("Returning %d records for HGNC_ID: %s.", len(result), hgnc_ids)
@@ -202,8 +202,7 @@ class Query:
                 return panel_data
             logger.info("Successfully pulled panel data for R_code: %s.", r_code)
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-        logger.debug("Gene list: %s", gene_query)
-        print("gene list:",gene_query,"Error Mode Debug")
+        logger.debug(f"Gene list: {gene_query}")
         return gene_query
     
     def get_gene_symbol(self, ids_to_replace):
@@ -220,8 +219,7 @@ class Query:
             '''
         
         result = cursor.execute(query, list(ids_to_replace)).fetchall()
-        logger.debug("id replaced: %s.", ids_to_replace)
-        print("id replaced", ids_to_replace, "error mode = Debug")
+        logger.debug(f"id replaced: {ids_to_replace}")
         return result
     
     def local_bed(self, gene_query, genome_build):
@@ -235,7 +233,7 @@ class Query:
             WHERE HGNC_ID IN ({placeholders})
             '''
             local_bed_records=cursor.execute(query, list(gene_query))
-            print("local bed searched",gene_query, genome_build)
+            logger.info(f"Local bed searched: {gene_query}, {genome_build}")
             return local_bed_records
         elif genome_build=="GRCh37":
             cursor = self.conn.cursor()
@@ -247,7 +245,7 @@ class Query:
             WHERE HGNC_ID IN ({placeholders})
             '''
             local_bed_records = cursor.execute(query, list(gene_query))
-            print("local bed searched",gene_query, genome_build)
+            logger.info(f"Local bed searched: {gene_query}, {genome_build}")
             return local_bed_records
     
     def check_patient_history(self, Patient_id: str, Rcode) -> str:

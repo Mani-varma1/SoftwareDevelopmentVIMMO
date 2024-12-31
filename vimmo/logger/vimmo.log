@@ -1,48 +1,46 @@
-2024-12-30 20:23:39,565 - VIMMO - INFO - Everything imported
-2024-12-30 20:23:39,942 - VIMMO - INFO - Everything imported
-2024-12-30 20:23:58,060 - VIMMO - INFO - Validation for panel space
-2024-12-30 20:23:58,061 - VIMMO - INFO - Attempting to get the database in the installed package
-2024-12-30 20:23:58,061 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
-2024-12-30 20:23:58,061 - VIMMO - INFO - Pulling all records associated with R_code: R123.
-2024-12-30 20:23:58,085 - VIMMO - INFO - Query ran successfully for R_code: R123, and retrieved 2 records.
-2024-12-30 20:23:58,085 - VIMMO - INFO - Returning 2 records for R_code: R123.
-2024-12-30 20:24:45,321 - VIMMO - INFO - Validation for panel space
-2024-12-30 20:24:45,321 - VIMMO - INFO - Attempting to get the database in the installed package
-2024-12-30 20:24:45,321 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
-2024-12-30 20:24:45,322 - VIMMO - INFO - Pulling all records associated with R_code: R123.
-2024-12-30 20:24:45,352 - VIMMO - INFO - Query ran successfully for R_code: R123, and retrieved 2 records.
-2024-12-30 20:24:45,352 - VIMMO - INFO - Returning 2 records for R_code: R123.
-2024-12-30 20:25:15,086 - VIMMO - INFO - Validation for bed space
-2024-12-30 20:25:15,086 - VIMMO - INFO - Attempting to get the database in the installed package
-2024-12-30 20:25:15,086 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
-2024-12-30 20:25:15,086 - VIMMO - INFO - Pulling all records associated with R_code: R234.
-2024-12-30 20:25:15,109 - VIMMO - INFO - Query ran successfully for R_code: R234, and retrieved 1 records.
-2024-12-30 20:25:15,109 - VIMMO - INFO - Returning 1 records for R_code: R234.
-2024-12-30 20:25:15,109 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R234.
-2024-12-30 20:25:15,109 - VIMMO - INFO - Pulling all records associated with R_code: R234.
-2024-12-30 20:25:15,131 - VIMMO - INFO - Query ran successfully for R_code: R234, and retrieved 1 records.
-2024-12-30 20:25:15,131 - VIMMO - INFO - Returning 1 records for R_code: R234.
-2024-12-30 20:25:15,131 - VIMMO - INFO - Successfully pulled panel data for R_code: R234.
-2024-12-30 20:25:15,140 - VIMMO - INFO - Loaded problematic gene list successfully.
-2024-12-30 20:25:15,140 - VIMMO - INFO - IDs to replace identified: []
-2024-12-30 20:25:15,140 - VIMMO - INFO - No IDs to replace found.
-2024-12-30 20:25:15,140 - VIMMO - INFO - Final output created: {'HGNC:7892'}
-2024-12-30 20:25:15,140 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A7892/mane_select/all/GRCh38.
-2024-12-30 20:25:15,348 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A7892/mane_select/all/GRCh38
-2024-12-30 20:25:15,349 - VIMMO - INFO - Gene data pulled successfully: [{'current_name': 'purine nucleoside phosphorylase', 'current_symbol': 'PNP', 'hgnc': 'HGNC:7892', 'previous_symbol': 'NP', 'requested_symbol': 'PNP', 'transcripts': [{'annotations': {'chromosome': '14', 'db_xref': {'CCDS': 'CCDS9552.1', 'ensemblgene': None, 'hgnc': 'HGNC:7892', 'ncbigene': '4860', 'select': 'MANE'}, 'ensembl_select': False, 'mane_plus_clinical': False, 'mane_select': True, 'map': '14q11.2', 'note': 'purine nucleoside phosphorylase', 'refseq_select': True, 'variant': '0'}, 'coding_end': 989, 'coding_start': 120, 'description': 'Homo sapiens purine nucleoside phosphorylase (PNP), mRNA', 'genomic_spans': {'NC_000014.9': {'end_position': 20477089, 'exon_structure': [{'cigar': '130=', 'exon_number': 1, 'genomic_end': 20469535, 'genomic_start': 20469406, 'transcript_end': 130, 'transcript_start': 1}, {'cigar': '170=', 'exon_number': 2, 'genomic_end': 20472477, 'genomic_start': 20472308, 'transcript_end': 300, 'transcript_start': 131}, {'cigar': '104=', 'exon_number': 3, 'genomic_end': 20474575, 'genomic_start': 20474472, 'transcript_end': 404, 'transcript_start': 301}, {'cigar': '176=', 'exon_number': 4, 'genomic_end': 20474948, 'genomic_start': 20474773, 'transcript_end': 580, 'transcript_start': 405}, {'cigar': '191=', 'exon_number': 5, 'genomic_end': 20475252, 'genomic_start': 20475062, 'transcript_end': 771, 'transcript_start': 581}, {'cigar': '706=', 'exon_number': 6, 'genomic_end': 20477089, 'genomic_start': 20476384, 'transcript_end': 1477, 'transcript_start': 772}], 'orientation': 1, 'start_position': 20469406, 'total_exons': 6}}, 'length': 1477, 'reference': 'NM_000270.4', 'translation': 'NP_000261.2'}, {'annotations': {'chromosome': '14', 'db_xref': {'CCDS': None, 'ensemblgene': 'ENSG00000198805', 'hgnc': 'HGNC:7892', 'ncbigene': None, 'select': 'MANE'}, 'ensembl_select': True, 'mane_plus_clinical': False, 'mane_select': True, 'map': '14q11.2', 'note': 'purine nucleoside phosphorylase', 'refseq_select': False, 'variant': '201'}, 'coding_end': 989, 'coding_start': 120, 'description': 'PNP-201', 'genomic_spans': {'NC_000014.9': {'end_position': 20477089, 'exon_structure': [{'cigar': '130=', 'exon_number': 1, 'genomic_end': 20469535, 'genomic_start': 20469406, 'transcript_end': 130, 'transcript_start': 1}, {'cigar': '170=', 'exon_number': 2, 'genomic_end': 20472477, 'genomic_start': 20472308, 'transcript_end': 300, 'transcript_start': 131}, {'cigar': '104=', 'exon_number': 3, 'genomic_end': 20474575, 'genomic_start': 20474472, 'transcript_end': 404, 'transcript_start': 301}, {'cigar': '176=', 'exon_number': 4, 'genomic_end': 20474948, 'genomic_start': 20474773, 'transcript_end': 580, 'transcript_start': 405}, {'cigar': '191=', 'exon_number': 5, 'genomic_end': 20475252, 'genomic_start': 20475062, 'transcript_end': 771, 'transcript_start': 581}, {'cigar': '706=', 'exon_number': 6, 'genomic_end': 20477089, 'genomic_start': 20476384, 'transcript_end': 1477, 'transcript_start': 772}], 'orientation': 1, 'start_position': 20469406, 'total_exons': 6}}, 'length': 1477, 'reference': 'ENST00000361505.10', 'translation': 'ENSP00000354532.6'}]}]
-2024-12-30 20:25:15,349 - VIMMO - INFO - Converting parsed data into DataFrame.
-2024-12-30 20:25:15,361 - VIMMO - INFO - Sorting the DataFrame.
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20469406, 20469535
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20472308, 20472477
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20474472, 20474575
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20474773, 20474948
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20475062, 20475252
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20476384, 20477089
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20469406, 20469535
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20472308, 20472477
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20474472, 20474575
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20474773, 20474948
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20475062, 20475252
-2024-12-30 20:25:15,363 - VIMMO - INFO - sorted key: 14, 20476384, 20477089
-2024-12-30 20:25:15,367 - VIMMO - INFO - Writing the DataFrame to BED file format.
-2024-12-30 20:25:15,369 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-30 21:11:07,510 - VIMMO - INFO - Everything imported
+2024-12-30 21:11:07,929 - VIMMO - INFO - Everything imported
+2024-12-30 21:11:57,565 - VIMMO - INFO - Everything imported
+2024-12-30 21:12:39,133 - VIMMO - INFO - Everything imported
+2024-12-30 21:13:22,685 - VIMMO - INFO - Everything imported
+2024-12-30 21:13:32,252 - VIMMO - INFO - Everything imported
+2024-12-30 22:21:22,486 - VIMMO - INFO - Everything imported
+2024-12-30 22:21:22,839 - VIMMO - INFO - Everything imported
+2024-12-30 22:22:38,837 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-30 22:22:38,837 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-30 22:23:09,386 - VIMMO - INFO - Everything imported
+2024-12-30 22:23:09,725 - VIMMO - INFO - Everything imported
+2024-12-30 22:32:32,524 - VIMMO - INFO - Everything imported
+2024-12-30 22:32:32,859 - VIMMO - INFO - Everything imported
+2024-12-30 22:33:02,704 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-30 22:33:02,704 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-30 22:33:02,705 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-30 22:33:02,705 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-30 22:33:02,749 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-30 22:33:02,750 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-30 22:34:36,644 - VIMMO - INFO - Everything imported
+2024-12-30 22:34:37,021 - VIMMO - INFO - Everything imported
+2024-12-30 22:34:39,851 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-30 22:34:39,851 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-30 22:34:39,851 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-30 22:34:39,851 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-30 22:34:39,858 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-30 22:34:39,858 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-31 05:27:06,184 - VIMMO - INFO - Everything imported
+2024-12-31 05:27:06,586 - VIMMO - INFO - Everything imported
+2024-12-31 05:27:21,424 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 05:27:21,424 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 05:27:21,426 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-31 05:27:21,426 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-31 05:27:21,484 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-31 05:27:21,485 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-31 05:54:43,864 - VIMMO - INFO - Everything imported
+2024-12-31 05:54:44,217 - VIMMO - INFO - Everything imported
+2024-12-31 05:54:58,162 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 05:54:58,162 - VIMMO - INFO - Database is in the installed package: /home/vincent/Desktop/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 05:54:58,171 - VIMMO - INFO - DB connection made from panel endpoint
+2024-12-31 05:54:58,171 - VIMMO - INFO - Pulling all records associated with Panel_ID: 1316
+2024-12-31 05:54:58,171 - VIMMO - INFO - Exact match for Panel_ID: 1316
+2024-12-31 05:54:58,221 - VIMMO - INFO - The run was successful for Panel_ID: 1316, and retrieved 2 records.
+2024-12-31 05:54:58,221 - VIMMO - INFO - Returning 2 records for Panel_ID: 1316.
+2024-12-31 05:58:33,336 - VIMMO - INFO - Everything imported
