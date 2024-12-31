@@ -58,17 +58,22 @@ class Update:
         self.conn.commit()
     
     def archive_panel_contents(self, panel_id: str, archive_version: str):
-        """ Archive the contents of an outdated panel version """
         cursor = self.conn.cursor()
         cursor.execute(
-                    '''
-                    INSERT INTO panel_genes_archive (Panel_ID, HGNC_ID, Version, Confidence)
-                    SELECT Panel_ID, HGNC_ID, ?, Confidence
-                    FROM panel_genes
-                    WHERE Panel_ID = ?
-                    ''', (archive_version,panel_id,)
-
-                )
+            '''
+            INSERT INTO panel_genes_archive (Panel_ID, HGNC_ID, Version, Confidence)
+            SELECT pg.Panel_ID, pg.HGNC_ID, ?, pg.Confidence
+            FROM panel_genes pg
+            WHERE pg.Panel_ID = ?
+            AND NOT EXISTS (
+                SELECT 1 
+                FROM panel_genes_archive pga 
+                WHERE pga.Panel_ID = pg.Panel_ID 
+                AND pga.HGNC_ID = pg.HGNC_ID 
+                AND pga.Version = ?
+            )
+            ''', (archive_version, panel_id, archive_version)
+        )
         self.conn.commit()
 
     def update_gene_contents(self, Rcode, panel_id):

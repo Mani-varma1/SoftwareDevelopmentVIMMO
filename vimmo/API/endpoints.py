@@ -5,6 +5,7 @@ try:
     from flask import send_file
     from flask_restx import Resource
     from vimmo.API import api,get_db
+    from vimmo.API.endpoint_process_func import bed_processor
     from vimmo.db.db_query import Query
     from vimmo.db.db_update import Update
     from vimmo.db.db_downgrade import Downgrade
@@ -413,7 +414,8 @@ class PatientResource(Resource):
                         update.update_panels_version(args["R code"], latest_online_version, panel_id)
                         update.archive_panel_contents(panel_id, database_version)
                         update.update_gene_contents(args["R code"],panel_id)
-                        disclaimer = 'Panel comparison up to date'
+                        database_version = query.get_db_latest_version(args["R code"]) # Db now is different
+                        disclaimer = 'Panel found differences and updated the local panel to latest version'
                     except:
                         disclaimer='Database update failed'
                 else: 
@@ -427,7 +429,7 @@ class PatientResource(Resource):
             if patient_history is None:  # Check if patient is in db with record of input R code
                 patient_records = query.return_all_records(args["Patient ID"])
                 if patient_records:  # if any record of patient exists - print records
-                    return {"Status": f"There is NO record of patient {args['Patient ID']} recieving {args['R code']} within our records", "Patient records": patient_records} # Re
+                    return {"Status": f"There is record of patient {args['Patient ID']} recieving {args['R code']} within our records", "Patient records": patient_records} # Re
                 else: # if no record esists
                     return {"Status":f"There is NO record of patient {args['Patient ID']} recieving any R code within our records"} # Return explanatory message
                         
@@ -469,58 +471,14 @@ class PatientBed(Resource):
         db = get_db()
         logger.info("DBconnection made from patient bed endpoint")
     
-        query = Query(db.conn) 
-        if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
-            patient_records = query.return_all_records(patient_id)
-            if len(patient_records) >= 2:
-                return {"MESSAGE": "Multiple records found",
-                        "Patient ID": patient_id, 
-                        "patient records":patient_records, 
-                        "Tip": "Please select a panel and version"}
-            elif len(patient_records) == 0:
-                return{f"Please use the update space as no records were found for {patient_id}"}
-            else:
-                gene_query=query.get_gene_list(r_code)
-
-        elif r_code and not version:
-            patient_records = query.return_all_records(patient_id)
-            
-            # Filter records matching the given r_code
-            matching_records = {date: details for date, details in patient_records.items() if details[0] == r_code}
-
-            if matching_records:
-                # Extract unique versions for the r_code
-                unique_versions = {details[1] for details in matching_records.values()}
-                
-                if len(unique_versions) > 1:
-                    # If more than one version is found, return a message with details
-                    return f"{len(matching_records)} records were found for {r_code} with multiple versions: {', '.join(map(str, sorted(unique_versions)))}. Please specify the version."
-                else:
-                    version= next(iter(unique_versions))
-            else:
-                logger.info(f"no records for {args}")
-                return{f"{r_code}":"No record found for this panel"}
-        
-        database_version = query.get_db_latest_version(r_code)
-        if str(database_version) != version:
-            
-            panel_ids= query.rcode_to_panelID(Rcode=r_code)
-            archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
-            gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
-
-            if not gene_query:
-                logger.debug(f"records not found for {panel_ids},{archived_records},{gene_query}")
-                return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
-   
-    
+        query = Query(db.conn)  
+        processed_info=bed_processor(query,patient_id,r_code,version,args,logger)
+        if processed_info["type"] == "gene_query":
+            # Perform additional processing on response["data"]
+            gene_query = processed_info["data"]
         else:
-            panel_ids = query.get_panels_by_rcode(rcode=r_code)
-            if "Message" in panel_ids:
-                logger.info(f"Missing panel IDs for {r_code}:{panel_ids}")
-                return panel_ids
-            else:
-                gene_query={record["HGNC_ID"] for record in panel_ids["Associated Gene Records"]}
-
+            # Return message directly to API
+            return processed_info["data"]
         
 
         # Initialize the VariantValidator client
@@ -580,57 +538,13 @@ class PatientLocalBed(Resource):
         logger.info("DB connection made from patient local bed endpoint")
         
         query = Query(db.conn) 
-        if r_code == None: # No Rcode input = show all Tests/version for a given patient ID workflow
-            patient_records = query.return_all_records(patient_id)
-            if len(patient_records) >= 2:
-                return {"MESSAGE": "Multiple records found",
-                        "Patient ID": patient_id, 
-                        "patient records":patient_records, 
-                        "Tip": "Please select a panel and version"}
-            elif len(patient_records) == 0:
-                return{f"Please use the update space as no records were found for {patient_id}"}
-            else:
-                gene_query=query.get_gene_list(r_code)
-
-        elif r_code and not version:
-            patient_records = query.return_all_records(patient_id)
-            
-            # Filter records matching the given r_code
-            matching_records = {date: details for date, details in patient_records.items() if details[0] == r_code}
-
-            if matching_records:
-                # Extract unique versions for the r_code
-                unique_versions = {details[1] for details in matching_records.values()}
-                
-                if len(unique_versions) > 1:
-                    # If more than one version is found, return a message with details
-                    return f"{len(matching_records)} records were found for {r_code} with multiple versions: {', '.join(map(str, sorted(unique_versions)))}. Please specify the version."
-                else:
-                    version= next(iter(unique_versions))
-            else:
-                logger.info(f"no records for {args}")
-                return{f"{r_code}":"No record found for this panel"}
-        
-        database_version = query.get_db_latest_version(r_code)
-        if str(database_version) != version:
-            
-            panel_ids= query.rcode_to_panelID(Rcode=r_code)
-            archived_records=query.historic_panel_retrieval(panelID=panel_ids,version=version)
-            gene_query=[hgnc for hgnc,confidence in archived_records.items() if confidence==3]
-
-
-            if not gene_query:
-                logger.info(f"no records for ID: {panel_ids},Archived: {archived_records},Result:{gene_query}")
-                return "Sorry provided version does not have any records. Provide a valid version by checking in patient space"
-   
+        processed_info=bed_processor(query,patient_id,r_code,version,args,logger)
+        if processed_info["type"] == "gene_query":
+            # Perform additional processing on response["data"]
+            gene_query = processed_info["data"]
         else:
-            panel_data = query.get_panels_by_rcode(rcode=r_code)
-            if "Message" in panel_data:
-                logger.info(f"Missing panel IDs for {r_code}:",panel_ids)
-                return panel_data
-            else:
-                gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
-
+            # Return message directly to API
+            return processed_info["data"]
     
         local_bed_records=query.local_bed(gene_query,genome_build)
         bed_file=local_bed_formatter(local_bed_records)
@@ -729,7 +643,8 @@ class UpdateClass(Resource):
     
                 # Then update patient record
                 updated_record = update.add_record(args["Patient ID"], args["R code"])
-                return {database_version: latest_online_version}
+                return {f"Current version > {database_version}": f"Updated to {latest_online_version}",
+                        f"Record added": f"Patient ID: {args['Patient ID']}, R Code: {args['R code']}, Version :{latest_online_version}"}
             
             else:
                 # Update patient_data table with record 

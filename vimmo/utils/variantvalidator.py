@@ -306,7 +306,6 @@ class VarValClient:
 
         # Convert rows into a DataFrame
         logger.info("Converting parsed data into DataFrame.")
-        print(bed_rows)
         bed_df = pd.DataFrame(bed_rows)
         # Define a custom sorting function
 

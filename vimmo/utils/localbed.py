@@ -1,5 +1,4 @@
 from vimmo.logger.logging_config import logger
-
 import pandas as pd
 from io import BytesIO
 
