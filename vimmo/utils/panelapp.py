@@ -1,3 +1,5 @@
+from vimmo.logger.logging_config import logger
+
 import requests
 
 class PanelAppAPIError(Exception):
@@ -19,8 +21,8 @@ class PanelAppClient:
             response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
             return response.json()
         except (requests.RequestException, ValueError):
-            # print("An error occurred while accessing or processing data from the PanelApp API.", "Error Mode Warning")
-            # print(response.raise_for_status(), "ERROR mode= Warning")
+            logger.warning("An error occurred while accessing or processing data from the PanelApp API.")
+            logger.warning(response.raise_for_status())
             raise PanelAppAPIError("An error occurred while accessing or processing data from the PanelApp API.")
 
 
@@ -71,16 +73,21 @@ class PanelAppClient:
 
         Here 2.5 is the version of R208, as of (26/11/24)
         """
+        logger.info(f"Starting get_latest_online_version for panel_id: {panel_id}")
 
         url = f'{self.base_url}/signedoff/?panel_id={panel_id}&display=latest'  # Set the URL
+        logger.debug(f"Constructed URL: {url}")
         json_data = self._check_response(url)  # Send get request to URL, if 200 return json format of the response
+        logger.info(f"Successfully retrieved JSON data for panel_id: {panel_id}")
 
         try:
             # Safely extract the version
             version_value = json_data["results"][0]["version"]  # Extract the version number from the json response
             version = float(version_value)
+            logger.info(f"Extracted version: {version} for panel_id: {panel_id}")
 
         except:
+            logger.warning(f"Invalid or missing version key in response for panel_id: {panel_id}")
             return KeyError({"Error": "Invalid or missing rcode. Please check the R code at 'https://panelapp.genomicsengland.co.uk/panels/'"})
 
         else:
@@ -118,9 +125,10 @@ class PanelAppClient:
         """
         try:
             url = f'{self.base_url}/{panel_id}/?version={version}' # Set the URL
-            # print(f"requesting data from endpoint: {url}", "Error_mode = INFO")
+            logger.info(f"requesting data from endpoint: {url}")
             json_data = self._check_response(url) # Send get request to URL, if 200 return json format of the response
+            logger.info(f"Successfully fetched data for panel_id: {panel_id}, version: {version}")
             return json_data
         except Exception:
-            # print(Exception,"Error Mode= Error")
+            logger.error(f"Failed to fetch data for panel_id: {panel_id}, version: {version}. {Exception}" )
             raise Exception

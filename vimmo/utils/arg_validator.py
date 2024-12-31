@@ -1,3 +1,5 @@
+from vimmo.logger.logging_config import logger
+
 import re
 
 
@@ -28,10 +30,12 @@ def validate_hgnc_ids(hgnc_id_value):
     for hgnc_id in hgnc_id_value:
         # print(hgnc_id)
         if not re.fullmatch(hgnc_pattern, hgnc_id):
+            logger.error(f"Invalid format for 'HGNC_ID': '{hgnc_id}' must start with 'HGNC:' followed by digits only.")
             raise ValueError(
                 f"Invalid format for 'HGNC_ID': '{hgnc_id}' must start with 'HGNC:' followed by digits only (e.g., 'HGNC:12345')."
             )
         else:
+            logger.info(f"Validated HGNC_ID: {hgnc_id}")
             continue
 
 
@@ -59,19 +63,24 @@ def panel_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     if panel_id_value:
         try:
             int(panel_id_value)  # Convert to integer to check numeric format
+            logger.info(f"Valid Panel_ID: {panel_id_value}")
         except ValueError:
+            logger.error("Invalid input: 'Panel_ID' must be digits only.")
             raise ValueError("Invalid input: 'Panel_ID' must be digits only (e.g., '123').")
 
     # Validate Rcode: Must match 'R123' or 'r123'
     if rcode_value:
         if not re.fullmatch(rcode_pattern, rcode_value):
+            logger.error("Invalid format for 'Rcode': Must start with 'R' followed by digits only")
             raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
 
     # Validate HGNC_ID: Must match 'HGNC:12345'
     if hgnc_id_value:
+        logger.info("Validating HGNC_ID")
         # We'll validate all HGNC IDs at once
         # If this fails, it will raise ValueError
         validate_hgnc_ids(hgnc_id_value)
+        logger.info(f"Validation for HGNC_ID: {hgnc_id_value} successful")
 
 def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     """
@@ -100,11 +109,13 @@ def bed_space_validator(panel_id_value, rcode_value, hgnc_id_value):
     # Validate Panel_ID: Must be numeric
     if panel_id_value:
         if not re.fullmatch(panel_pattern, str(panel_id_value)):
+            logger.error("Invalid format for 'Panel_ID': Must be a number.")
             raise ValueError("Invalid format for 'Panel_ID': Must be a number (e.g., '1234').")
 
     # Validate Rcode: Must match 'R123'
     if rcode_value:
         if not re.fullmatch(rcode_pattern, rcode_value):
+            logger.error("Invalid format for 'Rcode': Must start with 'R' followed by digits only")
             raise ValueError("Invalid format for 'Rcode': Must start with 'R' followed by digits only (e.g., 'R123').")
 
     # Validate HGNC_ID: Must match 'HGNC:12345'
@@ -132,24 +143,28 @@ def validate_panel_id_or_Rcode_or_hgnc(args, panel_space=False, bed_space=False)
         - Delegates validation to the appropriate validator based on context (`panel_space` or `bed_space`).
     """
     # Extract values from input arguments
-    # print("validator recieved:",args,panel_space,bed_space,"Error Mode = INFO")
+    logger.info(f"validator recieved: {args},{panel_space},{bed_space}")
     panel_id_value = args.get('Panel_ID', None)
     rcode_value = args.get('Rcode', None)
     hgnc_id_value = args.get('HGNC_ID', None)
 
     # Ensure at least one identifier is provided
     if not any([panel_id_value, rcode_value, hgnc_id_value]):
+        logger.error("At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.")
         raise ValueError("At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.")
 
     # Ensure only one identifier is provided
     if sum(bool(arg) for arg in [panel_id_value, rcode_value, hgnc_id_value]) > 1:
+        logger.error("Provide only one of 'Panel_ID', 'Rcode', or 'HGNC_ID', not multiple.")
         raise ValueError("Provide only one of 'Panel_ID', 'Rcode', or 'HGNC_ID', not multiple.")
 
     # Delegate validation based on the specified space
     if panel_space:
+        logger.info("Validation for panel space")
         panel_space_validator(panel_id_value, rcode_value, hgnc_id_value)
 
     if bed_space:
+        logger.info("Validation for bed space")
         bed_space_validator(panel_id_value, rcode_value, hgnc_id_value)
 
 
@@ -168,7 +183,8 @@ def hgnc_to_list(args):
 
                 except Exception as e:
 
-                    print(f"'error' : 'Failed to process HGNC_ID list: {str(e)}'","error mode =  debug?")
+                    
+                    logger.debug(f"'error' : 'Failed to process HGNC_ID list: {str(e)}'")
                     # If something unexpected happens, return a descriptive error message
                     return {"error": f"Failed to process HGNC_ID list: {str(e)}"}, 400
             else:
