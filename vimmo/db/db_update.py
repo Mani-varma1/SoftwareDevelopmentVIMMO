@@ -81,6 +81,7 @@ class Update:
         DELETE FROM panel_genes
         WHERE Panel_ID = ?
         """,(panel_id,))
+        print(genes)
 
         for gene in genes:
         

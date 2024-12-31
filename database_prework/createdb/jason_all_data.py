@@ -63,7 +63,7 @@ def main():
             if not rcodes:
                 rows.append({
                     "Panel_ID": panel_id,
-                    "R_Code": "",
+                    "rcodes": "",
                     "Version": version
                 })
             else:
@@ -71,13 +71,13 @@ def main():
                 for rcode in rcodes:
                     rows.append({
                         "Panel_ID": panel_id,
-                        "R_Code": rcode,
+                        "rcodes": rcode,
                         "Version": version
                     })
     
     # Write out to CSV
     with open("latest_panel_versions.csv", "w", newline="", encoding="utf-8") as csv_file:
-        fieldnames = ["Panel_ID", "R_Code", "Version"]
+        fieldnames = ["Panel_ID", "rcodes", "Version"]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:

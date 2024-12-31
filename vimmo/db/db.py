@@ -1,7 +1,7 @@
 from vimmo.logger.logging_config import logger
 import sqlite3
 from sqlite3 import Connection
-from typing import Optional, List, Tuple, Dict, Any
+from typing import Optional
 import importlib.resources
 import os
 

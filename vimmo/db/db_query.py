@@ -1,7 +1,5 @@
 from vimmo.logger.logging_config import logger
-import sqlite3
-from sqlite3 import Connection
-from typing import Optional, List, Tuple, Dict, Any
+from typing import Optional
 
 class Query:
     def __init__(self, connection):
@@ -83,7 +81,7 @@ class Query:
 
         # Query by rcode
         query = f'''
-        SELECT panel.Panel_ID, panel.rcodes, panel.Version, genes_info.HGNC_ID, 
+        SELECT panel.Panel_ID, panel.rcodes, panel.Version, panel_genes.Confidence, genes_info.HGNC_ID, 
                genes_info.Gene_Symbol, genes_info.HGNC_symbol, genes_info.GRCh38_Chr, 
                genes_info.GRCh38_start, genes_info.GRCh38_stop, genes_info.GRCh37_Chr,
                 genes_info.GRCh37_start, genes_info.GRCh37_stop
@@ -183,7 +181,7 @@ class Query:
                     "Message": "Could not find any match for the provided HGNC IDs."
                 }
         
-    def get_gene_list(self,panel_id,r_code,matches):
+    def get_gene_list(self,panel_id=None,r_code=None,matches=False):
         logger.info("Pulling the gene list associated with Panel_ID: %s, R_code: %s.", panel_id, r_code)
 
         if panel_id:
@@ -202,6 +200,7 @@ class Query:
                 return panel_data
             logger.info("Successfully pulled panel data for R_code: %s.", r_code)
             gene_query={record["HGNC_ID"] for record in panel_data["Associated Gene Records"]}
+
         logger.debug(f"Gene list: {gene_query}")
         return gene_query
     
@@ -289,6 +288,7 @@ class Query:
             FROM patient_data
             WHERE DATE = (SELECT MAX(DATE) FROM patient_data) AND Rcode = ? AND Patient_ID = ?         
             ''', (Rcode, Patient_id)).fetchone()
+            print(patient_history,"Hi",Rcode,Patient_id)
             if patient_history is None:
                 return None
             else: 
@@ -410,8 +410,9 @@ class Query:
         ''', (Patient_id,)).fetchall()  # The returned query is a sqlite3 row object list[tuples()].
 
         patient_records = {}  # Instantiation of object for output dict.
-        for record in patient_records_rows:
-            patient_records.update({record["Date"]: [record["Rcode"], record["Version"]]})
+        print(patient_records_rows)
+        for i,record in enumerate(patient_records_rows):
+            patient_records.update({i:{record["Date"]: [record["Rcode"], record["Version"]]}})
         return patient_records
     
     def return_all_patients(self, Rcode: str) -> dict:       
