@@ -26,7 +26,7 @@ formatter = logging.Formatter(
 
 # Setting up the console handler for logging to the terminal
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.ERROR) # Logs INFO level and  above to the console
+console_handler.setLevel(logging.CRITICAL) # Logs INFO level and  above to the console
 console_handler.setFormatter(formatter)
 
 # Setting up the file handler for logging to a file with rotation

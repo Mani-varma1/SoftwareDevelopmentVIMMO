@@ -6,7 +6,7 @@ from datetime import date
 from vimmo.db.db import Database 
 from vimmo.db.db_query import Query
 from vimmo.db.db_update import Update
-import sys
+import datetime
 
 """
 test_db.py - Comprehensive Test Suite for Database Operations
@@ -454,23 +454,37 @@ class TestQuery(BaseTestCase):
 
     def test_check_patient_history(self):
         """
-        Test patient history retrieval functionality with correct schema ordering.
+        Test patient history retrieval functionality with proper date filtering.
         """
         cursor = self.db.conn.cursor()
         
-        test_data = [
-            ("TEST_P123", 999999999, "TEST_R999", 2.0, "2023-01-01"),
-            ("TEST_P123", 999999999, "TEST_R999", 2.5, "2024-12-01")
-        ]
+        cursor.execute('''
+            INSERT INTO patient_data (Patient_ID, Panel_ID, Rcode, Version, Date)
+            VALUES 
+            ("TEST_P123", 999999999, "TEST_R999", 2.0, "2023-01-01")
+        ''')
         
-        for patient_id, panel_id, rcode, version, date in test_data:
-            cursor.execute('''
-                INSERT INTO patient_data (Patient_ID, Panel_ID, Rcode, Version, Date)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (patient_id, panel_id, rcode, version, date))
+        cursor.execute('''
+            INSERT INTO patient_data (Patient_ID, Panel_ID, Rcode, Version, Date)
+            VALUES 
+            ("TEST_P123", 999999999, "TEST_R999", 2.5, "2024-12-01")
+        ''')
+
+        cursor.execute('''
+            SELECT Version
+            FROM patient_data
+            WHERE Date = (
+                SELECT MAX(Date) 
+                FROM patient_data
+                WHERE Patient_ID = ? AND Rcode = ?
+            ) 
+            AND Patient_ID = ? AND Rcode = ?
+        ''', ("TEST_P123", "TEST_R999", "TEST_P123", "TEST_R999"))
+        final_result = cursor.fetchone()
+        print("Direct Query Result:", dict(final_result) if final_result else None)
+
         version = self.query.check_patient_history("TEST_P123", "TEST_R999")
         self.assertEqual(version, 2.5)
-
 
     def test_error_cases(self):
         """

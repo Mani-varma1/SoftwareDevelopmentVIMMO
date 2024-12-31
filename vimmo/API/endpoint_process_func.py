@@ -80,7 +80,6 @@ def bed_processor(query, patient_id, r_code, version, args, logger):
 
         
     database_version = query.get_db_latest_version(r_code)
-    print(f"DB_Ver: {database_version} , version : {version}")
     if str(database_version) != str(version):
         panel_ids = query.rcode_to_panelID(Rcode=r_code)
         archived_records = query.historic_panel_retrieval(panelID=panel_ids, version=version)

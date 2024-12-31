@@ -248,51 +248,63 @@ class Query:
             return local_bed_records
     
     def check_patient_history(self, Patient_id: str, Rcode) -> str:
-            """
-            Retrieves the latest test version for a given patient and R code within the Vimmo database. 
-            
-            Parameters
-            ----------
-            Patient_id: str (required)
-            The patient id, linked to the test history for a given patient
+        """
+        Retrieves the latest test version for a given patient and R code within the Vimmo database. 
+        
+        Parameters
+        ----------
+        Patient_id: str (required)
+        The patient id, linked to the test history for a given patient
 
-            Rcode: str (required)
-            A specific R code to search for a given patient
-            
+        Rcode: str (required)
+        A specific R code to search for a given patient
+        
 
-            Returns
-            -------
-            patient_history: float
-            The most recent version of a R code that a given patient has had
-            
-            Notes
-            -----
-            - Excutes a simple SQL query
-            - Queries the patient_data table
-            - For the entire test history of a patient, see return_all_records()
+        Returns
+        -------
+        patient_history: float
+        The most recent version of a R code that a given patient has had
+        
+        Notes
+        -----
+        - Excutes a simple SQL query
+        - Queries the patient_data table
+        - For the entire test history of a patient, see return_all_records()
 
-            Example
-            -----
-            User UI input: Patient ID = 123, Rcode R208
+        Example
+        -----
+        User UI input: Patient ID = 123, Rcode R208
 
-            Query class method: check_patient_history(123, R208) -> 2.5 
+        Query class method: check_patient_history(123, R208) -> 2.5 
 
-            Here, '2.5' is the most recent version of R208 conducted on patient 123
-            """
-            
-            cursor = self.conn.cursor()
-
-            
-            patient_history = cursor.execute(f'''
-            SELECT Version
+        Here, '2.5' is the most recent version of R208 conducted on patient 123
+        """
+        cursor = self.conn.cursor()
+        
+        patient_history = cursor.execute('''
+        SELECT Version
+        FROM patient_data
+        WHERE Date = (
+            SELECT MAX(Date) 
             FROM patient_data
-            WHERE DATE = (SELECT MAX(DATE) FROM patient_data) AND Rcode = ? AND Patient_ID = ?         
-            ''', (Rcode, Patient_id)).fetchone()
-            print(patient_history,"Hi",Rcode,Patient_id)
-            if patient_history is None:
-                return None
-            else: 
-                return patient_history[0]
+            WHERE Patient_ID = ? AND Rcode = ?
+        ) 
+        AND Version = (
+            SELECT MAX(Version)
+            FROM patient_data
+            WHERE Patient_ID = ? AND Rcode = ?
+            AND Date = (
+                SELECT MAX(Date)
+                FROM patient_data
+                WHERE Patient_ID = ? AND Rcode = ?
+            )
+        )
+        AND Patient_ID = ? AND Rcode = ?         
+        ''', (Patient_id, Rcode, Patient_id, Rcode, Patient_id, Rcode, Patient_id, Rcode)).fetchone()
+        
+        if patient_history is None:
+            return None
+        return patient_history[0]
 
     def get_db_latest_version(self, Rcode: str) -> str:
         """
@@ -410,7 +422,6 @@ class Query:
         ''', (Patient_id,)).fetchall()  # The returned query is a sqlite3 row object list[tuples()].
 
         patient_records = {}  # Instantiation of object for output dict.
-        print(patient_records_rows)
         for i,record in enumerate(patient_records_rows):
             patient_records.update({i:{record["Date"]: [record["Rcode"], record["Version"]]}})
         return patient_records

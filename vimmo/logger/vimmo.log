@@ -1,0 +1,1057 @@
+2024-12-31 16:25:49,822 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,823 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,828 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,828 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,828 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,828 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,829 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,829 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,836 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,837 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,838 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:25:49,838 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:25:49,838 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:25:49,838 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:25:49,838 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:25:49,839 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:25:49,839 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:25:49,839 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:25:49,839 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:25:49,839 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:25:49,839 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:25:49,839 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:25:49,847 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:25:49,848 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:25:49,848 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,848 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,849 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,849 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,850 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:25:49,850 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:25:49,850 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:25:49,899 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:25:49,899 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:25:49,899 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:25:49,899 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:25:49,899 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:25:49,932 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:25:49,933 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:25:49,933 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:25:49,933 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,933 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,934 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:25:49,934 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,934 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,935 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:25:49,935 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:25:49,941 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:25:49,941 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:25:49,942 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,942 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,942 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:25:49,974 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:25:49,974 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:25:49,974 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,974 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,975 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:25:49,975 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:25:49,978 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:25:49,978 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:25:49,978 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:25:49,978 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:25:49,985 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:25:49,985 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:25:49,985 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,986 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:25:49,986 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:25:49,986 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,989 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:23,989 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,992 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:23,992 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,992 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:23,992 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,992 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:23,992 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,995 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:23,996 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:23,996 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:27:23,996 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:27:23,996 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:27:23,996 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:27:23,996 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:27:23,996 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:27:23,996 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:27:23,996 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:27:23,997 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:27:23,997 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:27:23,997 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:27:23,997 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:27:23,998 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:27:23,999 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:27:24,000 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,001 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,002 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,003 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,003 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:27:24,003 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:27:24,003 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:27:24,014 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:27:24,014 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:27:24,014 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:27:24,014 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:27:24,014 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:27:24,054 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:27:24,054 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:27:24,054 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:27:24,055 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,055 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,056 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:27:24,057 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,057 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,058 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:27:24,058 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:27:24,069 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:27:24,070 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:27:24,071 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,071 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,072 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:27:24,105 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:27:24,106 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:27:24,106 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,106 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,107 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:27:24,107 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:27:24,109 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:27:24,109 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:27:24,109 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:27:24,109 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:27:24,114 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:27:24,114 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:27:24,115 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,115 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:27:24,116 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:27:24,116 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,051 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,051 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,055 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,055 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,055 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,055 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,056 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,056 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,063 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,063 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,064 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:28:54,064 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:28:54,064 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:28:54,064 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:28:54,065 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:28:54,065 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:28:54,065 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:28:54,065 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:28:54,065 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:28:54,065 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:28:54,065 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:28:54,065 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:28:54,068 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:28:54,068 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:28:54,069 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,069 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,071 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,072 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,073 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:28:54,073 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:28:54,073 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:28:54,087 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:28:54,088 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:28:54,088 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:28:54,088 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:28:54,088 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:28:54,131 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:28:54,131 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:28:54,131 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:28:54,131 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,131 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,132 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:28:54,132 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,132 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,133 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:28:54,133 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:28:54,139 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:28:54,139 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:28:54,139 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,139 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,140 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:28:54,169 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:28:54,169 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:28:54,170 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,170 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,171 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:28:54,171 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:28:54,173 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:28:54,173 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:28:54,173 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:28:54,173 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:28:54,179 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:28:54,179 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:28:54,179 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,179 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:28:54,180 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:28:54,180 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,733 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,733 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,737 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,738 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,738 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,739 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,739 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,739 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,744 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,744 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,744 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:31:08,745 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:31:08,745 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:31:08,745 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:31:08,745 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:31:08,745 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:31:08,745 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:31:08,746 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:31:08,746 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:31:08,746 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:31:08,746 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:31:08,746 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:31:08,748 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:31:08,748 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:31:08,748 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,748 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,749 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,749 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,750 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:31:08,750 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:31:08,750 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:31:08,762 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:31:08,763 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:31:08,763 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:31:08,763 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:31:08,763 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:31:08,800 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:31:08,801 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:31:08,801 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:31:08,801 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,801 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,802 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:31:08,802 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,802 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,803 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:31:08,803 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:31:08,811 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:31:08,812 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:31:08,812 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,813 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,813 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:31:08,847 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:31:08,847 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:31:08,848 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,848 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,848 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:31:08,848 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:31:08,851 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:31:08,851 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:31:08,851 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:31:08,851 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:31:08,856 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:31:08,856 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:31:08,857 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,857 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:31:08,857 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:31:08,857 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,022 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,023 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,023 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,023 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,023 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,023 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,024 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,024 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,025 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,025 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,025 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:32:38,025 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:32:38,025 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:32:38,025 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:32:38,025 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:32:38,026 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:32:38,026 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:32:38,026 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:32:38,026 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:32:38,026 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:32:38,026 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:32:38,026 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:32:38,026 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:32:38,026 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:32:38,027 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,027 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,027 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,027 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,027 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:32:38,028 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:32:38,028 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:32:38,034 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:32:38,034 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:32:38,035 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:32:38,035 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:32:38,035 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:32:38,072 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:32:38,072 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:32:38,072 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:32:38,073 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,073 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,073 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:32:38,074 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,074 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,074 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:32:38,074 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:32:38,081 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:32:38,081 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:32:38,081 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,082 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,082 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:32:38,113 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:32:38,113 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:32:38,113 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,113 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,114 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:32:38,114 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:32:38,116 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:32:38,116 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:32:38,116 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:32:38,116 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:32:38,124 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:32:38,124 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:32:38,125 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,125 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:32:38,126 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:32:38,126 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,165 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,165 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,165 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,165 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,166 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,166 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,166 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,166 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,168 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,168 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,168 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:33:06,168 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:33:06,168 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:33:06,168 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:33:06,168 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:33:06,169 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:33:06,169 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:33:06,169 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:33:06,169 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:33:06,169 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:33:06,169 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:33:06,169 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:33:06,170 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:33:06,170 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:33:06,170 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,170 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,171 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,171 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,172 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:33:06,172 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:33:06,172 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:33:06,179 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:33:06,179 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:33:06,180 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:33:06,180 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:33:06,180 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:33:06,221 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:33:06,222 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:33:06,222 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:33:06,222 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,223 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,223 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:33:06,224 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,224 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,225 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:33:06,225 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:33:06,233 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:33:06,233 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:33:06,233 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,233 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,234 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:33:06,275 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:33:06,275 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:33:06,276 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,276 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,277 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:33:06,277 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:33:06,280 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:33:06,280 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:33:06,281 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:33:06,281 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:33:06,288 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:33:06,289 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:33:06,289 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,289 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:33:06,290 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:33:06,291 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,673 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,673 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,674 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,674 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,674 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,674 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,674 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,675 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,676 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,676 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,677 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:34:12,677 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:34:12,677 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:34:12,677 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:34:12,677 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:34:12,677 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:34:12,677 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:34:12,678 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:34:12,678 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:34:12,678 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:34:12,678 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:34:12,678 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:34:12,678 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:34:12,679 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:34:12,679 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,679 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,679 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,680 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,680 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:34:12,680 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:34:12,680 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:34:12,688 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:34:12,689 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:34:12,689 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:34:12,689 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:34:12,689 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:34:12,723 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:34:12,723 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:34:12,723 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:34:12,724 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,724 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,725 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:34:12,725 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,726 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,726 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:34:12,726 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:34:12,734 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:34:12,735 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:34:12,735 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,735 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,736 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:34:12,771 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:34:12,772 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:34:12,772 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,772 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,773 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:34:12,773 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:34:12,776 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:34:12,776 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:34:12,776 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:34:12,776 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:34:12,782 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:34:12,782 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:34:12,782 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,782 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:34:12,783 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:34:12,783 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,093 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,093 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,094 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,094 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,094 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,094 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,094 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,094 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,095 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,096 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,096 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:36:13,096 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:36:13,096 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:36:13,096 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:36:13,096 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:36:13,097 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:36:13,097 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:36:13,097 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:36:13,097 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:36:13,097 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:36:13,097 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:36:13,097 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:36:13,098 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:36:13,098 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:36:13,098 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,098 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,098 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,098 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,099 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:36:13,099 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:36:13,099 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:36:13,105 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:36:13,106 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:36:13,106 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:36:13,106 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:36:13,106 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:36:13,139 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:36:13,140 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:36:13,140 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:36:13,141 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,141 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,141 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:36:13,142 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,142 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,143 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:36:13,143 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:36:13,149 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:36:13,150 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:36:13,150 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,150 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,151 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:36:13,229 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:36:13,230 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:36:13,231 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,232 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,233 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:36:13,233 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:36:13,243 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:36:13,243 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:36:13,244 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:36:13,244 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:36:13,259 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:36:13,260 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:36:13,261 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,262 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:36:13,268 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:36:13,269 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,918 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,919 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,922 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,923 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,923 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,923 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,923 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,924 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,927 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,927 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,927 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:40:08,927 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:40:08,927 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:40:08,928 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:40:08,928 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:40:08,928 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:40:08,928 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:40:08,928 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:40:08,928 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:40:08,928 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:40:08,928 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:40:08,928 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:40:08,929 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:40:08,929 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:40:08,929 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,930 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,930 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,930 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,931 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:40:08,931 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:40:08,931 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:40:08,942 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:40:08,942 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:40:08,942 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:40:08,942 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:40:08,942 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:40:08,978 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:40:08,978 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:40:08,978 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:40:08,978 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,979 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,980 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:08,980 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,981 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,981 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:40:08,981 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:40:08,988 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:40:08,989 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:40:08,989 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:08,989 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:08,989 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:40:09,020 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:40:09,020 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:40:09,020 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:09,021 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:09,021 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:40:09,021 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:40:09,023 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:40:09,023 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:40:09,024 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:09,024 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:40:09,031 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:40:09,032 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:09,033 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:09,033 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:09,035 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:09,035 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,489 - VIMMO - INFO - Everything imported
+2024-12-31 16:40:21,499 - VIMMO - ERROR - Invalid format for 'HGNC_ID': '45678' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:40:21,499 - VIMMO - ERROR - Invalid format for 'Panel_ID': Must be a number.
+2024-12-31 16:40:21,499 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:40:21,499 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:40:21,500 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'HGNC:12345,Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:40:21,500 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,500 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:40:21,500 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,500 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:40:21,500 - VIMMO - ERROR - Invalid format for 'HGNC_ID': '45678' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:40:21,500 - VIMMO - ERROR - Invalid input: 'Panel_ID' must be digits only.
+2024-12-31 16:40:21,501 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,501 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:40:21,501 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,501 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:40:21,501 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validated HGNC_ID: HGNC:67890
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:12345', 'HGNC:67890'] successful
+2024-12-31 16:40:21,501 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:40:21,501 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:45678'] successful
+2024-12-31 16:40:21,501 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:45678'] successful
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,502 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,502 - VIMMO - INFO - Validated HGNC_ID: HGNC:67890
+2024-12-31 16:40:21,503 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:40:21,503 - VIMMO - INFO - validator recieved: {'Rcode': 'r123'},False,True
+2024-12-31 16:40:21,503 - VIMMO - INFO - Validation for bed space
+2024-12-31 16:40:21,503 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:40:21,503 - VIMMO - INFO - validator recieved: {'Panel_ID': 'abc'},True,False
+2024-12-31 16:40:21,503 - VIMMO - INFO - Validation for panel space
+2024-12-31 16:40:21,503 - VIMMO - ERROR - Invalid input: 'Panel_ID' must be digits only.
+2024-12-31 16:40:21,503 - VIMMO - INFO - validator recieved: {'Panel_ID': '123', 'Rcode': 'R123'},False,True
+2024-12-31 16:40:21,503 - VIMMO - ERROR - Provide only one of 'Panel_ID', 'Rcode', or 'HGNC_ID', not multiple.
+2024-12-31 16:40:21,503 - VIMMO - INFO - validator recieved: {},True,False
+2024-12-31 16:40:21,503 - VIMMO - ERROR - At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.
+2024-12-31 16:40:21,503 - VIMMO - INFO - validator recieved: {'Panel_ID': '123'},True,False
+2024-12-31 16:40:21,503 - VIMMO - INFO - Validation for panel space
+2024-12-31 16:40:21,503 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:40:21,503 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,503 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,504 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,504 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,505 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,505 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,505 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,505 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,506 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,506 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,507 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:40:21,507 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:40:21,507 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:40:21,508 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:40:21,508 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:40:21,508 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:40:21,508 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:40:21,508 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:40:21,508 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:40:21,508 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:40:21,508 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:40:21,508 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:40:21,510 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:40:21,511 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:40:21,511 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,511 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,512 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,512 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,512 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:40:21,512 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:40:21,513 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:40:21,535 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:40:21,535 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:40:21,535 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:40:21,535 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:40:21,535 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:40:21,589 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:40:21,589 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:40:21,589 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:40:21,589 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,590 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,590 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:21,591 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,591 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,591 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:40:21,591 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:40:21,598 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:40:21,598 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:40:21,598 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,599 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,599 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:40:21,643 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:40:21,643 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:40:21,644 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,644 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,644 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:40:21,644 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:40:21,647 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:40:21,647 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:40:21,647 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:21,647 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:40:21,652 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:40:21,652 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:40:21,653 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,653 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,654 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:40:21,654 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:40:21,655 - VIMMO - INFO - Created Dataframe with 1 rows.
+2024-12-31 16:40:21,655 - VIMMO - INFO - DataFrame successfully written to the bedfile
+2024-12-31 16:40:21,655 - VIMMO - WARNING - No database records found
+2024-12-31 16:40:21,655 - VIMMO - WARNING - No database records found
+2024-12-31 16:40:21,663 - VIMMO - INFO - Created Dataframe with 2 rows.
+2024-12-31 16:40:21,676 - VIMMO - INFO - DataFrame successfully written to the bedfile
+2024-12-31 16:40:21,677 - VIMMO - WARNING - HTTP 404 error from PanelApp API: 404 Not Found
+2024-12-31 16:40:21,678 - VIMMO - WARNING - Unexpected error while accessing PanelApp API: Network error
+2024-12-31 16:40:21,679 - VIMMO - INFO - requesting data from endpoint: https://panelapp.genomicsengland.co.uk/api/v1/panels/635/?version=2.5
+2024-12-31 16:40:21,680 - VIMMO - INFO - Successfully fetched data for panel_id: 635, version: 2.5
+2024-12-31 16:40:21,680 - VIMMO - INFO - requesting data from endpoint: https://panelapp.genomicsengland.co.uk/api/v1/panels/635/?version=2.5
+2024-12-31 16:40:21,680 - VIMMO - WARNING - HTTP 404 error from PanelApp API: 404 Not Found
+2024-12-31 16:40:21,680 - VIMMO - ERROR - Failed to fetch data for panel_id: 635, version: 2.5. PanelApp API returned HTTP 404: 404 Not Found
+2024-12-31 16:40:21,687 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 635
+2024-12-31 16:40:21,687 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 635
+2024-12-31 16:40:21,687 - VIMMO - INFO - Extracted version: 2.5 for panel_id: 635
+2024-12-31 16:40:21,688 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 635
+2024-12-31 16:40:21,688 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 635
+2024-12-31 16:40:21,688 - VIMMO - WARNING - Invalid or missing version key in response for panel_id: 635
+2024-12-31 16:40:21,695 - VIMMO - ERROR - Failed to connect to test_url. Please check your internet connection and try again.
+2024-12-31 16:40:21,696 - VIMMO - WARNING - Failed to get data from VarVal API with status code:404
+2024-12-31 16:40:21,697 - VIMMO - INFO - Successfully pulled data from URL: test_url
+2024-12-31 16:40:21,698 - VIMMO - INFO - sorted key: 1, 1000, 2000
+2024-12-31 16:40:21,698 - VIMMO - INFO - sorted key: 23, 500, 1500
+2024-12-31 16:40:21,698 - VIMMO - INFO - sorted key: 2, 750, 1750
+2024-12-31 16:40:21,698 - VIMMO - INFO - sorted key: inf, 500, 1500
+2024-12-31 16:40:21,698 - VIMMO - INFO - sorted key: inf, 300, 400
+2024-12-31 16:40:21,699 - VIMMO - INFO - sorted key: inf, 1, inf
+2024-12-31 16:40:21,699 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA2/mane_select/all/GRCh38.
+2024-12-31 16:40:21,699 - VIMMO - WARNING - Failed to get data from VarVal API with status code:500
+2024-12-31 16:40:21,700 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38.
+2024-12-31 16:40:21,700 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38
+2024-12-31 16:40:21,700 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38.
+2024-12-31 16:40:21,700 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38
+2024-12-31 16:40:21,707 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:40:21,707 - VIMMO - INFO - IDs to replace identified: ['HGNC:12345678']
+2024-12-31 16:40:21,707 - VIMMO - INFO - HGNC_symbols retrieved for ID replacement: {'HGNC:12345678': 'TEST_symbol'}
+2024-12-31 16:40:21,707 - VIMMO - INFO - Gene query output: {'HGNC:456', 'TEST_symbol'}
+2024-12-31 16:40:21,710 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:40:21,710 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:40:21,710 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:40:21,710 - VIMMO - INFO - Gene query output: {'TRAC'}
+2024-12-31 16:40:21,710 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TRAC/mane_select/all/GRCh38.
+2024-12-31 16:40:21,711 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TRAC/mane_select/all/GRCh38
+2024-12-31 16:40:21,711 - VIMMO - INFO - var val params: [{'error': 'Unable to retrieve data from the VVTA, please contact admin', 'requested_symbol': 'TRAC'}]
+2024-12-31 16:40:21,711 - VIMMO - INFO - Gene: {'error': 'Unable to retrieve data from the VVTA, please contact admin', 'requested_symbol': 'TRAC'}
+2024-12-31 16:40:21,711 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:40:21,711 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:40:21,714 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:40:21,716 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:40:21,719 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:40:21,719 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:40:21,719 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:40:21,719 - VIMMO - INFO - Gene query output: {'TEST'}
+2024-12-31 16:40:21,719 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TEST/mane_select/all/GRCh38.
+2024-12-31 16:40:21,719 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TEST/mane_select/all/GRCh38
+2024-12-31 16:40:21,719 - VIMMO - INFO - var val params: [{'current_symbol': 'TEST', 'transcripts': [{'annotations': {'chromosome': '1'}, 'reference': 'NM_TEST', 'genomic_spans': {}}]}]
+2024-12-31 16:40:21,720 - VIMMO - INFO - Gene: {'current_symbol': 'TEST', 'transcripts': [{'annotations': {'chromosome': '1'}, 'reference': 'NM_TEST', 'genomic_spans': {}}]}
+2024-12-31 16:40:21,720 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:40:21,720 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:40:21,723 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:40:21,724 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:40:21,728 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:40:21,728 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:40:21,728 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:40:21,728 - VIMMO - INFO - Gene query output: {'BRCA1'}
+2024-12-31 16:40:21,728 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38.
+2024-12-31 16:40:21,728 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38
+2024-12-31 16:40:21,728 - VIMMO - INFO - var val params: [{'current_symbol': 'BRCA1', 'requested_symbol': 'BRCA1', 'transcripts': []}]
+2024-12-31 16:40:21,728 - VIMMO - INFO - Gene: {'current_symbol': 'BRCA1', 'requested_symbol': 'BRCA1', 'transcripts': []}
+2024-12-31 16:40:21,728 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:40:21,729 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:40:21,732 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:40:21,734 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:40:21,746 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:40:21,746 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:40:21,746 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:40:21,746 - VIMMO - INFO - Gene query output: {'HGNC:1100'}
+2024-12-31 16:40:21,746 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38.
+2024-12-31 16:40:21,746 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38
+2024-12-31 16:40:21,746 - VIMMO - INFO - var val params: [{'current_symbol': 'BRCA1', 'transcripts': [{'reference': 'NM_007294.4', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}, {'reference': 'ENST00000357654.9', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}]}]
+2024-12-31 16:40:21,747 - VIMMO - INFO - Gene: {'current_symbol': 'BRCA1', 'transcripts': [{'reference': 'NM_007294.4', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}, {'reference': 'ENST00000357654.9', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}]}
+2024-12-31 16:40:21,748 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:40:21,751 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:40:21,753 - VIMMO - INFO - sorted key: 17, 43125271, 43125364
+2024-12-31 16:40:21,754 - VIMMO - INFO - sorted key: 17, 43124017, 43124115
+2024-12-31 16:40:21,754 - VIMMO - INFO - sorted key: 17, 43125271, 43125364
+2024-12-31 16:40:21,754 - VIMMO - INFO - sorted key: 17, 43124017, 43124115
+2024-12-31 16:40:21,757 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:40:21,759 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:40:33,847 - VIMMO - INFO - Everything imported
+2024-12-31 16:40:34,592 - VIMMO - INFO - Everything imported
+2024-12-31 16:41:39,371 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:41:39,376 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:41:39,388 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:41:39,543 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:41:39,544 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:41:52,628 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:41:52,628 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:41:52,628 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:41:52,797 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:41:52,797 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:42:45,404 - VIMMO - INFO - Everything imported
+2024-12-31 16:42:48,409 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:42:48,412 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:42:48,415 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:42:48,530 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:42:48,530 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:43:03,434 - VIMMO - INFO - Everything imported
+2024-12-31 16:43:05,071 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:43:05,073 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:43:05,075 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:43:05,225 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:43:05,225 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:43:37,614 - VIMMO - INFO - Everything imported
+2024-12-31 16:43:39,265 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:43:39,266 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:43:39,268 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:43:39,419 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:43:39,419 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:44:15,731 - VIMMO - INFO - Everything imported
+2024-12-31 16:44:19,904 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:44:19,904 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:44:19,905 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:44:20,104 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:44:20,105 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:47:30,183 - VIMMO - INFO - Everything imported
+2024-12-31 16:47:35,205 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:35,206 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:35,209 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 65
+2024-12-31 16:47:35,361 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 65
+2024-12-31 16:47:35,361 - VIMMO - INFO - Extracted version: 3.0 for panel_id: 65
+2024-12-31 16:47:45,215 - VIMMO - INFO - Everything imported
+2024-12-31 16:47:45,221 - VIMMO - ERROR - Invalid format for 'HGNC_ID': '45678' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:47:45,221 - VIMMO - ERROR - Invalid format for 'Panel_ID': Must be a number.
+2024-12-31 16:47:45,221 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:47:45,221 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:47:45,221 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'HGNC:12345,Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:47:45,222 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:47:45,222 - VIMMO - ERROR - Invalid format for 'HGNC_ID': '45678' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:47:45,222 - VIMMO - ERROR - Invalid input: 'Panel_ID' must be digits only.
+2024-12-31 16:47:45,222 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,222 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:47:45,222 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,222 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:47:45,222 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validated HGNC_ID: HGNC:67890
+2024-12-31 16:47:45,222 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:12345', 'HGNC:67890'] successful
+2024-12-31 16:47:45,222 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:45678'] successful
+2024-12-31 16:47:45,223 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validating HGNC_ID
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:45678
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validation for HGNC_ID: ['HGNC:45678'] successful
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,223 - VIMMO - ERROR - Invalid format for 'HGNC_ID': 'Invalid' must start with 'HGNC:' followed by digits only.
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:67890
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validated HGNC_ID: HGNC:12345
+2024-12-31 16:47:45,223 - VIMMO - INFO - validator recieved: {'Rcode': 'r123'},False,True
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validation for bed space
+2024-12-31 16:47:45,223 - VIMMO - ERROR - Invalid format for 'Rcode': Must start with 'R' followed by digits only
+2024-12-31 16:47:45,223 - VIMMO - INFO - validator recieved: {'Panel_ID': 'abc'},True,False
+2024-12-31 16:47:45,223 - VIMMO - INFO - Validation for panel space
+2024-12-31 16:47:45,223 - VIMMO - ERROR - Invalid input: 'Panel_ID' must be digits only.
+2024-12-31 16:47:45,223 - VIMMO - INFO - validator recieved: {'Panel_ID': '123', 'Rcode': 'R123'},False,True
+2024-12-31 16:47:45,223 - VIMMO - ERROR - Provide only one of 'Panel_ID', 'Rcode', or 'HGNC_ID', not multiple.
+2024-12-31 16:47:45,223 - VIMMO - INFO - validator recieved: {},True,False
+2024-12-31 16:47:45,224 - VIMMO - ERROR - At least one of 'Panel_ID', 'Rcode', or 'HGNC_ID' must be provided.
+2024-12-31 16:47:45,224 - VIMMO - INFO - validator recieved: {'Panel_ID': '123'},True,False
+2024-12-31 16:47:45,224 - VIMMO - INFO - Validation for panel space
+2024-12-31 16:47:45,224 - VIMMO - INFO - Valid Panel_ID: 123
+2024-12-31 16:47:45,224 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,224 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,224 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,224 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,225 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,225 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,225 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,225 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,228 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,228 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,228 - VIMMO - INFO - Pulling all records associated with Panel_ID: 999999
+2024-12-31 16:47:45,229 - VIMMO - INFO - Exact match for Panel_ID: 999999
+2024-12-31 16:47:45,229 - VIMMO - INFO - The run was successful for Panel_ID: 999999, and retrieved 0 records.
+2024-12-31 16:47:45,229 - VIMMO - WARNING - No matches found for Panel_ID: 999999.
+2024-12-31 16:47:45,229 - VIMMO - INFO - Pulling all records associated with R_code: R000.00.
+2024-12-31 16:47:45,229 - VIMMO - INFO - Query ran successfully for R_code: R000.00, and retrieved 0 records.
+2024-12-31 16:47:45,229 - VIMMO - WARNING - No matches found for R_code: R000.00.
+2024-12-31 16:47:45,229 - VIMMO - INFO - Pulling all records associated with HGNC_ID: [].
+2024-12-31 16:47:45,229 - VIMMO - INFO - Exact match for HGNC_ID: []
+2024-12-31 16:47:45,229 - VIMMO - INFO - Query ran successfully for HGNC_ID: [], and retrieved 0 records.
+2024-12-31 16:47:45,229 - VIMMO - WARNING - No matches found for HGNC_ID: [].
+2024-12-31 16:47:45,229 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:000000'].
+2024-12-31 16:47:45,231 - VIMMO - INFO - Pulling all records associated with Panel_ID: None
+2024-12-31 16:47:45,231 - VIMMO - ERROR - ValueError- Panel_ID must be provided
+2024-12-31 16:47:45,232 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,232 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,233 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,233 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,233 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: 100001, R_code: None.
+2024-12-31 16:47:45,233 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:47:45,233 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:47:45,242 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:47:45,242 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:47:45,242 - VIMMO - INFO - Successfully pulled panel data for Panel_ID: 100001.
+2024-12-31 16:47:45,242 - VIMMO - INFO - Pulling the gene list associated with Panel_ID: None, R_code: R999.01.
+2024-12-31 16:47:45,242 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:47:45,280 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:47:45,280 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:47:45,280 - VIMMO - INFO - Successfully pulled panel data for R_code: R999.01.
+2024-12-31 16:47:45,280 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,281 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,281 - VIMMO - INFO - Pulling the gene_symbol called with IDs to replace: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:47:45,282 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,282 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,282 - VIMMO - INFO - Pulling all records associated with Panel_ID: 100001
+2024-12-31 16:47:45,282 - VIMMO - INFO - Exact match for Panel_ID: 100001
+2024-12-31 16:47:45,288 - VIMMO - INFO - The run was successful for Panel_ID: 100001, and retrieved 2 records.
+2024-12-31 16:47:45,289 - VIMMO - INFO - Returning 2 records for Panel_ID: 100001.
+2024-12-31 16:47:45,289 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,289 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,290 - VIMMO - INFO - Pulling all records associated with R_code: R999.01.
+2024-12-31 16:47:45,321 - VIMMO - INFO - Query ran successfully for R_code: R999.01, and retrieved 2 records.
+2024-12-31 16:47:45,321 - VIMMO - INFO - Returning 2 records for R_code: R999.01.
+2024-12-31 16:47:45,322 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,322 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,323 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:47:45,323 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789']
+2024-12-31 16:47:45,325 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789'], and retrieved 2 records.
+2024-12-31 16:47:45,325 - VIMMO - INFO - Returning 2 records for HGNC_ID: ['HGNC:123456789'].
+2024-12-31 16:47:45,325 - VIMMO - INFO - Pulling all records associated with HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:47:45,325 - VIMMO - INFO - Exact match for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321']
+2024-12-31 16:47:45,331 - VIMMO - INFO - Query ran successfully for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'], and retrieved 3 records.
+2024-12-31 16:47:45,331 - VIMMO - INFO - Returning 3 records for HGNC_ID: ['HGNC:123456789', 'HGNC:987654321'].
+2024-12-31 16:47:45,331 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,331 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,332 - VIMMO - INFO - Attempting to get the database in the installed package
+2024-12-31 16:47:45,332 - VIMMO - INFO - Database is in the installed package: /home/mani/SoftwareDevelopmentVIMMO/vimmo/db/panels_data.db
+2024-12-31 16:47:45,333 - VIMMO - INFO - Created Dataframe with 1 rows.
+2024-12-31 16:47:45,333 - VIMMO - INFO - DataFrame successfully written to the bedfile
+2024-12-31 16:47:45,333 - VIMMO - WARNING - No database records found
+2024-12-31 16:47:45,334 - VIMMO - WARNING - No database records found
+2024-12-31 16:47:45,343 - VIMMO - INFO - Created Dataframe with 2 rows.
+2024-12-31 16:47:45,356 - VIMMO - INFO - DataFrame successfully written to the bedfile
+2024-12-31 16:47:45,357 - VIMMO - WARNING - HTTP 404 error from PanelApp API: 404 Not Found
+2024-12-31 16:47:45,357 - VIMMO - WARNING - Unexpected error while accessing PanelApp API: Network error
+2024-12-31 16:47:45,359 - VIMMO - INFO - requesting data from endpoint: https://panelapp.genomicsengland.co.uk/api/v1/panels/635/?version=2.5
+2024-12-31 16:47:45,359 - VIMMO - INFO - Successfully fetched data for panel_id: 635, version: 2.5
+2024-12-31 16:47:45,359 - VIMMO - INFO - requesting data from endpoint: https://panelapp.genomicsengland.co.uk/api/v1/panels/635/?version=2.5
+2024-12-31 16:47:45,360 - VIMMO - WARNING - HTTP 404 error from PanelApp API: 404 Not Found
+2024-12-31 16:47:45,360 - VIMMO - ERROR - Failed to fetch data for panel_id: 635, version: 2.5. PanelApp API returned HTTP 404: 404 Not Found
+2024-12-31 16:47:45,365 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 635
+2024-12-31 16:47:45,365 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 635
+2024-12-31 16:47:45,365 - VIMMO - INFO - Extracted version: 2.5 for panel_id: 635
+2024-12-31 16:47:45,366 - VIMMO - INFO - Starting get_latest_online_version for panel_id: 635
+2024-12-31 16:47:45,366 - VIMMO - INFO - Successfully retrieved JSON data for panel_id: 635
+2024-12-31 16:47:45,366 - VIMMO - WARNING - Invalid or missing version key in response for panel_id: 635
+2024-12-31 16:47:45,376 - VIMMO - ERROR - Failed to connect to test_url. Please check your internet connection and try again.
+2024-12-31 16:47:45,377 - VIMMO - WARNING - Failed to get data from VarVal API with status code:404
+2024-12-31 16:47:45,378 - VIMMO - INFO - Successfully pulled data from URL: test_url
+2024-12-31 16:47:45,379 - VIMMO - INFO - sorted key: 1, 1000, 2000
+2024-12-31 16:47:45,379 - VIMMO - INFO - sorted key: 23, 500, 1500
+2024-12-31 16:47:45,379 - VIMMO - INFO - sorted key: 2, 750, 1750
+2024-12-31 16:47:45,380 - VIMMO - INFO - sorted key: inf, 500, 1500
+2024-12-31 16:47:45,380 - VIMMO - INFO - sorted key: inf, 300, 400
+2024-12-31 16:47:45,380 - VIMMO - INFO - sorted key: inf, 1, inf
+2024-12-31 16:47:45,380 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA2/mane_select/all/GRCh38.
+2024-12-31 16:47:45,380 - VIMMO - WARNING - Failed to get data from VarVal API with status code:500
+2024-12-31 16:47:45,381 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38.
+2024-12-31 16:47:45,381 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38
+2024-12-31 16:47:45,381 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38.
+2024-12-31 16:47:45,381 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38
+2024-12-31 16:47:45,383 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:47:45,383 - VIMMO - INFO - IDs to replace identified: ['HGNC:12345678']
+2024-12-31 16:47:45,383 - VIMMO - INFO - HGNC_symbols retrieved for ID replacement: {'HGNC:12345678': 'TEST_symbol'}
+2024-12-31 16:47:45,383 - VIMMO - INFO - Gene query output: {'TEST_symbol', 'HGNC:456'}
+2024-12-31 16:47:45,385 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:47:45,385 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:47:45,385 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:47:45,385 - VIMMO - INFO - Gene query output: {'TRAC'}
+2024-12-31 16:47:45,385 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TRAC/mane_select/all/GRCh38.
+2024-12-31 16:47:45,385 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TRAC/mane_select/all/GRCh38
+2024-12-31 16:47:45,385 - VIMMO - INFO - var val params: [{'error': 'Unable to retrieve data from the VVTA, please contact admin', 'requested_symbol': 'TRAC'}]
+2024-12-31 16:47:45,385 - VIMMO - INFO - Gene: {'error': 'Unable to retrieve data from the VVTA, please contact admin', 'requested_symbol': 'TRAC'}
+2024-12-31 16:47:45,385 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:47:45,386 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:47:45,389 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:47:45,390 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:47:45,394 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:47:45,394 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:47:45,394 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:47:45,394 - VIMMO - INFO - Gene query output: {'TEST'}
+2024-12-31 16:47:45,394 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TEST/mane_select/all/GRCh38.
+2024-12-31 16:47:45,394 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/TEST/mane_select/all/GRCh38
+2024-12-31 16:47:45,394 - VIMMO - INFO - var val params: [{'current_symbol': 'TEST', 'transcripts': [{'annotations': {'chromosome': '1'}, 'reference': 'NM_TEST', 'genomic_spans': {}}]}]
+2024-12-31 16:47:45,395 - VIMMO - INFO - Gene: {'current_symbol': 'TEST', 'transcripts': [{'annotations': {'chromosome': '1'}, 'reference': 'NM_TEST', 'genomic_spans': {}}]}
+2024-12-31 16:47:45,395 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:47:45,395 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:47:45,398 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:47:45,399 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:47:45,401 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:47:45,401 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:47:45,401 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:47:45,401 - VIMMO - INFO - Gene query output: {'BRCA1'}
+2024-12-31 16:47:45,401 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38.
+2024-12-31 16:47:45,402 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/BRCA1/mane_select/all/GRCh38
+2024-12-31 16:47:45,402 - VIMMO - INFO - var val params: [{'current_symbol': 'BRCA1', 'requested_symbol': 'BRCA1', 'transcripts': []}]
+2024-12-31 16:47:45,402 - VIMMO - INFO - Gene: {'current_symbol': 'BRCA1', 'requested_symbol': 'BRCA1', 'transcripts': []}
+2024-12-31 16:47:45,402 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:47:45,402 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:47:45,403 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:47:45,404 - VIMMO - INFO - BED file generation completed successfully.
+2024-12-31 16:47:45,413 - VIMMO - INFO - Loaded problematic gene list successfully.
+2024-12-31 16:47:45,413 - VIMMO - INFO - IDs to replace identified: []
+2024-12-31 16:47:45,413 - VIMMO - INFO - No IDs to replace found.
+2024-12-31 16:47:45,413 - VIMMO - INFO - Gene query output: {'HGNC:1100'}
+2024-12-31 16:47:45,413 - VIMMO - INFO - Pulling gene data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38.
+2024-12-31 16:47:45,414 - VIMMO - INFO - Successfully pulled data from URL: https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/HGNC%3A1100/mane_select/all/GRCh38
+2024-12-31 16:47:45,414 - VIMMO - INFO - var val params: [{'current_symbol': 'BRCA1', 'transcripts': [{'reference': 'NM_007294.4', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}, {'reference': 'ENST00000357654.9', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}]}]
+2024-12-31 16:47:45,414 - VIMMO - INFO - Gene: {'current_symbol': 'BRCA1', 'transcripts': [{'reference': 'NM_007294.4', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}, {'reference': 'ENST00000357654.9', 'annotations': {'chromosome': '17'}, 'genomic_spans': {'NC_000017.11': {'orientation': -1, 'exon_structure': [{'exon_number': 1, 'genomic_start': 43125271, 'genomic_end': 43125364}, {'exon_number': 2, 'genomic_start': 43124017, 'genomic_end': 43124115}]}}}]}
+2024-12-31 16:47:45,414 - VIMMO - INFO - Converting parsed data into DataFrame.
+2024-12-31 16:47:45,415 - VIMMO - INFO - Sorting the DataFrame.
+2024-12-31 16:47:45,415 - VIMMO - INFO - sorted key: 17, 43125271, 43125364
+2024-12-31 16:47:45,415 - VIMMO - INFO - sorted key: 17, 43124017, 43124115
+2024-12-31 16:47:45,415 - VIMMO - INFO - sorted key: 17, 43125271, 43125364
+2024-12-31 16:47:45,416 - VIMMO - INFO - sorted key: 17, 43124017, 43124115
+2024-12-31 16:47:45,417 - VIMMO - INFO - Writing the DataFrame to BED file format.
+2024-12-31 16:47:45,418 - VIMMO - INFO - BED file generation completed successfully.
