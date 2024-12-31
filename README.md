@@ -33,7 +33,7 @@ conda activate VIMMO
 3. Install the package:
 ```bash
 # Install in development mode
-pip install -e .
+pip install -e .[test]
 ```
 
 The package installation will automatically handle all dependencies listed in `pyproject.toml`.
@@ -105,12 +105,20 @@ docker-compose up
 ## Testing
 
 In root directory (<path>/SoftwareDevelopmentVIMMO) :
+Testing requires an instance of the application to be running as it checks for various responses
+Please run the App in a seperate terminal or have an instance of Docker running in the background
 ```bash
-# Using the command to automagically find and run tests
-python -m unittest discover
+pytest #Tests everything
 
-# if you want to test individual folder
-python -m unittest <name_of_the_file>
+# for extra debugging purposes use 
+pytest -s # this prints out some of the info we recieve and should only be used for debugging purposes e.g, change in panelapp or variant validator.
+
+# To test just integration
+pytest -m integration
+
+# To test just unittest modules
+ pytest -m "not integration"
+ #Note: this does not require an instance of the app to run as it mocks responses with dummy data
 ```
 
 how to exit
