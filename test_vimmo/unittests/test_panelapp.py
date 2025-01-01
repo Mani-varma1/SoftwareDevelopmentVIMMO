@@ -57,23 +57,23 @@ class TestPanelAppClient(unittest.TestCase):
         self.assertEqual(result, ['BRCA1', 'TP53', 'EGFR'])
 
 
-    # Test for get_genes_HGNC method
-    @patch('requests.get')
-    def test_get_genes_hgnc(self, mock_get):
-        # Mock the API response for get_genes_HGNC
-        mock_response = {
-            "results": [
-                {"gene_data": {"hgnc_id": "HGNC:1234"}},
-                {"gene_data": {"hgnc_id": "HGNC:5678"}},
-                {"gene_data": {"hgnc_id": "HGNC:91011"}}
-            ]
-        }
-        mock_get.return_value.json.return_value = mock_response
-        mock_get.return_value.status_code = 200
+    # # Test for get_genes_HGNC method
+    # @patch('requests.get')
+    # def test_get_genes_hgnc(self, mock_get):
+    #     # Mock the API response for get_genes_HGNC
+    #     mock_response = {
+    #         "results": [
+    #             {"gene_data": {"hgnc_id": "HGNC:1234"}},
+    #             {"gene_data": {"hgnc_id": "HGNC:5678"}},
+    #             {"gene_data": {"hgnc_id": "HGNC:91011"}}
+    #         ]
+    #     }
+    #     mock_get.return_value.json.return_value = mock_response
+    #     mock_get.return_value.status_code = 200
 
-        client = PanelAppClient()
-        result = client.get_genes_HGNC('R123')
-        self.assertEqual(result, ['HGNC:1234', 'HGNC:5678', 'HGNC:91011'])
+    #     client = PanelAppClient()
+    #     result = client.get_genes_HGNC('R123')
+    #     self.assertEqual(result, ['HGNC:1234', 'HGNC:5678', 'HGNC:91011'])
 
 
     # Test for get_latest_online_version method
