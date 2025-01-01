@@ -12,6 +12,8 @@ A Flask-based API application for panel data analysis.
 
 - Conda (Miniconda or Anaconda)
 - Git.
+### For Docker
+- Docker Desktop
 
 ### Setup Instructions
 
@@ -90,16 +92,24 @@ bumpversion major
 # to run docker make sure you are in route directory of the project
 cd <your_file_path>/SoftwareDevelopmentVIMMO
 
-# make sure your docker daemon is running if you are on mac/windows use docker desktop
-  
 # if you are on linux use
 sudo systemctl start docker
 
-# to build the image
-docker-compose build
+#Tp build and run the image
+docker build -t vimmo_app .
+docker run -d --name my_vimmo_app -p 5000:5000 vimmo_app
 
-# to run the container 
-docker-compose up
+#to exit
+docker stop my_vimmo_app
+docker rm my_vimmo_app
+
+# <m>ake sure your docker daemon is running if you are on mac/windows use docker desktop
+  
+# # to build the image and to run the container 
+docker-compose up --build
+
+# to run it in the background use
+docker-compose up -d --build
 ````
 
 ## Testing
@@ -120,6 +130,4 @@ pytest -m integration
  pytest -m "not integration"
  #Note: this does not require an instance of the app to run as it mocks responses with dummy data
 ```
-
-how to exit
 

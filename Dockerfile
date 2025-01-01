@@ -1,53 +1,28 @@
-#FROM python:3.13
-#
-## Update the package list and upgrade installed packages
-#RUN apt-get update && apt-get -y upgrade
-#
-## Install sqlite3 \
-#RUN apt-get install -y sqlite3
-#
-##RUN git clone --branch docker-test --single-branch https://github.com/Itebbs22/SoftwareDevelopmentVIMMO /app
-#
-#WORKDIR /app
-#
-#COPY . /app
-#
-## Upgrade pip
-#RUN pip install --upgrade pip
-#
-## Install Python packages defined in the current project
-#RUN pip install -e .
-#
-## Keep the container running (optional, for debugging or persistence)
-#CMD ["tail", "-f", "/dev/null"]
-
-
-
-
-
-# Use Python 3.13 as the base image
-FROM python:3.13
-
-# Update the package list and upgrade installed packages
-RUN apt-get update && apt-get -y upgrade
-
-# Install sqlite3 for the database
-RUN apt-get install -y sqlite3
+# Use Miniconda as the base image
+FROM continuumio/miniconda3
 
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy environment file
+COPY environment.yaml /app/environment.yaml
+
+# Create Conda environment with the correct name
+RUN conda env create -f /app/environment.yaml && conda clean -afy
+
+# Activate Conda environment and set PATH
+SHELL ["/bin/bash", "-c"]
+RUN echo "conda activate VIMMO" >> ~/.bashrc
+ENV PATH /opt/conda/envs/VIMMO/bin:$PATH
+
+# Copy application files
 COPY . /app
 
-# Upgrade pip
-RUN pip install --upgrade pip
+# Install test dependencies
+RUN /bin/bash -c "source ~/.bashrc && conda activate VIMMO && pip install -e .[test]"
 
-# Install Python packages defined in the current project
-RUN pip install -e .
-
-# Expose port 5001 to the outside world
+# Expose port 5000 to the outside world
 EXPOSE 5000
 
 # Run the application (main.py) when the container starts
-CMD ["python", "vimmo/main.py"]
+CMD ["/bin/bash", "-c", "source ~/.bashrc && conda activate VIMMO && vimmo"]

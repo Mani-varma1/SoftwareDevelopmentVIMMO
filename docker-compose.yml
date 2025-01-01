@@ -8,7 +8,7 @@ services:
       - ./vimmo/db:/app/vimmo/db  # Mount local db directory into the container's db directory
     environment:
       - DATABASE_URL=/app/vimmo/db/panels_data.db  # Set environment variable for database path (optional, for explicit reference)
-    command: ["python", "/app/vimmo/main.py"]  # Run the Flask app in the container
+    command: ["/bin/bash", "-c", "source ~/.bashrc && conda activate VIMMO && vimmo"]  # Run the Flask app in the container
 
 volumes:
   db_data:  # This volume is for persisting the database
