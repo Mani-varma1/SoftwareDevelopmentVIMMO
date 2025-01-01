@@ -12,6 +12,8 @@ A Flask-based API application for panel data analysis.
 
 - Conda (Miniconda or Anaconda)
 - Git.
+### For Docker
+- Docker Desktop
 
 ### Setup Instructions
 
@@ -33,7 +35,7 @@ conda activate VIMMO
 3. Install the package:
 ```bash
 # Install in development mode
-pip install -e .
+pip install -e .[test]
 ```
 
 The package installation will automatically handle all dependencies listed in `pyproject.toml`.
@@ -90,28 +92,42 @@ bumpversion major
 # to run docker make sure you are in route directory of the project
 cd <your_file_path>/SoftwareDevelopmentVIMMO
 
-# make sure your docker daemon is running if you are on mac/windows use docker desktop
-  
 # if you are on linux use
 sudo systemctl start docker
 
-# to build the image
-docker-compose build
+#Tp build and run the image
+docker build -t vimmo_app .
+docker run -d --name my_vimmo_app -p 5000:5000 vimmo_app
 
-# to run the container 
-docker-compose up
+#to exit
+docker stop my_vimmo_app
+docker rm my_vimmo_app
+
+# <m>ake sure your docker daemon is running if you are on mac/windows use docker desktop
+  
+# # to build the image and to run the container 
+docker-compose up --build
+
+# to run it in the background use
+docker-compose up -d --build
 ````
 
 ## Testing
 
 In root directory (<path>/SoftwareDevelopmentVIMMO) :
+Testing requires an instance of the application to be running as it checks for various responses
+Please run the App in a seperate terminal or have an instance of Docker running in the background
 ```bash
-# Using the command to automagically find and run tests
-python -m unittest discover
+pytest #Tests everything
 
-# if you want to test individual folder
-python -m unittest <name_of_the_file>
+# for extra debugging purposes use 
+pytest -s # this prints out some of the info we recieve and should only be used for debugging purposes e.g, change in panelapp or variant validator.
+
+# To test just integration
+pytest -m integration
+
+# To test just unittest modules
+ pytest -m "not integration"
+ #Note: this does not require an instance of the app to run as it mocks responses with dummy data
 ```
-
-how to exit
 
