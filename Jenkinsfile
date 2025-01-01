@@ -22,8 +22,13 @@ pipeline {
             steps {
                 echo 'Installing required tools on Alpine...'
                 sh '''
-                apk add --no-cache bash wget docker-compose python3 py3-pip
+                apk add --no-cache bash wget docker-compose python3 py3-pip libstdc++ libgcc shadow
+                wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+                wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r0/glibc-2.35-r0.apk
+                apk add glibc-2.35-r0.apk
+                rm glibc-2.35-r0.apk
                 ln -sf /usr/bin/python3 /usr/bin/python
+                usermod -aG docker jenkins
                 '''
             }
         }
@@ -32,7 +37,7 @@ pipeline {
             steps {
                 echo 'Setting up Conda environment...'
                 sh '''
-                # Install Miniconda if not present
+                # Install Miniconda
                 if ! command -v conda &> /dev/null; then
                     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
                     sh miniconda.sh -b -p $HOME/miniconda
@@ -43,7 +48,7 @@ pipeline {
                 export PATH="$HOME/miniconda/bin:$PATH"
                 source $HOME/miniconda/etc/profile.d/conda.sh
                 conda init
-                conda env create -f environment.yaml -n ${CONDA_ENV_NAME} || conda env update -f environment.yaml -n ${CONDA_ENV_NAME}
+                conda env create -f environment.yaml
                 conda activate ${CONDA_ENV_NAME}
 
                 # Install dependencies
@@ -59,7 +64,7 @@ pipeline {
                 export PATH="$HOME/miniconda/bin:$PATH"
                 source $HOME/miniconda/etc/profile.d/conda.sh
                 conda activate ${CONDA_ENV_NAME}
-                pytest test_vimmo/unittests -v
+                pytest -m "not integration""
                 '''
             }
         }
@@ -71,7 +76,7 @@ pipeline {
                 docker-compose up -d --build
                 echo 'Waiting for the application to be ready...'
                 sleep 180 # Adjust based on application startup time
-                pytest test_vimmo/integrationtests -v
+                pytest
                 '''
             }
         }
