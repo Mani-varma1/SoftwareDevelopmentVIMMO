@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'alpine:latest'
-            args '-u root'
+            image 'continuumio/miniconda3:latest'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'  // Mount Docker socket
         }
     }
 
@@ -13,70 +13,65 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
                 checkout scm
             }
         }
 
-        stage('Install Required Tools') {
+        stage('Install Docker') {
             steps {
-                echo 'Installing required tools on Alpine...'
                 sh '''
-                apk add --no-cache bash wget docker-compose python3 py3-pip libstdc++ libgcc shadow
-                wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
-                wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r0/glibc-2.35-r0.apk
-                apk add glibc-2.35-r0.apk
-                rm glibc-2.35-r0.apk
-                ln -sf /usr/bin/python3 /usr/bin/python
-                usermod -aG docker jenkins
+                    # Add Docker's official GPG key
+                    apt-get update
+                    apt-get install -y ca-certificates curl gnupg
+                    install -m 0755 -d /etc/apt/keyrings
+                    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+                    chmod a+r /etc/apt/keyrings/docker.gpg
+
+                    # Add Docker repository
+                    echo \
+                      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+                      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+                      tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+                    # Install Docker and Docker Compose
+                    apt-get update
+                    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
                 '''
             }
         }
 
-        stage('Setup Conda Environment') {
+        stage('Setup Environment') {
             steps {
-                echo 'Setting up Conda environment...'
                 sh '''
-                # Install Miniconda
-                if ! command -v conda &> /dev/null; then
-                    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-                    sh miniconda.sh -b -p $HOME/miniconda
-                    export PATH="$HOME/miniconda/bin:$PATH"
-                fi
-
-                # Initialize Conda and create environment
-                export PATH="$HOME/miniconda/bin:$PATH"
-                source $HOME/miniconda/etc/profile.d/conda.sh
-                conda init
-                conda env create -f environment.yaml
-                conda activate ${CONDA_ENV_NAME}
-
-                # Install dependencies
-                pip install -e .[test]
+                    conda env create -f environment.yaml
+                    conda activate ${CONDA_ENV_NAME}
+                    pip install -e .[test]
                 '''
             }
         }
 
         stage('Run Unit Tests') {
             steps {
-                echo 'Running unit tests...'
                 sh '''
-                export PATH="$HOME/miniconda/bin:$PATH"
-                source $HOME/miniconda/etc/profile.d/conda.sh
-                conda activate ${CONDA_ENV_NAME}
-                pytest -m "not integration""
+                    conda activate ${CONDA_ENV_NAME}
+                    pytest -m "not integration"
                 '''
             }
         }
 
-        stage('Start Application and Integration Tests') {
+        stage('Run Integration Tests') {
             steps {
-                echo 'Starting application and running integration tests using Docker Compose...'
                 sh '''
-                docker-compose up -d --build
-                echo 'Waiting for the application to be ready...'
-                sleep 180 # Adjust based on application startup time
-                pytest
+                    # Start application using Docker
+                    docker-compose up -d --build
+
+                    # Wait for application to be ready
+                    echo "Waiting for services to be ready..."
+                    sleep 30  # Adjust based on your app's startup time
+
+                    # Run integration tests
+                    conda activate ${CONDA_ENV_NAME}
+                    pytest -m "integration"
                 '''
             }
         }
@@ -84,24 +79,14 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up resources...'
-            sh 'docker-compose down'
-
             sh '''
-                # Deactivate and remove Conda environment
-                export PATH="$HOME/miniconda/bin:$PATH"
-                source $HOME/miniconda/etc/profile.d/conda.sh
+                # Cleanup Docker
+                docker-compose down --volumes --remove-orphans
+
+                # Cleanup Conda environment
                 conda deactivate
-                conda env remove -n ${CONDA_ENV_NAME}
+                conda env remove -n ${CONDA_ENV_NAME} -y || true
             '''
-        }
-
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-
-        failure {
-            echo 'Pipeline failed. Check the logs for details.'
         }
     }
 }
