@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'continuumio/miniconda3:latest'
-            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'  // Mount Docker socket
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
 
@@ -42,9 +42,19 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                sh '''
+                sh '''#!/bin/bash
+                    # Initialize conda for shell interaction
+                    conda init bash
+                    source ~/.bashrc
+                    
+                    # Create and activate environment
                     conda env create -f environment.yaml
+                    
+                    # Activate environment with full path to avoid conda init issues
+                    source $(conda info --base)/etc/profile.d/conda.sh
                     conda activate ${CONDA_ENV_NAME}
+                    
+                    # Install package
                     pip install -e .[test]
                 '''
             }
@@ -52,7 +62,8 @@ pipeline {
 
         stage('Run Unit Tests') {
             steps {
-                sh '''
+                sh '''#!/bin/bash
+                    source $(conda info --base)/etc/profile.d/conda.sh
                     conda activate ${CONDA_ENV_NAME}
                     pytest -m "not integration"
                 '''
@@ -61,16 +72,16 @@ pipeline {
 
         stage('Run Integration Tests') {
             steps {
-                sh '''
-                    # Start application using Docker
-                    docker-compose up -d --build
-
-                    # Wait for application to be ready
-                    echo "Waiting for services to be ready..."
-                    sleep 30  # Adjust based on your app's startup time
-
-                    # Run integration tests
+                sh '''#!/bin/bash
+                    source $(conda info --base)/etc/profile.d/conda.sh
                     conda activate ${CONDA_ENV_NAME}
+                    
+                    # Use docker compose v2 command syntax
+                    docker compose up -d --build
+                    
+                    echo "Waiting for services to be ready..."
+                    sleep 30
+                    
                     pytest -m "integration"
                 '''
             }
@@ -79,11 +90,12 @@ pipeline {
 
     post {
         always {
-            sh '''
-                # Cleanup Docker
-                docker-compose down --volumes --remove-orphans
-
+            sh '''#!/bin/bash
+                # Use docker compose v2 command syntax
+                docker compose down --volumes --remove-orphans || true
+                
                 # Cleanup Conda environment
+                source $(conda info --base)/etc/profile.d/conda.sh
                 conda deactivate
                 conda env remove -n ${CONDA_ENV_NAME} -y || true
             '''
