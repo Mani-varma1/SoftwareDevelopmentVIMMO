@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'continuumio/miniconda3:latest'
-            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
+            args '-u root -v /var/run/docker.sock:/var/run/docker.sock --network host'
         }
     }
 
@@ -76,12 +76,31 @@ pipeline {
                     source $(conda info --base)/etc/profile.d/conda.sh
                     conda activate ${CONDA_ENV_NAME}
                     
-                    # Use docker compose v2 command syntax
+                    # Create a custom network for the tests
+                    docker network create vimmo_test_network || true
+                    
+                    # Start the application with specific network settings
                     docker compose up -d --build
                     
                     echo "Waiting for services to be ready..."
-                    sleep 30
                     
+                    # More robust wait for the service
+                    attempt_counter=0
+                    max_attempts=30
+                    
+                    until curl -s http://localhost:5000/health > /dev/null || [ $attempt_counter -eq $max_attempts ]; do
+                        printf '.'
+                        attempt_counter=$(($attempt_counter+1))
+                        sleep 2
+                    done
+                    
+                    if [ $attempt_counter -eq $max_attempts ]; then
+                        echo "Failed to connect to the API after 60 seconds"
+                        docker compose logs
+                        exit 1
+                    fi
+                    
+                    echo "Service is up, running tests..."
                     pytest -m "integration"
                 '''
             }
@@ -92,7 +111,8 @@ pipeline {
         always {
             sh '''#!/bin/bash
                 # Use docker compose v2 command syntax
-                docker compose down --volumes --remove-orphans || true
+                docker compose down --volumes --remove-orphans
+                docker network rm vimmo_test_network || true
                 
                 # Cleanup Conda environment
                 source $(conda info --base)/etc/profile.d/conda.sh
