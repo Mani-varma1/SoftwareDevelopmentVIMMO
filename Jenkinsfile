@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'python:3.13-slim'
-            args '-u root'
+            image 'alpine:latest'
+            args '-u 0:0' // Run the container as root
         }
     }
 
