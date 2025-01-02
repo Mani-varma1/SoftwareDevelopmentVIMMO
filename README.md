@@ -132,3 +132,5 @@ pytest -m integration
 ```
 This is to test github hooks 
 First need to create a pull req  to test i think
+
+OK TESTED WITH FREE STYLE NOW TESTING WITH PIPELINE
